@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#f4efe3"/>
+  <g stroke="#1b2a4a" stroke-opacity=".07" stroke-width="1">
+    <path d="M0 40H1200M0 80H1200M0 120H1200M0 160H1200M0 200H1200M0 240H1200M0 280H1200M0 320H1200M0 360H1200M0 400H1200M0 440H1200M0 480H1200M0 520H1200M0 560H1200M0 600H1200"/>
+    <path d="M40 0V630M80 0V630M120 0V630M160 0V630M200 0V630M240 0V630M280 0V630M320 0V630M360 0V630M400 0V630M440 0V630M480 0V630M520 0V630M560 0V630M600 0V630M640 0V630M680 0V630M720 0V630M760 0V630M800 0V630M840 0V630M880 0V630M920 0V630M960 0V630M1000 0V630M1040 0V630M1080 0V630M1120 0V630M1160 0V630"/>
+  </g>
+  <g font-family="DejaVu Sans, sans-serif" fill="#1b2a4a">
+    <text x="72" y="98" font-size="31" font-weight="700" letter-spacing="-1">palavra viva</text>
+    <text x="72" y="248" font-size="74" font-weight="700" letter-spacing="-3">Ler começa</text>
+    <text x="72" y="326" font-size="74" font-weight="700" letter-spacing="-3">numa palavra.</text>
+    <text x="74" y="392" font-size="26" fill="#485773">Método das 28 palavras, com a professora no comando.</text>
+  </g>
+  <g transform="translate(760 145) rotate(4)">
+    <rect x="0" y="0" width="340" height="380" rx="8" fill="#fffdf7" stroke="#1b2a4a" stroke-width="5"/>
+    <rect x="0" y="0" width="340" height="54" rx="8" fill="#f6c445" stroke="#1b2a4a" stroke-width="5"/>
+    <text x="24" y="36" font-family="DejaVu Sans, sans-serif" font-size="20" font-weight="700" fill="#1b2a4a">oficina de sílabas</text>
+    <image href="palavras/menina.svg" x="45" y="76" width="250" height="188"/>
+    <text x="170" y="312" text-anchor="middle" font-family="DejaVu Sans, sans-serif" font-size="48" font-weight="700" fill="#1b2a4a">menina</text>
+    <g transform="translate(37 336)">
+      <rect width="76" height="34" rx="17" fill="#e3e9ff" stroke="#2457e6" stroke-width="2"/>
+      <text x="38" y="23" text-anchor="middle" font-family="DejaVu Sans, sans-serif" font-size="18" font-weight="700" fill="#1746c9">me</text>
+      <rect x="86" width="76" height="34" rx="17" fill="#e3e9ff" stroke="#2457e6" stroke-width="2"/>
+      <text x="124" y="23" text-anchor="middle" font-family="DejaVu Sans, sans-serif" font-size="18" font-weight="700" fill="#1746c9">ni</text>
+      <rect x="172" width="76" height="34" rx="17" fill="#e3e9ff" stroke="#2457e6" stroke-width="2"/>
+      <text x="210" y="23" text-anchor="middle" font-family="DejaVu Sans, sans-serif" font-size="18" font-weight="700" fill="#1746c9">na</text>
+    </g>
+  </g>
+  <g transform="translate(72 520)">
+    <rect width="272" height="48" rx="24" fill="#f05a47" stroke="#1b2a4a" stroke-width="4"/>
+    <text x="136" y="32" text-anchor="middle" font-family="DejaVu Sans, sans-serif" font-size="20" font-weight="700" fill="#fffdf7">rever · validar · aprovar</text>
+  </g>
+  <text x="72" y="602" font-family="DejaVu Sans, sans-serif" font-size="18" fill="#6b7890">Protótipo académico · Design de Sistemas Interativos · 2026</text>
+</svg>

@@ -1,0 +1,9 @@
+{
+  "name": "palavra-viva",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "imports": {
+    "#lib/*": "./src/lib/*"
+  }
+}

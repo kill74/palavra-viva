@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 180" fill="none" role="img" aria-hidden="true">
+  <g stroke="#1B2A4A" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M91 61 Q88 28 120 27 Q152 28 149 61 Q141 47 120 48 Q99 47 91 61Z" fill="#8A5A3B"/>
+    <circle cx="120" cy="23" r="15" fill="#8A5A3B"/>
+    <circle cx="120" cy="68" r="32" fill="#F2B98B"/>
+    <path d="M94 60 Q103 44 120 45 Q137 44 146 60" fill="none" stroke="#8A5A3B" stroke-width="9"/>
+    <circle cx="108" cy="67" r="3" fill="#1B2A4A" stroke="none"/> <circle cx="132" cy="67" r="3" fill="#1B2A4A" stroke="none"/> <path d="M113 79 Q120 88 127 79" fill="none" stroke="#1B2A4A" stroke-width="4"/>
+    <circle cx="89" cy="77" r="3" fill="#F6C445" stroke="none"/>
+    <circle cx="151" cy="77" r="3" fill="#F6C445" stroke="none"/>
+    <path d="M84 112 Q84 96 102 94 H138 Q156 96 156 112 L151 156 H89Z" fill="#2457E6"/>
+    <path d="M101 94 Q108 113 120 113 Q132 113 139 94" fill="#E86A92"/>
+    <path d="M120 113 L109 137 M120 113 L131 137" fill="none" stroke="#FFFDF7" stroke-width="4"/>
+    <path d="M99 156 Q120 148 141 156" fill="none" stroke="#1B2A4A" stroke-width="4"/>
+  </g>
+</svg>

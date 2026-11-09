@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 180" fill="none" role="img" aria-hidden="true">
+  <g stroke="#1B2A4A" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M120 47 Q118 32 132 25" fill="none" stroke="#8A5A3B" stroke-width="6"/>
+    <path d="M122 45 Q143 22 165 35 Q151 55 124 51Z" fill="#3E7C6A"/>
+    <g fill="#7A5AF8">
+    <circle cx="100" cy="69" r="15"/><circle cx="120" cy="67" r="15"/><circle cx="140" cy="69" r="15"/>
+    <circle cx="91" cy="91" r="15"/><circle cx="111" cy="90" r="15"/><circle cx="131" cy="91" r="15"/><circle cx="149" cy="91" r="15"/>
+    <circle cx="101" cy="113" r="15"/><circle cx="121" cy="112" r="15"/><circle cx="141" cy="113" r="15"/>
+    <circle cx="111" cy="134" r="15"/><circle cx="131" cy="134" r="15"/>
+    <circle cx="121" cy="154" r="15"/>
+    </g>
+    <circle cx="95" cy="64" r="3" fill="#FFFDF7" stroke="none" opacity=".9"/> <circle cx="116" cy="84" r="3" fill="#FFFDF7" stroke="none" opacity=".9"/> <circle cx="126" cy="128" r="3" fill="#FFFDF7" stroke="none" opacity=".9"/>
+  </g>
+</svg>

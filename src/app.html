@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="pt-PT">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#f4efe3" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#101827" media="(prefers-color-scheme: dark)" />
+    <meta
+      name="description"
+      content="Palavra Viva é um protótipo de aprendizagem da leitura pelo método das 28 palavras, com revisão da professora antes de cada atividade."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="pt_PT" />
+    <meta property="og:site_name" content="Palavra Viva" />
+    <meta property="og:title" content="Palavra Viva — ler começa numa palavra" />
+    <meta
+      property="og:description"
+      content="Um percurso de leitura pelo método das 28 palavras: a professora prepara e aprova, a criança ouve, lê e constrói."
+    />
+    <meta property="og:image" content="/og.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link
+      rel="preload"
+      href="/fonts/bricolage-grotesque-latin.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="preload"
+      href="/fonts/atkinson-hyperlegible-400.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin="anonymous"
+    />
+    <script>
+      (() => {
+        try {
+          const guardado = localStorage.getItem('palavra-viva:tema');
+          const prefereEscuro = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          const tema = guardado === 'escuro' || guardado === 'claro' ? guardado : prefereEscuro ? 'escuro' : 'claro';
+          document.documentElement.dataset.tema = tema;
+          document.documentElement.style.colorScheme = tema === 'escuro' ? 'dark' : 'light';
+        } catch {
+          document.documentElement.dataset.tema = 'claro';
+        }
+      })();
+    </script>
+    %sveltekit.head%
+  </head>
+  <body data-sveltekit-preload-data="hover">
+    <div style="display: contents">%sveltekit.body%</div>
+  </body>
+</html>

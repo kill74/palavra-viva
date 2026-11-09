@@ -1,0 +1,15 @@
+# Dependências e artefactos gerados
+node_modules/
+build/
+.svelte-kit/
+
+# Sistema e editores
+.DS_Store
+Thumbs.db
+*.log
+
+# Materiais de apoio do enunciado (ficam apenas localmente)
+/Trabalho_Pratico_1_Metodo_28_Palavras.pdf
+/metodo-28-palavras-outras-fichas.pdf
+/Template_TrabalhoPratico1.docx
+/Método das 28 Palavras Infográfico Educativo.png
