@@ -5,6 +5,7 @@
 [![SvelteKit](https://img.shields.io/badge/SvelteKit-3-FF3E00?style=flat-square)](https://svelte.dev/docs/kit)
 [![TypeScript](https://img.shields.io/badge/TypeScript-6-3178C6?logo=typescript&logoColor=white&style=flat-square)](https://www.typescriptlang.org/)
 [![Lighthouse](https://img.shields.io/badge/Lighthouse-%E2%89%A595-3e7c6a?style=flat-square)](https://developer.chrome.com/docs/lighthouse/overview)
+[![CI](https://github.com/kill74/palavra-viva/actions/workflows/ci.yml/badge.svg)](https://github.com/kill74/palavra-viva/actions/workflows/ci.yml)
 
 ```text
 ╭─────────────────────────────────────────────────────────────────────────────────────────────╮
@@ -231,6 +232,12 @@ rascunho e não aparece à criança.
 
 ## Validação
 
+### Integração contínua
+
+O workflow `.github/workflows/ci.yml` corre em cada push para `main`, em pull requests e
+manualmente. Instala as dependências com `deno install --frozen`, executa `deno task check`,
+constrói o site com `deno task build` e guarda `build/` como artefacto durante sete dias.
+
 ### Tipos e build
 
 ```text
@@ -342,6 +349,8 @@ o projeto.
 ## Estrutura
 
 ```text
+.github/
+  workflows/ci.yml           verificação e build em GitHub Actions
 src/
   app.css                    tokens, tipografia, componentes globais, temas
   app.html                   head base, tema sem flash, fontes, metadados
