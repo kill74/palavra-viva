@@ -1,5 +1,11 @@
 # Palavra Viva
 
+[![Deno](https://img.shields.io/badge/Deno-2.9-000000?logo=deno&logoColor=white&style=flat-square)](https://deno.com/)
+[![Svelte](https://img.shields.io/badge/Svelte-5-FF3E00?logo=svelte&logoColor=white&style=flat-square)](https://svelte.dev/)
+[![SvelteKit](https://img.shields.io/badge/SvelteKit-3-FF3E00?style=flat-square)](https://svelte.dev/docs/kit)
+[![TypeScript](https://img.shields.io/badge/TypeScript-6-3178C6?logo=typescript&logoColor=white&style=flat-square)](https://www.typescriptlang.org/)
+[![Lighthouse](https://img.shields.io/badge/Lighthouse-%E2%89%A595-3e7c6a?style=flat-square)](https://developer.chrome.com/docs/lighthouse/overview)
+
 Protótipo funcional para o Trabalho Prático 1 de **Design de Sistemas Interativos**:
 um sistema interativo com IA generativa para aprender a ler pelo **Método das 28 Palavras**.
 
@@ -11,6 +17,10 @@ A aplicação separa dois percursos que se encontram numa revisão obrigatória:
    resolve frases curtas, com feedback imediato e nova tentativa.
 
 > Todos os nomes, registos e sessões são fictícios. Os dados ficam apenas no browser.
+
+<p align="center">
+  <img src="docs/screenshots/home-claro.webp" alt="Página inicial do Palavra Viva: «Ler começa numa palavra que a criança já conhece.»" width="100%">
+</p>
 
 ---
 
@@ -80,6 +90,29 @@ Atalhos úteis:
 - `/professor/biblioteca?recurso=rec-alice-galinha` — rascunho de associação som–imagem.
 - `/professor/sessoes?crianca=alice` — registos filtrados por criança.
 - `/crianca/sessao?crianca=alice&recurso=rec-alice-menina` — abrir uma atividade concreta.
+
+---
+
+## Capturas
+
+**Página inicial.** A mesma composição no tema claro e no tema escuro, com a oficina de
+sílabas como elemento interativo.
+
+| Tema claro | Tema escuro |
+| :---: | :---: |
+| ![Página inicial no tema claro](docs/screenshots/home-claro.webp) | ![Página inicial no tema escuro](docs/screenshots/home-escuro.webp) |
+
+**Biblioteca de recursos.** Pré-visualização do que a criança verá, estado de revisão e as
+seis verificações antes da aprovação.
+
+![Biblioteca de recursos com o rascunho da palavra «galinha»](docs/screenshots/biblioteca.webp)
+
+**Sessão da criança.** Instruções curtas, botões grandes, áudio repetível e progresso visível
+num ecrã mobile.
+
+<p align="center">
+  <img src="docs/screenshots/sessao-mobile.webp" alt="Sessão da criança num ecrã mobile, com botão de áudio e opções de resposta" width="320">
+</p>
 
 ---
 
