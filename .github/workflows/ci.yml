@@ -41,7 +41,7 @@ jobs:
         run: deno task build
 
       - name: Guardar o build
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: palavra-viva-build
           path: build/
