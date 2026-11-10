@@ -3,19 +3,19 @@
   "short_name": "Palavra Viva",
   "description": "Aprender a ler pelo método das 28 palavras, com revisão da professora.",
   "lang": "pt-PT",
-  "start_url": "/",
+  "start_url": "./",
   "display": "standalone",
   "background_color": "#f4efe3",
   "theme_color": "#2457e6",
   "icons": [
     {
-      "src": "/favicon.svg",
+      "src": "favicon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any"
     },
     {
-      "src": "/apple-touch-icon.png",
+      "src": "apple-touch-icon.png",
       "sizes": "180x180",
       "type": "image/png"
     }

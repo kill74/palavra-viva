@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { resolve } from '$app/paths';
   import { page } from '$app/state';
   import Icone from '#lib/components/Icone.svelte';
 
@@ -24,9 +25,9 @@
         {/if}
       </p>
       <div class="erro__acoes">
-        <a class="botao botao--primario" href="/"><Icone nome="livro" tamanho={18} /> Voltar ao início</a>
-        <a class="botao botao--secundario" href="/professor">Área do professor</a>
-        <a class="botao botao--fantasma" href="/crianca">Área da criança</a>
+        <a class="botao botao--primario" href={resolve('/')}><Icone nome="livro" tamanho={18} /> Voltar ao início</a>
+        <a class="botao botao--secundario" href={resolve('/professor')}>Área do professor</a>
+        <a class="botao botao--fantasma" href={resolve('/crianca')}>Área da criança</a>
       </div>
     </div>
     <div class="erro__ficha ficha" aria-hidden="true">

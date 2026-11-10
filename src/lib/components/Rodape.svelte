@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { resolve } from '$app/paths';
   import Marca from './Marca.svelte';
 </script>
 
@@ -13,19 +14,19 @@
       <div>
         <h2>Percurso</h2>
         <ul>
-          <li><a href="/">Início</a></li>
-          <li><a href="/metodo">Método e validação</a></li>
-          <li><a href="/professor">Área do professor</a></li>
-          <li><a href="/crianca">Área da criança</a></li>
+          <li><a href={resolve('/')}>Início</a></li>
+          <li><a href={resolve('/metodo')}>Método e validação</a></li>
+          <li><a href={resolve('/professor')}>Área do professor</a></li>
+          <li><a href={resolve('/crianca')}>Área da criança</a></li>
         </ul>
       </div>
       <div>
         <h2>Projeto</h2>
         <ul>
-          <li><a href="/metodo#sequencia">As 28 palavras</a></li>
-          <li><a href="/metodo#ia">Como a IA entra</a></li>
-          <li><a href="/metodo#testes">Testes funcionais</a></li>
-          <li><a href="/metodo#referencias">Referências</a></li>
+          <li><a href={resolve('/metodo#sequencia')}>As 28 palavras</a></li>
+          <li><a href={resolve('/metodo#ia')}>Como a IA entra</a></li>
+          <li><a href={resolve('/metodo#testes')}>Testes funcionais</a></li>
+          <li><a href={resolve('/metodo#referencias')}>Referências</a></li>
         </ul>
       </div>
     </div>

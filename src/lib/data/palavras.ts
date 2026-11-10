@@ -1,3 +1,5 @@
+import { recursoEstatico } from '#lib/utils/caminho';
+
 export type Palavra = {
   id: string;
   palavra: string;
@@ -12,9 +14,9 @@ export type Palavra = {
   nota?: string;
 };
 
-const base = '/palavras';
-const audio = '/audio/palavras';
-const audioFrases = '/audio/frases';
+const pastaPalavras = 'palavras';
+const pastaAudio = 'audio/palavras';
+const pastaFrases = 'audio/frases';
 
 function entrada(
   id: string,
@@ -30,11 +32,11 @@ function entrada(
     palavra,
     silabas,
     ordem,
-    imagem: `${base}/${id}.svg`,
-    audio: `${audio}/${id}.mp3`,
+    imagem: recursoEstatico(`${pastaPalavras}/${id}.svg`),
+    audio: recursoEstatico(`${pastaAudio}/${id}.mp3`),
     alt,
     frase,
-    fraseAudio: `${audioFrases}/${id}.mp3`,
+    fraseAudio: recursoEstatico(`${pastaFrases}/${id}.mp3`),
     nuclear
   };
 }
@@ -101,12 +103,12 @@ export const SILABAS = PALAVRAS.flatMap((p) =>
     silaba,
     palavraId: p.id,
     indice,
-    audio: `/audio/silabas/${p.id}-${indice}.mp3`
+    audio: recursoEstatico(`audio/silabas/${p.id}-${indice}.mp3`)
   }))
 );
 
 export function audioDaSilaba(palavraId: string, indice: number): string {
-  return `/audio/silabas/${palavraId}-${indice}.mp3`;
+  return recursoEstatico(`audio/silabas/${palavraId}-${indice}.mp3`);
 }
 
 export function fonteDaSilaba(silaba: string): { audio: string; palavraId: string; indice: number } {

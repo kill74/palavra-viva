@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { resolve } from '$app/paths';
   import { onMount } from 'svelte';
   import { PALAVRAS_NUCLEARES, obterPalavra } from '#lib/data/palavras';
   import { NOMES_FASE, NOMES_TIPO } from '#lib/data/tipos';
@@ -124,9 +125,9 @@
 <section class="pagina pagina--ficha">
   <div class="container">
     <p class="migalhas">
-      <a href="/">Início</a>
+      <a href={resolve('/')}>Início</a>
       <span aria-hidden="true">/</span>
-      <a href="/professor">Professor</a>
+      <a href={resolve('/professor')}>Professor</a>
       <span aria-hidden="true">/</span>
       <span>Registos</span>
     </p>
@@ -145,7 +146,7 @@
           <button type="button" class="botao botao--secundario" onclick={exportar}>
             <Icone nome="descarregar" tamanho={18} /> Exportar registos
           </button>
-          <a class="botao botao--primario" href="/crianca">
+          <a class="botao botao--primario" href={resolve('/crianca')}>
             <Icone nome="crianca" tamanho={18} /> Abrir área da criança
           </a>
         </div>
@@ -245,7 +246,7 @@
           texto="Quando a criança terminar uma atividade, os registos aparecem aqui. Podes abrir uma sessão de demonstração na área da criança."
           icone="crianca"
         >
-          <a class="botao botao--primario botao--pequeno" href="/crianca">Abrir área da criança</a>
+          <a class="botao botao--primario botao--pequeno" href={resolve('/crianca')}>Abrir área da criança</a>
         </EstadoVazio>
       {:else}
         <div class="lista-sessoes">

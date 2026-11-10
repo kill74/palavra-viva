@@ -6,6 +6,7 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-6-3178C6?logo=typescript&logoColor=white&style=flat-square)](https://www.typescriptlang.org/)
 [![Lighthouse](https://img.shields.io/badge/Lighthouse-%E2%89%A595-3e7c6a?style=flat-square)](https://developer.chrome.com/docs/lighthouse/overview)
 [![CI](https://github.com/kill74/palavra-viva/actions/workflows/ci.yml/badge.svg)](https://github.com/kill74/palavra-viva/actions/workflows/ci.yml)
+[![Site](https://img.shields.io/badge/site-online-3e7c6a?style=flat-square)](https://kill74.github.io/palavra-viva/)
 
 ```text
 ╭─────────────────────────────────────────────────────────────────────────────────────────────╮
@@ -33,6 +34,8 @@ A aplicação separa dois percursos que se encontram numa revisão obrigatória:
 
 > Todos os nomes, registos e sessões são fictícios. Os dados ficam apenas no browser.
 
+**Demonstração pública:** https://kill74.github.io/palavra-viva/
+
 <p align="center">
   <img src="docs/screenshots/home-escuro.webp" alt="Página inicial do Palavra Viva no tema escuro: «Ler começa numa palavra que a criança já conhece.»" width="100%">
 </p>
@@ -59,11 +62,21 @@ deno task build
 
 # pré-visualizar o build (porta indicada, para testes Lighthouse)
 deno task preview --port 4173
+
+# build para GitHub Pages, servido em /palavra-viva/
+BASE_PATH=/palavra-viva deno task build
 ```
 
 O site é totalmente pré-renderizado com `@sveltejs/adapter-static`. O resultado em `build/`
 pode ser servido por qualquer alojamento estático. O fallback `404.html` garante a página de
 erro em servidores estáticos.
+
+### Publicação
+
+O workflow `.github/workflows/pages.yml` constrói o site com `BASE_PATH=/palavra-viva` e
+publica-o no GitHub Pages em cada push para `main`. A demonstração fica em
+**https://kill74.github.io/palavra-viva/**. Todas as rotas são geradas como pastas com
+`index.html`, para funcionarem sem extensão no alojamento estático.
 
 ### Stack
 
@@ -355,6 +368,7 @@ o projeto.
 ```text
 .github/
   workflows/ci.yml           verificação e build em GitHub Actions
+  workflows/pages.yml        publicação no GitHub Pages
 src/
   app.css                    tokens, tipografia, componentes globais, temas
   app.html                   head base, tema sem flash, fontes, metadados

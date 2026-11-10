@@ -1,9 +1,11 @@
 <script lang="ts">
+  import { resolve } from '$app/paths';
   import { onMount } from 'svelte';
   import { audioDaSilaba, fonteDaSilaba, obterPalavra } from '#lib/data/palavras';
   import { DESCRICAO_TIPO, NOMES_FASE, NOMES_TIPO, type Recurso, type Resposta } from '#lib/data/tipos';
   import { dados } from '#lib/stores/dados.svelte';
   import { parametroUrl } from '#lib/utils/consulta';
+  import { recursoEstatico } from '#lib/utils/caminho';
   import { idCurto } from '#lib/utils/formato';
   import { tocarAudio } from '#lib/utils/audio';
   import BotaoAudio from '#lib/components/BotaoAudio.svelte';
@@ -300,7 +302,7 @@
 
 <div class="sessao-app">
   <header class="barra-topo">
-    <a class="barra__sair" href={crianca ? `/crianca?crianca=${crianca.id}` : '/crianca'}>
+    <a class="barra__sair" href={crianca ? resolve('/crianca') + '?crianca=' + crianca.id : resolve('/crianca')}>
       <Icone nome="seta-esquerda" tamanho={20} /> <span>Sair</span>
     </a>
     <div class="barra__marca">
@@ -325,7 +327,7 @@
       <span class="mensagem__icone" aria-hidden="true"><Icone nome="crianca" tamanho={34} /></span>
       <h1>Quem vai ler?</h1>
       <p>Escolhe o teu nome para começar. Se precisares, pede ajuda à professora.</p>
-      <a class="botao botao--primario botao--grande" href="/crianca">Escolher o meu nome</a>
+      <a class="botao botao--primario botao--grande" href={resolve('/crianca')}>Escolher o meu nome</a>
     </main>
   {:else if fila.length === 0}
     <main class="mensagem">
@@ -336,8 +338,8 @@
         voltar às tuas palavras ou pedir-lhe para preparar uma.
       </p>
       <div class="linha">
-        <a class="botao botao--secundario" href="/crianca?crianca={crianca.id}">Voltar</a>
-        <a class="botao botao--primario" href="/professor/biblioteca">Ver a biblioteca</a>
+        <a class="botao botao--secundario" href={resolve('/crianca') + '?crianca=' + crianca.id}>Voltar</a>
+        <a class="botao botao--primario" href={resolve('/professor/biblioteca')}>Ver a biblioteca</a>
       </div>
     </main>
   {:else if terminou}
@@ -380,7 +382,7 @@
         {/if}
 
         <div class="fim__acoes">
-          <a class="botao botao--primario" href="/crianca?crianca={crianca.id}">
+          <a class="botao botao--primario" href={resolve('/crianca') + '?crianca=' + crianca.id}>
             <Icone nome="check" tamanho={18} /> Voltar às atividades
           </a>
           <button type="button" class="botao botao--secundario" onclick={repetir}>
@@ -579,7 +581,7 @@
           <div class="ajudas">
             {#if atividade.tipo === 'reconhecimento'}
               <BotaoAudio
-                src="/audio/instrucoes/reconhecimento.mp3"
+                src={recursoEstatico('audio/instrucoes/reconhecimento.mp3')}
                 rotulo="Ouvir a instrução"
                 rotuloAria="Ouvir a instrução: qual é a palavra escrita"
                 variante="fantasma"
@@ -596,7 +598,7 @@
               />
             {:else if atividade.tipo === 'frase'}
               <BotaoAudio
-                src="/audio/instrucoes/frase.mp3"
+                src={recursoEstatico('audio/instrucoes/frase.mp3')}
                 rotulo="Ouvir a instrução"
                 rotuloAria="Ouvir a instrução: lê a frase e escolhe a imagem"
                 variante="fantasma"

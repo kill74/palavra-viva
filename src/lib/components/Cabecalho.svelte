@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { resolve } from '$app/paths';
   import { afterNavigate } from '$app/navigation';
   import { page } from '$app/state';
   import { tema } from '#lib/stores/tema.svelte';
@@ -10,10 +11,10 @@
   let botaoMenu = $state<HTMLButtonElement>();
 
   const ligacoes = [
-    { href: '/', texto: 'Início' },
-    { href: '/metodo', texto: 'Método' },
-    { href: '/professor', texto: 'Professor' },
-    { href: '/crianca', texto: 'Criança' }
+    { href: resolve('/'), caminho: '/', texto: 'Início' },
+    { href: resolve('/metodo'), caminho: '/metodo', texto: 'Método' },
+    { href: resolve('/professor'), caminho: '/professor', texto: 'Professor' },
+    { href: resolve('/crianca'), caminho: '/crianca', texto: 'Criança' }
   ];
 
   onMount(() => tema.iniciar());
@@ -21,9 +22,11 @@
     menuAberto = false;
   });
 
-  function ativo(href: string): boolean {
-    if (href === '/') return page.url.pathname === '/';
-    return page.url.pathname === href || page.url.pathname.startsWith(`${href}/`);
+  function ativo(caminho: string): boolean {
+    const rota = page.route.id;
+    if (!rota) return false;
+    if (caminho === '/') return rota === '/';
+    return rota === caminho || rota.startsWith(`${caminho}/`);
   }
 
   function fecharMenu() {
@@ -40,7 +43,7 @@
 
 <header class="cabecalho">
   <div class="container cabecalho__interior">
-    <a class="marca-ligacao" href="/" aria-label="Palavra Viva, página inicial">
+    <a class="marca-ligacao" href={resolve('/')} aria-label="Palavra Viva, página inicial">
       <Marca />
     </a>
 
@@ -50,7 +53,7 @@
           <li>
             <a
               href={ligacao.href}
-              aria-current={ativo(ligacao.href) ? 'page' : undefined}
+              aria-current={ativo(ligacao.caminho) ? 'page' : undefined}
               onclick={() => (menuAberto = false)}
             >
               {ligacao.texto}
@@ -94,7 +97,7 @@
             <li>
               <a
                 href={ligacao.href}
-                aria-current={ativo(ligacao.href) ? 'page' : undefined}
+                aria-current={ativo(ligacao.caminho) ? 'page' : undefined}
                 onclick={() => (menuAberto = false)}
               >
                 {ligacao.texto}

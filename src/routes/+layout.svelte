@@ -12,7 +12,7 @@
   onMount(() => dados.carregar());
   let principal = $state<HTMLElement>();
 
-  const imersivo = $derived(page.url.pathname.startsWith('/crianca/sessao'));
+  const imersivo = $derived(page.route.id?.startsWith('/crianca/sessao') ?? false);
   const carregando = $derived(Boolean(navigating.to));
 
   onNavigate((navigation) => {

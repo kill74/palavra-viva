@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { resolve } from '$app/paths';
   import { PALAVRAS, PALAVRAS_NUCLEARES, obterPalavra } from '#lib/data/palavras';
   import { MODELO_IA, PROMPT_VALIDACAO } from '#lib/data/prompts';
   import {
@@ -127,9 +128,9 @@
 <section class="pagina pagina--ficha">
   <div class="container">
     <p class="migalhas">
-      <a href="/">Início</a>
+      <a href={resolve('/')}>Início</a>
       <span aria-hidden="true">/</span>
-      <a href="/professor">Professor</a>
+      <a href={resolve('/professor')}>Professor</a>
       <span aria-hidden="true">/</span>
       <span>Criar recurso</span>
     </p>
@@ -341,8 +342,8 @@
 
         {#if guardado}
           <p class="resultado__ligacoes">
-            <a class="link" href="/professor/biblioteca?recurso={proposta.id}">Ver na biblioteca</a>
-            <a class="link" href="/professor">Voltar ao painel</a>
+            <a class="link" href={resolve('/professor/biblioteca') + '?recurso=' + proposta.id}>Ver na biblioteca</a>
+            <a class="link" href={resolve('/professor')}>Voltar ao painel</a>
             <button type="button" class="link-botao" onclick={() => { proposta = null; mensagem = ''; erro = ''; guardado = false; }}>
               Criar outra proposta
             </button>

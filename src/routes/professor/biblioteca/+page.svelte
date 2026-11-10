@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { resolve } from '$app/paths';
   import { onMount } from 'svelte';
   import { NOMES_FASE, NOMES_TIPO, type Recurso } from '#lib/data/tipos';
   import { dados } from '#lib/stores/dados.svelte';
@@ -167,9 +168,9 @@
 <section class="pagina pagina--ficha nao-imprimir">
   <div class="container">
     <p class="migalhas">
-      <a href="/">Início</a>
+      <a href={resolve('/')}>Início</a>
       <span aria-hidden="true">/</span>
-      <a href="/professor">Professor</a>
+      <a href={resolve('/professor')}>Professor</a>
       <span aria-hidden="true">/</span>
       <span>Biblioteca</span>
     </p>
@@ -185,7 +186,7 @@
           recurso para ver o que a criança veria e confirmar as seis verificações.
         </p>
         <div class="pagina__acao">
-          <a class="botao botao--primario" href="/professor/criar">
+          <a class="botao botao--primario" href={resolve('/professor/criar')}>
             <Icone nome="faisca" tamanho={18} /> Criar recurso
           </a>
           <button type="button" class="botao botao--secundario" onclick={exportar}>
@@ -257,7 +258,7 @@
         >
           Limpar filtros
         </button>
-        <a class="botao botao--primario botao--pequeno" href="/professor/criar">Criar recurso</a>
+        <a class="botao botao--primario botao--pequeno" href={resolve('/professor/criar')}>Criar recurso</a>
       </div>
     </EstadoVazio>
   {:else}

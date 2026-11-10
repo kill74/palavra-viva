@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { resolve } from '$app/paths';
   import { RECURSOS_DEMO } from '#lib/data/demo';
   import { NOMES_FASE } from '#lib/data/tipos';
   import { obterPalavra } from '#lib/data/palavras';
@@ -46,10 +47,10 @@
         a fase e o apoio; a criança ouve, lê e constrói. Nenhum recurso aparece sem revisão.
       </p>
       <div class="hero__acoes">
-        <a class="botao botao--primario botao--grande" href="/professor">
+        <a class="botao botao--primario botao--grande" href={resolve('/professor')}>
           <Icone nome="lapis" tamanho={19} /> Preparar uma aula
         </a>
-        <a class="botao botao--secundario botao--grande" href="/crianca">
+        <a class="botao botao--secundario botao--grande" href={resolve('/crianca')}>
           <Icone nome="crianca" tamanho={19} /> Entrar como criança
         </a>
       </div>
@@ -92,7 +93,7 @@
           <li><Icone nome="check" tamanho={17} /> Ortografia, sílabas, imagem e pronúncia.</li>
           <li><Icone nome="check" tamanho={17} /> Registo de tentativas e ajudas por sessão.</li>
         </ul>
-        <a class="link" href="/professor">Abrir o painel da turma</a>
+        <a class="link" href={resolve('/professor')}>Abrir o painel da turma</a>
       </article>
 
       <article class="area area--crianca">
@@ -121,7 +122,7 @@
           />
         </div>
 
-        <a class="link link--claro" href="/crianca">Entrar na sessão de leitura</a>
+        <a class="link link--claro" href={resolve('/crianca')}>Entrar na sessão de leitura</a>
       </article>
     </div>
   </div>
@@ -176,7 +177,7 @@
         A escrita manual não é substituída por um ecrã. A aplicação pode gerar uma ficha de
         cópia em papel e a professora regista a conclusão.
       </p>
-      <a class="link" href="/metodo#escrita">Ver a fase de escrita</a>
+      <a class="link" href={resolve('/metodo#escrita')}>Ver a fase de escrita</a>
     </div>
   </div>
 </section>
@@ -192,7 +193,7 @@
     </div>
     <MuralPalavras />
     <p class="mais-abaixo">
-      <a class="link" href="/metodo#sequencia">Ver a sequência, a variante e as referências</a>
+      <a class="link" href={resolve('/metodo#sequencia')}>Ver a sequência, a variante e as referências</a>
     </p>
   </div>
 </section>
@@ -252,10 +253,10 @@
           confundir o referente. A opção passou a «cenoura».
         </p>
         <div class="linha">
-          <a class="botao botao--secundario botao--pequeno" href="/professor/biblioteca?recurso=rec-alice-galinha">
+          <a class="botao botao--secundario botao--pequeno" href={resolve('/professor/biblioteca?recurso=rec-alice-galinha')}>
             Rever este recurso
           </a>
-          <a class="link" href="/metodo#ia">Ver o registo do prompt</a>
+          <a class="link" href={resolve('/metodo#ia')}>Ver o registo do prompt</a>
         </div>
       </article>
     </div>
@@ -274,7 +275,7 @@
         «Uma resposta correta isolada não demonstra domínio da leitura.»
         <span>Enunciado do projeto</span>
       </p>
-      <a class="link" href="/professor/sessoes">Ver os registos da turma fictícia</a>
+      <a class="link" href={resolve('/professor/sessoes')}>Ver os registos da turma fictícia</a>
     </div>
 
     <div class="painel-registo ficha">
@@ -319,9 +320,9 @@
       </p>
     </div>
     <div class="cta__acoes">
-      <a class="botao botao--secundario botao--grande" href="/professor">Preparar uma aula</a>
-      <a class="botao botao--fantasma botao--grande" href="/crianca">Entrar como criança</a>
-      <a class="cta__metodo" href="/metodo">Ler a metodologia e os limites</a>
+      <a class="botao botao--secundario botao--grande" href={resolve('/professor')}>Preparar uma aula</a>
+      <a class="botao botao--fantasma botao--grande" href={resolve('/crianca')}>Entrar como criança</a>
+      <a class="cta__metodo" href={resolve('/metodo')}>Ler a metodologia e os limites</a>
     </div>
   </div>
 </section>

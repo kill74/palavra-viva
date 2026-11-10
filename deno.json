@@ -5,7 +5,7 @@
     "dev": "deno run -A npm:vite dev",
     "build": "deno run -A npm:vite build",
     "preview": "deno run -A npm:vite preview",
-    "sync": "deno run -A npm:@sveltejs/kit sync",
+    "sync": "deno run -A npm:@sveltejs/kit@3.1.1 sync",
     "check": "deno run -A npm:svelte-check --tsconfig ./tsconfig.json"
   },
   "imports": {

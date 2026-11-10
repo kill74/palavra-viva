@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { resolve } from '$app/paths';
   import { PALAVRAS_NUCLEARES } from '#lib/data/palavras';
   import { NOMES_FASE, NOMES_TIPO } from '#lib/data/tipos';
   import { dados } from '#lib/stores/dados.svelte';
@@ -43,7 +44,7 @@
 <section class="pagina pagina--ficha">
   <div class="container">
     <p class="migalhas">
-      <a href="/">Início</a>
+      <a href={resolve('/')}>Início</a>
       <span aria-hidden="true">/</span>
       <span>Professor</span>
     </p>
@@ -59,10 +60,10 @@
           revisão e o que as sessões registaram — sem transformar um acerto numa nota.
         </p>
         <div class="pagina__acao">
-          <a class="botao botao--primario" href="/professor/criar">
+          <a class="botao botao--primario" href={resolve('/professor/criar')}>
             <Icone nome="faisca" tamanho={18} /> Criar um recurso
           </a>
-          <a class="botao botao--secundario" href="/professor/biblioteca">
+          <a class="botao botao--secundario" href={resolve('/professor/biblioteca')}>
             <Icone nome="livro" tamanho={18} /> Abrir biblioteca
           </a>
         </div>
@@ -143,8 +144,8 @@
           </dl>
 
           <div class="aluno__acoes">
-            <a class="link" href="/professor/sessoes?crianca={crianca.id}">Ver registos</a>
-            <a class="botao botao--pequeno botao--secundario" href="/crianca/sessao?crianca={crianca.id}">
+            <a class="link" href={resolve('/professor/sessoes') + '?crianca=' + crianca.id}>Ver registos</a>
+            <a class="botao botao--pequeno botao--secundario" href={resolve('/crianca/sessao') + '?crianca=' + crianca.id}>
               Abrir sessão <Icone nome="seta" tamanho={15} />
             </a>
           </div>
@@ -168,7 +169,7 @@
         <li><strong>2.</strong> Rever a proposta, corrigir campos e confirmar o áudio.</li>
         <li><strong>3.</strong> Aprovar. Só então a atividade aparece na área da criança.</li>
       </ol>
-      <a class="link" href="/professor/criar">Começar um recurso novo</a>
+      <a class="link" href={resolve('/professor/criar')}>Começar um recurso novo</a>
     </div>
 
     <div class="fila ficha">
@@ -195,7 +196,7 @@
                   <p class="fila-item__data">Criado a {dataCurta(recurso.criadoEm)}, {hora(recurso.criadoEm)}</p>
                   <SeloEstado estado={recurso.estado} />
                 </div>
-                <a class="botao botao--pequeno botao--secundario" href="/professor/biblioteca?recurso={recurso.id}">
+                <a class="botao botao--pequeno botao--secundario" href={resolve('/professor/biblioteca') + '?recurso=' + recurso.id}>
                   Rever <Icone nome="seta" tamanho={14} />
                 </a>
               </div>
@@ -204,7 +205,7 @@
         </ul>
       {/if}
       <div class="fila-rodape">
-        <a class="link" href="/professor/biblioteca">Ver todos os recursos</a>
+        <a class="link" href={resolve('/professor/biblioteca')}>Ver todos os recursos</a>
       </div>
     </div>
   </div>
@@ -214,22 +215,22 @@
   <div class="container">
     <h2 id="atalhos-titulo" class="titulo-atalhos">O que precisas agora?</h2>
     <div class="atalhos">
-      <a class="atalho" href="/professor/criar">
+      <a class="atalho" href={resolve('/professor/criar')}>
         <Icone nome="faisca" tamanho={24} />
         <h3>Criar com IA</h3>
         <p>Dar o contexto, receber uma proposta e revê-la antes de aprovar.</p>
       </a>
-      <a class="atalho" href="/professor/biblioteca">
+      <a class="atalho" href={resolve('/professor/biblioteca')}>
         <Icone nome="livro" tamanho={24} />
         <h3>Biblioteca</h3>
         <p>Filtrar por criança, palavra ou estado. Editar, aprovar, imprimir.</p>
       </a>
-      <a class="atalho" href="/professor/sessoes">
+      <a class="atalho" href={resolve('/professor/sessoes')}>
         <Icone nome="olho" tamanho={24} />
         <h3>Registos</h3>
         <p>Tentativas, ajudas e autonomia por sessão. Exportar em CSV.</p>
       </a>
-      <a class="atalho" href="/crianca">
+      <a class="atalho" href={resolve('/crianca')}>
         <Icone nome="crianca" tamanho={24} />
         <h3>Área da criança</h3>
         <p>Ver o que a criança encontra: poucas escolhas, instruções curtas.</p>

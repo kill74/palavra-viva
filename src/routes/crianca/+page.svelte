@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { resolve } from '$app/paths';
   import { onMount } from 'svelte';
   import { PALAVRAS_NUCLEARES, obterPalavra } from '#lib/data/palavras';
   import { DESCRICAO_TIPO, NOMES_FASE, NOMES_TIPO } from '#lib/data/tipos';
@@ -118,7 +119,7 @@
           </div>
         </div>
         {#if atividades.length > 0}
-          <a class="botao botao--primario botao--grande" href="/crianca/sessao?crianca={selecionada.id}">
+          <a class="botao botao--primario botao--grande" href={resolve('/crianca/sessao') + '?crianca=' + selecionada.id}>
             <Icone nome="play" tamanho={20} /> Começar a sessão
           </a>
         {/if}
@@ -130,7 +131,7 @@
           texto="A professora tem de rever e aprovar os recursos antes de aparecerem aqui. Podes pedir-lhe para preparar uma palavra."
           icone="professor"
         >
-          <a class="botao botao--secundario botao--pequeno" href="/professor/biblioteca">
+          <a class="botao botao--secundario botao--pequeno" href={resolve('/professor/biblioteca')}>
             Abrir a biblioteca da professora
           </a>
         </EstadoVazio>
@@ -156,7 +157,7 @@
                 </div>
                 <a
                   class="botao botao--secundario atividade__acao"
-                  href="/crianca/sessao?crianca={selecionada.id}&recurso={atividade.id}"
+                  href={resolve('/crianca/sessao') + '?crianca=' + selecionada.id + '&recurso=' + atividade.id}
                   aria-label="Começar a atividade {NOMES_TIPO[atividade.tipo]} com a palavra {atividade.palavra}"
                 >
                   Começar <Icone nome="seta" tamanho={16} />

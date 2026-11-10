@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { resolve } from '$app/paths';
   import { PALAVRAS_NUCLEARES, obterPalavra } from '#lib/data/palavras';
   import { FASES, NOMES_FASE } from '#lib/data/tipos';
   import { RECURSOS_DEMO } from '#lib/data/demo';
@@ -47,7 +48,7 @@
   <div class="container metodo-hero__interior">
     <div>
       <p class="migalhas metodo-hero__migalhas">
-        <a href="/">Início</a>
+        <a href={resolve('/')}>Início</a>
         <span aria-hidden="true">/</span>
         <span>Método</span>
       </p>
@@ -59,8 +60,8 @@
         revê, corrige e aprova.
       </p>
       <div class="metodo-hero__acoes">
-        <a class="botao botao--primario" href="/professor">Abrir a área do professor</a>
-        <a class="botao botao--fantasma" href="/crianca">Ver a área da criança</a>
+        <a class="botao botao--primario" href={resolve('/professor')}>Abrir a área do professor</a>
+        <a class="botao botao--fantasma" href={resolve('/crianca')}>Ver a área da criança</a>
       </div>
     </div>
     <div class="metodo-hero__ficha ficha" aria-hidden="true">
@@ -288,7 +289,7 @@
             Este registo fica separado dos acertos digitais. Uma coisa é reconhecer uma palavra no
             ecrã; outra é produzi-la com lápis e papel.
           </p>
-          <a class="botao botao--secundario" href="/professor/biblioteca">
+          <a class="botao botao--secundario" href={resolve('/professor/biblioteca')}>
             <Icone nome="impressora" tamanho={18} /> Abrir a biblioteca e imprimir
           </a>
         </div>
@@ -420,9 +421,9 @@
         <p>Prepara um recurso, revê a proposta e entra na sessão da criança.</p>
       </div>
       <div class="linha">
-        <a class="botao botao--primario" href="/professor/criar">Criar um recurso</a>
-        <a class="botao botao--secundario" href="/professor/biblioteca">Abrir a biblioteca</a>
-        <a class="botao botao--fantasma" href="/crianca">Entrar como criança</a>
+        <a class="botao botao--primario" href={resolve('/professor/criar')}>Criar um recurso</a>
+        <a class="botao botao--secundario" href={resolve('/professor/biblioteca')}>Abrir a biblioteca</a>
+        <a class="botao botao--fantasma" href={resolve('/crianca')}>Entrar como criança</a>
       </div>
     </div>
   </article>
