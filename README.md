@@ -6,6 +6,20 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-6-3178C6?logo=typescript&logoColor=white&style=flat-square)](https://www.typescriptlang.org/)
 [![Lighthouse](https://img.shields.io/badge/Lighthouse-%E2%89%A595-3e7c6a?style=flat-square)](https://developer.chrome.com/docs/lighthouse/overview)
 
+```text
+╭─────────────────────────────────────────────────────────────────────────────────────────────╮
+│                                                                                             │
+│ ██████╗  █████╗ ██╗      █████╗ ██╗   ██╗██████╗  █████╗    ██╗   ██╗██╗  ██╗   ██╗ █████╗  │
+│ ██╔══██╗██╔══██╗██║     ██╔══██╗██║   ██║██╔══██╗██╔══██╗   ██║   ██║██║  ██║   ██║██╔══██╗ │
+│ ██████╔╝███████║██║     ███████║██║   ██║██████╔╝███████║   ██║   ██║██║  ██║   ██║███████║ │
+│ ██╔═══╝ ██╔══██║██║     ██╔══██║╚██╗ ██╔╝██╔══██╗██╔══██║   ╚██╗ ██╔╝██║  ╚██╗ ██╔╝██╔══██║ │
+│ ██║     ██║  ██║███████╗██║  ██║ ╚████╔╝ ██║  ██║██║  ██║    ╚████╔╝ ██║   ╚████╔╝ ██║  ██║ │
+│ ╚═╝     ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝  ╚═══╝  ╚═╝  ╚═╝╚═╝  ╚═╝     ╚═══╝  ╚═╝    ╚═══╝  ╚═╝  ╚═╝ │
+│                                                                                             │
+│                   método das 28 palavras · svelte 5 · deno · offline-first                  │
+╰─────────────────────────────────────────────────────────────────────────────────────────────╯
+```
+
 Protótipo funcional para o Trabalho Prático 1 de **Design de Sistemas Interativos**:
 um sistema interativo com IA generativa para aprender a ler pelo **Método das 28 Palavras**.
 
@@ -19,7 +33,7 @@ A aplicação separa dois percursos que se encontram numa revisão obrigatória:
 > Todos os nomes, registos e sessões são fictícios. Os dados ficam apenas no browser.
 
 <p align="center">
-  <img src="docs/screenshots/home-claro.webp" alt="Página inicial do Palavra Viva: «Ler começa numa palavra que a criança já conhece.»" width="100%">
+  <img src="docs/screenshots/home-escuro.webp" alt="Página inicial do Palavra Viva no tema escuro: «Ler começa numa palavra que a criança já conhece.»" width="100%">
 </p>
 
 ---
@@ -95,17 +109,12 @@ Atalhos úteis:
 
 ## Capturas
 
-**Página inicial.** A mesma composição no tema claro e no tema escuro, com a oficina de
-sílabas como elemento interativo.
+**Tema claro e biblioteca.** A mesma página no tema claro e a área onde a professora revê,
+corrige e aprova cada recurso antes de o mostrar à criança.
 
-| Tema claro | Tema escuro |
+| Página inicial (tema claro) | Biblioteca de recursos |
 | :---: | :---: |
-| ![Página inicial no tema claro](docs/screenshots/home-claro.webp) | ![Página inicial no tema escuro](docs/screenshots/home-escuro.webp) |
-
-**Biblioteca de recursos.** Pré-visualização do que a criança verá, estado de revisão e as
-seis verificações antes da aprovação.
-
-![Biblioteca de recursos com o rascunho da palavra «galinha»](docs/screenshots/biblioteca.webp)
+| ![Página inicial no tema claro](docs/screenshots/home-claro.webp) | ![Biblioteca de recursos com o rascunho da palavra «galinha»](docs/screenshots/biblioteca.webp) |
 
 **Sessão da criança.** Instruções curtas, botões grandes, áudio repetível e progresso visível
 num ecrã mobile.
