@@ -48,6 +48,9 @@ ou pnpm. As dependências npm são resolvidas pelo Deno através de `npm:` em `d
 # desenvolvimento com HMR
 deno task dev
 
+# gerar tipos e configuração do SvelteKit (necessário antes do primeiro check)
+deno task sync
+
 # verificação de tipos e acessibilidade do compilador Svelte
 deno task check
 
@@ -235,8 +238,9 @@ rascunho e não aparece à criança.
 ### Integração contínua
 
 O workflow `.github/workflows/ci.yml` corre em cada push para `main`, em pull requests e
-manualmente. Instala as dependências com `deno install --frozen`, executa `deno task check`,
-constrói o site com `deno task build` e guarda `build/` como artefacto durante sete dias.
+manualmente. Instala as dependências com `deno install --frozen`, gera os tipos com
+`deno task sync`, executa `deno task check`, constrói o site com `deno task build` e guarda
+`build/` como artefacto durante sete dias.
 
 ### Tipos e build
 

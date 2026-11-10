@@ -31,6 +31,9 @@ jobs:
       - name: Instalar dependências
         run: deno install --frozen
 
+      - name: Gerar os tipos do SvelteKit
+        run: deno task sync
+
       - name: Verificar tipos e acessibilidade
         run: deno task check
 
