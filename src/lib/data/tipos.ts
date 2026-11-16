@@ -5,7 +5,10 @@ export type TipoAtividade =
   | 'reconhecimento'
   | 'associacao'
   | 'silabas'
-  | 'frase';
+  | 'frase'
+  | 'rima'
+  | 'ditado'
+  | 'ordem';
 
 export type EstadoRecurso = 'rascunho' | 'aprovado';
 
@@ -39,6 +42,8 @@ export type Recurso = {
   tipo: TipoAtividade;
   fase: Fase;
   opcoes: string[];
+  /** Resposta certa explícita, usada pelas atividades de rima e ditado. */
+  respostaCorreta?: string;
   apoios: Apoios;
   estado: EstadoRecurso;
   origem: 'ia-previa' | 'manual';
@@ -141,7 +146,10 @@ export const NOMES_TIPO: Record<TipoAtividade, string> = {
   reconhecimento: 'Reconhecer a palavra',
   associacao: 'Associar som e imagem',
   silabas: 'Construir com sílabas',
-  frase: 'Ler uma frase'
+  frase: 'Ler uma frase',
+  rima: 'Encontrar a rima',
+  ditado: 'Ditado com áudio',
+  ordem: 'Ordenar as sílabas'
 };
 
 export const DESCRICAO_TIPO: Record<TipoAtividade, string> = {
@@ -149,8 +157,25 @@ export const DESCRICAO_TIPO: Record<TipoAtividade, string> = {
   reconhecimento: 'Escolher a palavra escrita certa entre várias opções.',
   associacao: 'Ouvir a palavra e encontrar a imagem correspondente.',
   silabas: 'Recompor a palavra a partir das sílabas conhecidas.',
-  frase: 'Ler uma frase curta e escolher a imagem que combina.'
+  frase: 'Ler uma frase curta e escolher a imagem que combina.',
+  rima: 'Ouvir a palavra e escolher outra que termina da mesma forma.',
+  ditado: 'Ouvir a palavra e escolher a forma escrita correta.',
+  ordem: 'Ouvir a palavra e colocas as sílabas pela ordem certa.'
 };
+
+/** Agrupa os formatos no estúdio de criação. */
+export const GRUPOS_TIPO: Array<{ titulo: string; tipos: TipoAtividade[] }> = [
+  { titulo: 'Descoberta', tipos: ['cartao', 'associacao', 'frase'] },
+  { titulo: 'Reconhecimento', tipos: ['reconhecimento', 'ditado', 'rima'] },
+  { titulo: 'Construção', tipos: ['silabas', 'ordem'] }
+];
+
+/** Formatos cuja resposta é uma palavra escrita (e não um id de imagem). */
+export const TIPOS_COM_RESPOSTA_ESCRITA: TipoAtividade[] = [
+  'reconhecimento',
+  'rima',
+  'ditado'
+];
 
 export const NOMES_FASE = Object.fromEntries(
   FASES.map((f) => [f.numero, f.nome])

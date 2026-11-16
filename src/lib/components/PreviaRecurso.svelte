@@ -82,6 +82,43 @@
           {/each}
         </div>
       </div>
+    {:else if recurso.tipo === 'rima'}
+      <div class="prompt">
+        <BotaoAudio src={palavra.audio} rotulo="Ouvir a palavra" rotuloAria="Ouvir a palavra {recurso.palavra}" />
+        <p class="palavra-alvo">{recurso.palavra}</p>
+        <p class="pergunta">Qual palavra rima com esta?</p>
+        <div class="opcoes-letras">
+          {#each recurso.opcoes as opcao}
+            <span class="opcao-letra" class:certa={opcao === recurso.respostaCorreta}>{opcao}</span>
+          {/each}
+        </div>
+      </div>
+    {:else if recurso.tipo === 'ditado'}
+      <div class="prompt">
+        <BotaoAudio src={palavra.audio} rotulo="Ouvir a palavra" rotuloAria="Ouvir a palavra do ditado" />
+        <p class="pergunta">Ouve e escolhe a palavra escrita.</p>
+        <div class="opcoes-letras">
+          {#each recurso.opcoes as opcao}
+            <span class="opcao-letra" class:certa={opcao === recurso.respostaCorreta}>{opcao}</span>
+          {/each}
+        </div>
+        <p class="nota-audio"><Icone nome="olho" tamanho={16} /> A imagem fica escondida nesta atividade.</p>
+      </div>
+    {:else if recurso.tipo === 'ordem'}
+      <div class="prompt">
+        <div class="imagem"><Ilustracao {palavra} /></div>
+        <BotaoAudio src={palavra.audio} rotulo="Ouvir a palavra" rotuloAria="Ouvir a palavra {recurso.palavra}" />
+        <p class="pergunta">Ouve e põe as sílabas por ordem.</p>
+        <div class="slots">
+          {#each recurso.silabas as _}<span>?</span>{/each}
+        </div>
+        <div class="chips">
+          {#each [...recurso.silabas, ...recurso.opcoes] as silaba}
+            <span>{silaba}</span>
+          {/each}
+        </div>
+        <p class="nota-audio"><Icone nome="olho" tamanho={16} /> A palavra escrita fica escondida.</p>
+      </div>
     {/if}
   </div>
 </section>

@@ -45,8 +45,11 @@ REGRAS
 4. O áudio não pode revelar automaticamente a solução numa tarefa de reconhecimento.
 5. A frase deve ter entre 3 e 10 palavras, incluir a palavra-alvo e usar ligações já conhecidas.
 6. Não inventes uma imagem: a ilustração é escolhida do catálogo validado.
-7. Explica o feedback em linguagem direta, sem elogios vagos.
-8. Devolve os campos palavra, sílabas, opções, frase, feedback certo e feedback errado.
+7. No ditado, usa parónimos (palavras parecidas no som) como distratores e esconde a imagem.
+8. Na rima, a resposta deve terminar como a palavra da pergunta, que não aparece nas opções.
+9. Na ordenação de sílabas, esconde a palavra escrita: só a imagem e o áudio dão a pista.
+10. Explica o feedback em linguagem direta, sem elogios vagos.
+11. Devolve os campos palavra, sílabas, opções, resposta certa, frase, feedback certo e feedback errado.
 
 VERIFICAÇÃO PEDIDA
 Confirma ortografia, divisão silábica, correspondência palavra–imagem e pronúncia em português europeu. Assinala qualquer dúvida em vez de a esconder.`;
@@ -116,5 +119,20 @@ export const TESTES = [
     caso: 'Navegação apenas por teclado e com movimento reduzido',
     esperado: 'Foco visível, ordem lógica e ausência de animações essenciais.',
     resultado: 'Confirmado com prefers-reduced-motion ativo.'
+  },
+  {
+    caso: 'Ditado de «gato» com parónimos',
+    esperado: 'O áudio é a única pista e os distratores partilham som com a resposta.',
+    resultado: 'Confirmado com rato, pato e bota; sem imagem visível.'
+  },
+  {
+    caso: 'Rima de «gato»',
+    esperado: 'A resposta é «rato» e a palavra da pergunta não aparece entre as opções.',
+    resultado: 'Confirmado; a validação bloqueia opções que não rimam.'
+  },
+  {
+    caso: 'Ordenação de sílabas de «sapato»',
+    esperado: 'A criança ouve a palavra e coloca sa · pa · to sem a ver escrita.',
+    resultado: 'Confirmado; sílabas extra não repetem as da resposta.'
   }
 ];

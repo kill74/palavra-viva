@@ -64,6 +64,7 @@ type DadosDemo = {
   tipo: TipoAtividade;
   fase: Fase;
   opcoes: string[];
+  respostaCorreta?: string;
   apoios: Apoios;
   estado: EstadoRecurso;
   criadoEm: string;
@@ -94,6 +95,7 @@ function recursoDemo(dados: DadosDemo): Recurso {
     tipo: dados.tipo,
     fase: dados.fase,
     opcoes: [...dados.opcoes],
+    respostaCorreta: dados.respostaCorreta,
     apoios: { ...dados.apoios },
     estado: dados.estado,
     origem: 'ia-previa',
@@ -132,6 +134,45 @@ export const RECURSOS_DEMO: Recurso[] = [
     estado: 'aprovado',
     criadoEm: '2026-11-05T17:20:00.000Z',
     aprovadoEm: '2026-11-05T17:24:00.000Z'
+  }),
+  recursoDemo({
+    id: 'rec-alice-ditado',
+    criancaId: 'alice',
+    palavraId: 'sapato',
+    tipo: 'ditado',
+    fase: 3,
+    opcoes: ['sapato', 'pato', 'rato', 'gato'],
+    respostaCorreta: 'sapato',
+    apoios: { imagem: false, audio: true, silabas: false },
+    estado: 'aprovado',
+    criadoEm: '2026-11-09T10:00:00.000Z',
+    aprovadoEm: '2026-11-09T10:03:00.000Z'
+  }),
+  recursoDemo({
+    id: 'rec-alice-rima',
+    criancaId: 'alice',
+    palavraId: 'gato',
+    tipo: 'rima',
+    fase: 4,
+    opcoes: ['rato', 'pato', 'bola'],
+    respostaCorreta: 'rato',
+    apoios: { imagem: false, audio: true, silabas: false },
+    estado: 'aprovado',
+    criadoEm: '2026-11-09T10:05:00.000Z',
+    aprovadoEm: '2026-11-09T10:08:00.000Z'
+  }),
+  recursoDemo({
+    id: 'rec-alice-ordem',
+    criancaId: 'alice',
+    palavraId: 'sapato',
+    tipo: 'ordem',
+    fase: 3,
+    opcoes: ['me', 'ni'],
+    respostaCorreta: 'sapato',
+    apoios: { imagem: false, audio: true, silabas: false },
+    estado: 'aprovado',
+    criadoEm: '2026-11-09T10:10:00.000Z',
+    aprovadoEm: '2026-11-09T10:12:00.000Z'
   }),
   recursoDemo({
     id: 'rec-alice-galinha',
@@ -245,6 +286,50 @@ export const SESSOES_DEMO: Sessao[] = [
         ajudas: 1,
         acertouPrimeira: false,
         tempoMs: 24600,
+        usouAudio: true,
+        usouDica: false,
+        revelou: false
+      }
+    ]
+  },
+  {
+    id: 'ses-alice-2',
+    criancaId: 'alice',
+    inicio: '2026-11-09T10:30:00.000Z',
+    fim: '2026-11-09T10:36:00.000Z',
+    respostas: [
+      {
+        recursoId: 'rec-alice-ditado',
+        palavra: 'sapato',
+        tipo: 'ditado',
+        tentativas: 1,
+        ajudas: 0,
+        acertouPrimeira: true,
+        tempoMs: 12400,
+        usouAudio: true,
+        usouDica: false,
+        revelou: false
+      },
+      {
+        recursoId: 'rec-alice-rima',
+        palavra: 'gato',
+        tipo: 'rima',
+        tentativas: 2,
+        ajudas: 1,
+        acertouPrimeira: false,
+        tempoMs: 19800,
+        usouAudio: true,
+        usouDica: true,
+        revelou: false
+      },
+      {
+        recursoId: 'rec-alice-ordem',
+        palavra: 'sapato',
+        tipo: 'ordem',
+        tentativas: 1,
+        ajudas: 0,
+        acertouPrimeira: true,
+        tempoMs: 14300,
         usouAudio: true,
         usouDica: false,
         revelou: false

@@ -15,6 +15,10 @@
 
   type Resultado = 'a-jogar' | 'errado' | 'certo' | 'revelado';
 
+  function mesmoTexto(a: string, b: string): boolean {
+    return a.trim().toLocaleLowerCase('pt-PT') === b.trim().toLocaleLowerCase('pt-PT');
+  }
+
   let criancaId = $state('');
   let recursoPedido = $state<string | null>(null);
 
@@ -91,6 +95,12 @@
         return 'Constrói a palavra com as sílabas.';
       case 'frase':
         return 'Lê a frase e escolhe a imagem.';
+      case 'rima':
+        return 'Qual palavra rima com esta?';
+      case 'ditado':
+        return 'Ouve e escolhe a palavra que ouviste.';
+      case 'ordem':
+        return 'Ouve e põe as sílabas por ordem.';
       default:
         return '';
     }
@@ -107,6 +117,12 @@
         return `A primeira sílaba é «${atividade.silabas[0]}». Tenta começar por essa parte.`;
       case 'frase':
         return `A palavra importante da frase é «${atividade.palavra}». Procura a imagem que lhe corresponde.`;
+      case 'rima':
+        return `«${atividade.palavra}» termina em «${atividade.silabas[atividade.silabas.length - 1]}». Procura outra palavra com o mesmo fim.`;
+      case 'ditado':
+        return `A palavra começa por «${atividade.silabas[0]}». Ouve outra vez e compara as opções.`;
+      case 'ordem':
+        return `A primeira sílaba é «${atividade.silabas[0]}». Tenta começar por essa parte.`;
       default:
         return `A palavra é «${atividade.palavra}». Podes ouvir outra vez.`;
     }
@@ -116,7 +132,7 @@
     if (!atividade) return '';
     if (resultado === 'certo') return atividade.feedbackCerto;
     if (resultado === 'errado') return atividade.feedbackErrado;
-    if (resultado === 'revelado') return `A resposta certa é «${atividade.palavra}». Vamos ver com calma.`;
+    if (resultado === 'revelado') return `A resposta certa é «${atividade.respostaCorreta ?? atividade.palavra}». Vamos ver com calma.`;
     return '';
   });
 
@@ -195,9 +211,12 @@
 
   function escolherOpcao(valor: string) {
     if (!atividade || bloqueado) return;
+    const resposta = atividade.respostaCorreta ?? atividade.palavra;
     const certa =
-      atividade.tipo === 'reconhecimento'
-        ? valor.toLocaleLowerCase('pt-PT') === atividade.palavra.toLocaleLowerCase('pt-PT')
+      atividade.tipo === 'reconhecimento' ||
+      atividade.tipo === 'rima' ||
+      atividade.tipo === 'ditado'
+        ? mesmoTexto(valor, resposta)
         : valor === atividade.palavraId;
 
     if (certa) {
@@ -220,7 +239,7 @@
     if (bloqueado) return;
     resultado = 'a-jogar';
     ultimaErrada = null;
-    if (atividade?.tipo === 'silabas') escolhidas = [];
+    if (atividade?.tipo === 'silabas' || atividade?.tipo === 'ordem') escolhidas = [];
   }
 
   function escolherSilaba(silaba: string, origem: number) {
@@ -246,8 +265,7 @@
     if (!atividade || bloqueado) return;
     if (escolhidas.length !== atividade.silabas.length) return;
     const construida = escolhidas.map((e) => e.silaba).join('');
-    const certa =
-      construida.toLocaleLowerCase('pt-PT') === atividade.palavra.toLocaleLowerCase('pt-PT');
+    const certa = mesmoTexto(construida, atividade.respostaCorreta ?? atividade.palavra);
     if (certa) {
       const autonoma = tentativasAtuais === 0 && ajudasAtuais === 0;
       tentativasAtuais += 1;
@@ -488,12 +506,16 @@
               </div>
             </div>
 
-          {:else if atividade.tipo === 'silabas'}
+          {:else if atividade.tipo === 'silabas' || atividade.tipo === 'ordem'}
             <div class="silabas-area">
               <div class="silabas-topo">
                 <div class="imagem-alvo imagem-alvo--pequena"><Ilustracao palavra={palavra} prioridade /></div>
                 <div>
-                  <p class="silabas-palavra">{atividade.palavra}</p>
+                  {#if atividade.tipo !== 'ordem'}
+                    <p class="silabas-palavra">{atividade.palavra}</p>
+                  {:else}
+                    <p class="silabas-palavra silabas-palavra--oculta" aria-hidden="true">? ? ?</p>
+                  {/if}
                   <div class="slots" role="group" aria-label="Sílabas escolhidas, por ordem">
                     {#each atividade.silabas as _, posicao (posicao)}
                       <button
@@ -541,7 +563,11 @@
                 </button>
               </div>
               <p class="silabas-nota">
-                Toca numa sílaba para a ouvir e colocar no lugar. Toca num lugar preenchido para a tirar.
+                {#if atividade.tipo === 'ordem'}
+                  Ouve a palavra e toca nas sílabas pela ordem certa. A palavra escrita está escondida.
+                {:else}
+                  Toca numa sílaba para a ouvir e colocar no lugar. Toca num lugar preenchido para a tirar.
+                {/if}
               </p>
             </div>
 
@@ -574,6 +600,65 @@
                 {/each}
               </div>
             </div>
+
+          {:else if atividade.tipo === 'rima'}
+            <div class="rima-area">
+              <div class="rima-pergunta">
+                <BotaoAudio
+                  src={palavra.audio}
+                  rotulo="Ouvir a palavra"
+                  rotuloAria="Ouvir a palavra {atividade.palavra}"
+                  variante="fantasma"
+                  tamanho="grande"
+                  aoTocar={registarAudio}
+                />
+                <p class="rima-alvo">«{atividade.palavra}»</p>
+                <p class="rima-nota">Procura uma palavra que acabe da mesma forma.</p>
+              </div>
+              <div class="opcoes-escritas" role="group" aria-label="Escolhe a palavra que rima">
+                {#each atividade.opcoes as opcao (opcao)}
+                  <button
+                    type="button"
+                    class="opcao-palavra"
+                    class:errada={ultimaErrada === opcao && resultado === 'errado'}
+                    class:certa={bloqueado && mesmoTexto(opcao, atividade.respostaCorreta ?? '')}
+                    disabled={bloqueado}
+                    onclick={() => escolherOpcao(opcao)}
+                  >
+                    {opcao}
+                  </button>
+                {/each}
+              </div>
+            </div>
+
+          {:else if atividade.tipo === 'ditado'}
+            <div class="ditado-area">
+              <div class="ditado-ouvir">
+                <BotaoAudio
+                  src={palavra.audio}
+                  rotulo="Ouvir a palavra"
+                  rotuloAria="Ouvir a palavra para o ditado"
+                  variante="fantasma"
+                  tamanho="grande"
+                  aoTocar={registarAudio}
+                />
+                <p class="ditado-nota">Ouve quantas vezes quiseres. A imagem está escondida.</p>
+              </div>
+              <div class="opcoes-escritas" role="group" aria-label="Escolhe a palavra que ouviste">
+                {#each atividade.opcoes as opcao (opcao)}
+                  <button
+                    type="button"
+                    class="opcao-palavra"
+                    class:errada={ultimaErrada === opcao && resultado === 'errado'}
+                    class:certa={bloqueado && mesmoTexto(opcao, atividade.respostaCorreta ?? '')}
+                    disabled={bloqueado}
+                    onclick={() => escolherOpcao(opcao)}
+                  >
+                    {opcao}
+                  </button>
+                {/each}
+              </div>
+            </div>
           {/if}
         </div>
 
@@ -587,7 +672,7 @@
                 variante="fantasma"
                 tamanho="pequeno"
               />
-            {:else if atividade.tipo === 'silabas'}
+            {:else if atividade.tipo === 'silabas' || atividade.tipo === 'ordem'}
               <BotaoAudio
                 src={palavra.audio}
                 rotulo="Ouvir a palavra inteira"
@@ -1147,6 +1232,56 @@
     color: var(--tinta-fraca);
     font-size: var(--texto-xs);
     text-align: center;
+  }
+
+  .silabas-palavra--oculta {
+    color: var(--tinta-fraca);
+    letter-spacing: 0.2em;
+  }
+
+  /* Rima e ditado ------------------------------------------------------------ */
+
+  .rima-area,
+  .ditado-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.3rem;
+    width: 100%;
+  }
+
+  .rima-pergunta,
+  .ditado-ouvir {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.55rem;
+    text-align: center;
+  }
+
+  .rima-alvo {
+    margin: 0;
+    color: var(--tinta-ficha);
+    font-family: var(--fonte-titulo);
+    font-size: clamp(2.6rem, 1.6rem + 4vw, 4.4rem);
+    font-weight: 700;
+    letter-spacing: -0.05em;
+    line-height: 1;
+  }
+
+  .rima-nota,
+  .ditado-nota {
+    margin: 0;
+    color: var(--tinta-suave);
+    font-size: var(--texto-s);
+    line-height: 1.4;
+  }
+
+  .ditado-ouvir {
+    padding: 0.9rem 1.2rem;
+    border: 2px dashed var(--linha-forte);
+    border-radius: var(--raio-ficha);
+    background: var(--sol-fundo);
   }
 
   /* Ajudas, dica, feedback --------------------------------------------------- */
