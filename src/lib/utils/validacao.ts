@@ -1,5 +1,6 @@
 import { LIGACOES, PALAVRAS, VOCABULARIO_EXTRA, porId, porTexto } from '#lib/data/palavras';
 import type { Recurso, ValidacaoItem } from '#lib/data/tipos';
+import { mesmoTexto, proximidade, rimam } from './similaridade';
 
 function unicas(valores: string[]): boolean {
   const vistos = new Set<string>();
@@ -24,7 +25,7 @@ function opcoesValidas(r: Recurso): { ok: boolean; detalhe: string } {
     return { ok: false, detalhe: 'Há opções repetidas ou vazias.' };
   }
 
-  if (r.tipo === 'silabas') {
+  if (r.tipo === 'silabas' || r.tipo === 'ordem') {
     const partes = new Set(r.silabas.map((s) => s.toLocaleLowerCase('pt-PT')));
     const repetida = r.opcoes.some((o) => partes.has(o.toLocaleLowerCase('pt-PT')));
     return repetida
@@ -32,13 +33,55 @@ function opcoesValidas(r: Recurso): { ok: boolean; detalhe: string } {
       : { ok: true, detalhe: `${total} sílabas extra, todas diferentes.` };
   }
 
-  if (r.tipo === 'reconhecimento') {
-    const inclui = r.opcoes.some(
-      (o) => o.toLocaleLowerCase('pt-PT') === r.palavra.toLocaleLowerCase('pt-PT')
-    );
-    return inclui
-      ? { ok: true, detalhe: `${total} opções; a palavra certa está incluída.` }
-      : { ok: false, detalhe: 'A palavra certa não está entre as opções.' };
+  if (r.tipo === 'reconhecimento' || r.tipo === 'ditado') {
+    const inclui = r.opcoes.some((o) => mesmoTexto(o, r.palavra));
+    if (!inclui) return { ok: false, detalhe: 'A palavra certa não está entre as opções.' };
+
+    if (r.tipo === 'ditado') {
+      const todasConhecidas = r.opcoes.every((o) => Boolean(porTexto(o)));
+      if (!todasConhecidas) {
+        return { ok: false, detalhe: 'Há uma opção que não consta do léxico validado.' };
+      }
+      const alvo = porTexto(r.palavra);
+      const distratores = r.opcoes
+        .filter((o) => !mesmoTexto(o, r.palavra))
+        .map((o) => porTexto(o))
+        .filter((p): p is NonNullable<typeof p> => Boolean(p));
+      const fonicos = distratores.filter((d) => alvo && proximidade(alvo, d) >= 3);
+      if (distratores.length > 0 && fonicos.length === 0) {
+        return {
+          ok: false,
+          detalhe: 'Os distratores do ditado devem ser palavras parecidas no som.'
+        };
+      }
+      return {
+        ok: true,
+        detalhe: `${total} opções; a palavra certa está incluída e os distratores são parónimos.`
+      };
+    }
+
+    return { ok: true, detalhe: `${total} opções; a palavra certa está incluída.` };
+  }
+
+  if (r.tipo === 'rima') {
+    const todasConhecidas = r.opcoes.every((o) => Boolean(porTexto(o)));
+    if (!todasConhecidas) {
+      return { ok: false, detalhe: 'Há uma opção que não consta do léxico validado.' };
+    }
+    const resposta = r.respostaCorreta;
+    if (!resposta || !r.opcoes.some((o) => mesmoTexto(o, resposta))) {
+      return { ok: false, detalhe: 'Falta a resposta de rima entre as opções.' };
+    }
+    const alvo = porTexto(r.palavra);
+    const rimada = porTexto(resposta);
+    if (!alvo || !rimada || !rimam(alvo, rimada)) {
+      return { ok: false, detalhe: 'A resposta escolhida não rima com a palavra da atividade.' };
+    }
+    const revelaAlvo = r.opcoes.some((o) => mesmoTexto(o, r.palavra));
+    if (revelaAlvo) {
+      return { ok: false, detalhe: 'A palavra da pergunta não pode estar entre as opções de rima.' };
+    }
+    return { ok: true, detalhe: `${total} opções; «${resposta}» rima com «${r.palavra}».` };
   }
 
   const todasConhecidas = r.opcoes.every((id) => porId.has(id));

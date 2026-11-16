@@ -1,7 +1,7 @@
 <script lang="ts">
   import { PALAVRAS, porId, porTexto } from '#lib/data/palavras';
   import { NOMES_TIPO, type Recurso } from '#lib/data/tipos';
-  import { feedbackCerto, feedbackErrado } from '#lib/utils/gerador';
+  import { feedbackCerto, feedbackErrado, rimasDe } from '#lib/utils/gerador';
   import Icone from './Icone.svelte';
 
   let { recurso = $bindable() }: { recurso: Recurso } = $props();
@@ -11,9 +11,11 @@
 
   const reconhecida = $derived(porTexto(recurso.palavra));
 
+  const tiposPalavra = ['reconhecimento', 'rima', 'ditado'];
+  const tiposSilaba = ['silabas', 'ordem'];
+
   function textoDasOpcoes(r: Recurso): string {
-    if (r.tipo === 'reconhecimento') return r.opcoes.join(', ');
-    if (r.tipo === 'silabas') return r.opcoes.join(', ');
+    if (tiposPalavra.includes(r.tipo) || tiposSilaba.includes(r.tipo)) return r.opcoes.join(', ');
     return r.opcoes.map((id) => porId.get(id)?.palavra ?? id).join(', ');
   }
 
@@ -34,13 +36,26 @@
     recurso.feedbackCerto = feedbackCerto(recurso.tipo, encontrada.palavra, encontrada.silabas);
     recurso.feedbackErrado = feedbackErrado(recurso.tipo, encontrada.palavra, encontrada.silabas);
 
-    if (recurso.tipo === 'reconhecimento') {
+    if (recurso.tipo === 'rima') {
+      const rimas = rimasDe(encontrada.id);
+      const nova = rimas.find((p) => p.palavra !== anterior?.palavra) ?? rimas[0];
+      if (nova) {
+        recurso.respostaCorreta = nova.palavra;
+        recurso.opcoes = [
+          nova.palavra,
+          ...recurso.opcoes.filter((o) => o !== nova.palavra && o !== encontrada.palavra)
+        ].slice(0, 4);
+      }
+    } else if (tiposPalavra.includes(recurso.tipo)) {
+      recurso.respostaCorreta = encontrada.palavra;
       recurso.opcoes = recurso.opcoes.map((o) =>
         anterior && o === anterior.palavra ? encontrada.palavra : o
       );
       if (!recurso.opcoes.includes(encontrada.palavra)) {
         recurso.opcoes = [encontrada.palavra, ...recurso.opcoes].slice(0, 4);
       }
+    } else if (recurso.tipo === 'ordem') {
+      recurso.respostaCorreta = encontrada.palavra;
     } else if (recurso.tipo === 'associacao' || recurso.tipo === 'frase') {
       recurso.opcoes = recurso.opcoes.map((id) =>
         anterior && id === anterior.id ? encontrada.id : id
@@ -66,7 +81,7 @@
       .split(',')
       .map((s) => s.trim())
       .filter(Boolean);
-    if (recurso.tipo === 'reconhecimento' || recurso.tipo === 'silabas') {
+    if (tiposPalavra.includes(recurso.tipo) || tiposSilaba.includes(recurso.tipo)) {
       recurso.opcoes = partes;
     } else {
       recurso.opcoes = partes.map((parte) => porTexto(parte)?.id ?? parte);
@@ -125,7 +140,7 @@
 
   <div class="campo">
     <label for="campo-opcoes">
-      {recurso.tipo === 'silabas' ? 'Sílabas extra' : 'Opções'}
+      {tiposSilaba.includes(recurso.tipo) ? 'Sílabas extra' : 'Opções'}
     </label>
     <input
       id="campo-opcoes"
@@ -135,15 +150,32 @@
       oninput={(e) => mudarOpcoes(e.currentTarget.value)}
     />
     <p class="campo__ajuda">
-      {#if recurso.tipo === 'reconhecimento'}
+      {#if recurso.tipo === 'rima'}
+        Palavras escritas que rimam com a pergunta. Não incluas a palavra da pergunta.
+      {:else if recurso.tipo === 'ditado'}
+        Palavras escritas, separadas por vírgulas. Usa parónimos como distratores.
+      {:else if recurso.tipo === 'reconhecimento'}
         Palavras escritas, separadas por vírgulas, incluindo a palavra certa.
-      {:else if recurso.tipo === 'silabas'}
+      {:else if tiposSilaba.includes(recurso.tipo)}
         Sílabas que não pertencem à palavra, separadas por vírgulas.
       {:else}
         Nomes das imagens, separados por vírgulas, incluindo a imagem certa.
       {/if}
     </p>
   </div>
+
+  {#if recurso.tipo === 'rima'}
+    <div class="campo">
+      <label for="campo-resposta">Resposta de rima</label>
+      <input
+        id="campo-resposta"
+        type="text"
+        bind:value={recurso.respostaCorreta}
+        autocomplete="off"
+      />
+      <p class="campo__ajuda">A palavra que deve rimar com «{recurso.palavra}» e estar entre as opções.</p>
+    </div>
+  {/if}
 
   <div class="grelha">
     <div class="campo">
