@@ -5,7 +5,7 @@
   import { dados } from '#lib/stores/dados.svelte';
   import { parametroUrl } from '#lib/utils/consulta';
   import { csv, dataCurta, descarregar, plural } from '#lib/utils/formato';
-  import { comValidacao, validarRecurso } from '#lib/utils/validacao';
+  import { comValidacao, recursoValido, validarRecurso } from '#lib/utils/validacao';
   import CamposRecurso from '#lib/components/CamposRecurso.svelte';
   import EstadoVazio from '#lib/components/EstadoVazio.svelte';
   import Icone from '#lib/components/Icone.svelte';
@@ -99,17 +99,19 @@
 
   function aprovar() {
     if (!selecionado) return;
-    const atualizada = comValidacao({
+    const candidata = comValidacao({
       ...selecionado,
       estado: 'aprovado',
       aprovadoEm: new Date().toISOString()
     });
-    if (!atualizada.validacao.every((i) => i.ok)) {
+    if (!recursoValido(candidata)) {
       erro = 'Ainda há verificações em falta. Corrige os campos antes de aprovar.';
       return;
     }
-    dados.atualizarRecurso(atualizada);
-    edicao = atualizada;
+    // Guarda primeiro as edições e depois usa a guarda central da store.
+    dados.atualizarRecurso(candidata);
+    const aprovada = dados.aprovarRecurso(candidata.id);
+    edicao = aprovada ?? candidata;
     mensagem = 'Recurso aprovado e disponível para a criança.';
     erro = '';
     aEditar = false;
@@ -117,9 +119,9 @@
 
   function devolver() {
     if (!selecionado) return;
-    const atualizada = comValidacao({ ...selecionado, estado: 'rascunho', aprovadoEm: undefined });
-    dados.atualizarRecurso(atualizada);
-    edicao = atualizada;
+    dados.atualizarRecurso(comValidacao(selecionado));
+    const devolvida = dados.devolverARascunho(selecionado.id);
+    edicao = devolvida ?? comValidacao({ ...selecionado, estado: 'rascunho', aprovadoEm: undefined });
     mensagem = 'Recurso devolvido a rascunho. Deixa de estar visível para a criança.';
     erro = '';
   }

@@ -70,6 +70,17 @@
         <p class="pagina__nota">
           <Icone nome="escudo" tamanho={15} /> Turma fictícia de demonstração. Os dados ficam neste browser.
         </p>
+        <button
+          type="button"
+          class="botao botao--fantasma botao--pequeno"
+          onclick={() => {
+            if (window.confirm('Repor a demonstração? Os registos locais serão substituídos pelos dados iniciais.')) {
+              dados.repor();
+            }
+          }}
+        >
+          <Icone nome="refresh" tamanho={16} /> Repor demonstração
+        </button>
       </div>
     </div>
 

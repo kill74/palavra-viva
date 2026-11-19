@@ -2,7 +2,14 @@
   import { resolve } from '$app/paths';
   import { onMount } from 'svelte';
   import { audioDaSilaba, fonteDaSilaba, obterPalavra } from '#lib/data/palavras';
-  import { DESCRICAO_TIPO, NOMES_FASE, NOMES_TIPO, type Recurso, type Resposta } from '#lib/data/tipos';
+  import {
+    DESCRICAO_TIPO,
+    NOMES_FASE,
+    NOMES_TIPO,
+    type Recurso,
+    type Resposta,
+    type TipoAtividade
+  } from '#lib/data/tipos';
   import { dados } from '#lib/stores/dados.svelte';
   import { parametroUrl } from '#lib/utils/consulta';
   import { recursoEstatico } from '#lib/utils/caminho';
@@ -14,6 +21,16 @@
   import Ilustracao from '#lib/components/Ilustracao.svelte';
 
   type Resultado = 'a-jogar' | 'errado' | 'certo' | 'revelado';
+
+  // Instruções pré-geradas em pt-PT: uma por formato, quando existe.
+  const AUDIO_INSTRUCAO: Partial<Record<TipoAtividade, string>> = {
+    cartao: 'cartao.mp3',
+    reconhecimento: 'reconhecimento.mp3',
+    associacao: 'associacao.mp3',
+    silabas: 'silabas.mp3',
+    ordem: 'silabas.mp3',
+    frase: 'frase.mp3'
+  };
 
   function mesmoTexto(a: string, b: string): boolean {
     return a.trim().toLocaleLowerCase('pt-PT') === b.trim().toLocaleLowerCase('pt-PT');
@@ -400,6 +417,13 @@
         {/if}
 
         <div class="fim__acoes">
+          <BotaoAudio
+            src={recursoEstatico('audio/instrucoes/fim.mp3')}
+            rotulo="Ouvir o fim da sessão"
+            rotuloAria="Ouvir o fim da sessão"
+            variante="fantasma"
+            tamanho="pequeno"
+          />
           <a class="botao botao--primario" href={resolve('/crianca') + '?crianca=' + crianca.id}>
             <Icone nome="check" tamanho={18} /> Voltar às atividades
           </a>
@@ -468,6 +492,18 @@
               </div>
               {#if atividade.apoios.silabas}
                 <p class="silabas-apoio" aria-label="Sílabas da palavra">{atividade.silabas.join(' · ')}</p>
+              {/if}
+              {#if tentativasAtuais > 0 && atividade.apoios.audio}
+                <div class="audio-apos-resposta">
+                  <BotaoAudio
+                    src={palavra.audio}
+                    rotulo="Ouvir a palavra"
+                    rotuloAria="Ouvir a palavra {atividade.palavra} depois da resposta"
+                    variante="fantasma"
+                    tamanho="pequeno"
+                  />
+                  <span>Agora já podes ouvir a palavra escrita.</span>
+                </div>
               {/if}
             </div>
 
@@ -664,15 +700,16 @@
 
         {#if resultado === 'a-jogar' || resultado === 'errado'}
           <div class="ajudas">
-            {#if atividade.tipo === 'reconhecimento'}
+            {#if AUDIO_INSTRUCAO[atividade.tipo]}
               <BotaoAudio
-                src={recursoEstatico('audio/instrucoes/reconhecimento.mp3')}
+                src={recursoEstatico(`audio/instrucoes/${AUDIO_INSTRUCAO[atividade.tipo]}`)}
                 rotulo="Ouvir a instrução"
-                rotuloAria="Ouvir a instrução: qual é a palavra escrita"
+                rotuloAria="Ouvir a instrução: {instrucao}"
                 variante="fantasma"
                 tamanho="pequeno"
               />
-            {:else if atividade.tipo === 'silabas' || atividade.tipo === 'ordem'}
+            {/if}
+            {#if atividade.tipo === 'silabas' || atividade.tipo === 'ordem'}
               <BotaoAudio
                 src={palavra.audio}
                 rotulo="Ouvir a palavra inteira"
@@ -680,14 +717,6 @@
                 variante="fantasma"
                 tamanho="pequeno"
                 aoTocar={registarAudio}
-              />
-            {:else if atividade.tipo === 'frase'}
-              <BotaoAudio
-                src={recursoEstatico('audio/instrucoes/frase.mp3')}
-                rotulo="Ouvir a instrução"
-                rotuloAria="Ouvir a instrução: lê a frase e escolhe a imagem"
-                variante="fantasma"
-                tamanho="pequeno"
               />
             {/if}
             <button type="button" class="botao botao--fantasma botao--pequeno" onclick={usarDica}>
@@ -705,25 +734,52 @@
             <div class="resposta__caixa resposta__caixa--erro">
               <span class="resposta__icone"><Icone nome="x" tamanho={22} /></span>
               <p>{feedback}</p>
-              <button type="button" class="botao botao--secundario botao--pequeno" onclick={tentarOutraVez}>
-                <Icone nome="refresh" tamanho={16} /> Tentar outra vez
-              </button>
+              <div class="resposta__acoes">
+                <BotaoAudio
+                  src={recursoEstatico('audio/instrucoes/quase.mp3')}
+                  rotulo="Ouvir o feedback"
+                  rotuloAria="Ouvir o feedback: quase"
+                  variante="fantasma"
+                  tamanho="pequeno"
+                />
+                <button type="button" class="botao botao--secundario botao--pequeno" onclick={tentarOutraVez}>
+                  <Icone nome="refresh" tamanho={16} /> Tentar outra vez
+                </button>
+              </div>
             </div>
           {:else if resultado === 'certo'}
             <div class="resposta__caixa resposta__caixa--certo">
               <span class="resposta__icone"><Icone nome="check" tamanho={22} /></span>
               <p>{feedback}</p>
-              <button type="button" class="botao botao--primario botao--pequeno" onclick={avancar}>
-                {indice + 1 >= total ? 'Ver o fim' : 'Continuar'}
-              </button>
+              <div class="resposta__acoes">
+                <BotaoAudio
+                  src={recursoEstatico('audio/instrucoes/certo.mp3')}
+                  rotulo="Ouvir o feedback"
+                  rotuloAria="Ouvir o feedback: certo"
+                  variante="fantasma"
+                  tamanho="pequeno"
+                />
+                <button type="button" class="botao botao--primario botao--pequeno" onclick={avancar}>
+                  {indice + 1 >= total ? 'Ver o fim' : 'Continuar'}
+                </button>
+              </div>
             </div>
           {:else if resultado === 'revelado'}
             <div class="resposta__caixa resposta__caixa--aviso">
               <span class="resposta__icone"><Icone nome="olho" tamanho={22} /></span>
               <p>{feedback}</p>
-              <button type="button" class="botao botao--secundario botao--pequeno" onclick={avancar}>
-                {indice + 1 >= total ? 'Ver o fim' : 'Continuar'}
-              </button>
+              <div class="resposta__acoes">
+                <BotaoAudio
+                  src={recursoEstatico('audio/instrucoes/quase.mp3')}
+                  rotulo="Ouvir o feedback"
+                  rotuloAria="Ouvir o feedback: quase"
+                  variante="fantasma"
+                  tamanho="pequeno"
+                />
+                <button type="button" class="botao botao--secundario botao--pequeno" onclick={avancar}>
+                  {indice + 1 >= total ? 'Ver o fim' : 'Continuar'}
+                </button>
+              </div>
             </div>
           {/if}
         </div>
@@ -1019,6 +1075,17 @@
     margin: 0;
     color: var(--link-ficha);
     font-size: var(--texto-l);
+    font-weight: 700;
+  }
+
+  .audio-apos-resposta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    color: var(--link-ficha);
+    font-size: var(--texto-s);
     font-weight: 700;
   }
 
@@ -1332,6 +1399,13 @@
     font-size: var(--texto-m);
     font-weight: 700;
     line-height: 1.35;
+  }
+
+  .resposta__acoes {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
   }
 
   .resposta__caixa--certo {

@@ -167,7 +167,7 @@ num ecrã mobile.
 - Instruções curtas, botões grandes, foco visível e áudio repetível.
 - **Cartão** de palavra com imagem e áudio.
 - **Reconhecimento** da palavra escrita entre 2–4 opções, com posição variável.
-- **Associação** som–imagem, com o áudio sem revelar a solução.
+- **Associação** som–imagem: a palavra escrita e o áudio no topo, com o áudio como pista principal.
 - **Sílabas**: ouvir cada parte, reconstruir a palavra e ouvir o resultado.
 - **Frase curta**: ler e escolher a imagem correspondente.
 - **Rima**: ouvir a palavra e escolher outra que termina da mesma forma.
@@ -255,7 +255,7 @@ rascunho e não aparece à criança.
 - Fontes auto-alojadas e pré-carregadas; ilustrações SVG; áudio só é pedido quando usado.
 - Sem bibliotecas de UI, sem ícones remotos e sem fontes do Google.
 - Animações limitadas a `transform` e `opacity`.
-- Layout estável: dimensões explícitas em imagens e ausência de `CLS` nas auditorias.
+- Layout estável: dimensões explícitas em imagens; `CLS` zero na maioria das rotas e no máximo 0,097 nas medições atuais.
 
 ---
 
@@ -277,7 +277,8 @@ deno task build  → site estático escrito em build/
 
 ### Testes funcionais
 
-Executados com Playwright contra o build de pré-visualização:
+Script: `scripts/testes-funcionais.mjs`. Executados com Playwright contra o build de
+pré-visualização; resultado em `docs/verificacao/testes-funcionais.json` (10/10):
 
 - alternância e persistência do tema claro/escuro;
 - menu móvel, foco e fecho com `Escape`;
@@ -292,7 +293,8 @@ Executados com Playwright contra o build de pré-visualização:
 
 ### Acessibilidade
 
-Auditoria axe-core (WCAG 2 A/AA + 2.1 A/AA) em 9 rotas, nos temas claro e escuro:
+Auditoria axe-core (WCAG 2 A/AA + 2.1 A/AA) em 9 rotas, nos temas claro e escuro.
+Script: `scripts/auditar-acessibilidade.mjs`; resultado em `docs/verificacao/axe-core.json`:
 
 ```text
 claro  home · método · professor · criar · biblioteca · sessões · criança · sessão · erro  → ok
@@ -303,25 +305,30 @@ escuro home · método · professor · criar · biblioteca · sessões · crian�
 
 ### Lighthouse
 
-Lighthouse 13.0.1, Chromium 155, build de produção em `http://127.0.0.1:4173`.
-Mobile usa a simulação padrão (Slow 4G, CPU 4×); desktop usa `--preset=desktop`.
+Lighthouse 13.6.0, Chromium do sistema, build de produção. Script:
+`scripts/auditar-desempenho.mjs`; resultado completo em `docs/verificacao/lighthouse.json`
+(64 pontuações: 8 rotas × 4 categorias × 2 perfis). A página de erro não entra nesta
+matriz porque um 404 deve ser `noindex` — o que o Lighthouse penaliza em SEO — e é
+verificada por axe-core e testes funcionais. Mobile usa a simulação padrão (Slow 4G,
+CPU 4×); desktop usa `--preset=desktop`.
 
 | Rota | Performance | Acessibilidade | Boas práticas | SEO | LCP | CLS |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| `/` mobile | 97 | 100 | 100 | 100 | 2,3 s | 0 |
-| `/` desktop | 100 | 100 | 100 | 100 | 0,5 s | 0 |
-| `/professor` mobile | 98 | 100 | 100 | 100 | 2,1 s | 0 |
-| `/professor/criar` mobile | 97 | 100 | 100 | 100 | 2,3 s | 0 |
-| `/professor/biblioteca` mobile | 96 | 100 | 100 | 100 | 2,4 s | 0 |
-| `/professor/sessoes` mobile | 98 | 100 | 100 | 100 | 2,3 s | 0 |
-| `/crianca` mobile | 98 | 100 | 100 | 100 | 2,3 s | 0 |
-| `/crianca/sessao?crianca=alice` mobile | 97 | 100 | 100 | 100 | 2,3 s | 0 |
-| `/metodo` mobile | 98 | 100 | 100 | 100 | 2,3 s | 0 |
+| `/` mobile | 100 | 100 | 100 | 100 | 1.5 s | 0.016 |
+| `/metodo` mobile | 100 | 100 | 100 | 100 | 1.5 s | 0 |
+| `/professor` mobile | 100 | 100 | 100 | 100 | 1.1 s | 0 |
+| `/professor/criar` mobile | 100 | 100 | 100 | 100 | 1.4 s | 0.001 |
+| `/professor/biblioteca` mobile | 100 | 100 | 100 | 100 | 1.4 s | 0 |
+| `/professor/sessoes` mobile | 100 | 100 | 100 | 100 | 1.2 s | 0 |
+| `/crianca` mobile | 100 | 100 | 100 | 100 | 1.1 s | 0 |
+| `/crianca/sessao?crianca=alice` mobile | 94 | 100 | 100 | 100 | 3.0 s | 0 |
+| `/` desktop | 100 | 100 | 100 | 100 | 0.4 s | 0.001 |
 
-Todas as categorias estão **≥ 95**. Em desktop, o LCP é 0,5 s e o TBT é 0 ms. Em mobile, o
-LCP simulado fica entre 2,1 e 2,4 s por causa do modelo Slow 4G da ferramenta; o valor real
-observado no browser, sem essa simulação, é próximo de 1 s. O objetivo principal do
-trabalho é a qualidade da interação, não um orçamento de desempenho definido no enunciado.
+Das 64 pontuações, **63 são 100**; a exceção é o desempenho mobile da sessão (94), com
+LCP simulado de 3,0 s sob Slow 4G. Acessibilidade, boas práticas e SEO são 100 em todas as
+rotas e perfis. Em desktop, o LCP fica entre 0,3 e 0,6 s e o TBT é 0 ms; sem a simulação Slow 4G, o LCP
+observado no browser é próximo de 1 s. O objetivo principal do trabalho é a qualidade da
+interação, não um orçamento de desempenho definido no enunciado.
 
 Para repetir:
 
@@ -360,7 +367,7 @@ o projeto.
 | Validar pronúncia em pt-PT | `src/lib/utils/validacao.ts` (regra 4), `static/audio/`, `src/lib/data/prompts.ts` |
 | Reconhecimento com número variável de opções | `src/lib/utils/gerador.ts` (`numeroOpcoesSugerido`, `distratoresDePalavra`), `src/routes/crianca/sessao/+page.svelte` |
 | Imagens e áudio em português europeu | `static/palavras/`, `static/audio/`, `src/lib/data/palavras.ts` |
-| Associação palavra–imagem–áudio | atividade `associacao` em `src/routes/crianca/sessao/+page.svelte`, `src/lib/components/MuralPalavras.svelte` |
+| Associação palavra–imagem–áudio | atividade `associacao` em `src/routes/crianca/sessao/+page.svelte` (`Ilustracao`); `MuralPalavras.svelte` é o mural da sequência na página inicial |
 | Segmentação e reconstrução de sílabas | `src/lib/components/MesaSilabas.svelte`, atividade `silabas` em `src/routes/crianca/sessao/+page.svelte` |
 | Formação de novas palavras | `src/lib/data/palavras.ts` (derivadas), `src/lib/components/MesaSilabas.svelte`, `/metodo#fases` |
 | Leitura de frases curtas | atividade `frase` em `src/routes/crianca/sessao/+page.svelte`, `src/lib/data/palavras.ts` |

@@ -1,0 +1,117 @@
+{
+  "data": "2026-11-19T22:43:56.518Z",
+  "ferramenta": "axe-core 4.14.1",
+  "norma": "WCAG 2 A/AA + 2.1 A/AA",
+  "combinacoes": 18,
+  "totalViolacoes": 0,
+  "resultados": [
+    {
+      "rota": "inicio",
+      "tema": "claro",
+      "violacoes": 0,
+      "detalhes": []
+    },
+    {
+      "rota": "metodo",
+      "tema": "claro",
+      "violacoes": 0,
+      "detalhes": []
+    },
+    {
+      "rota": "professor",
+      "tema": "claro",
+      "violacoes": 0,
+      "detalhes": []
+    },
+    {
+      "rota": "professor/criar",
+      "tema": "claro",
+      "violacoes": 0,
+      "detalhes": []
+    },
+    {
+      "rota": "professor/biblioteca",
+      "tema": "claro",
+      "violacoes": 0,
+      "detalhes": []
+    },
+    {
+      "rota": "professor/sessoes",
+      "tema": "claro",
+      "violacoes": 0,
+      "detalhes": []
+    },
+    {
+      "rota": "crianca",
+      "tema": "claro",
+      "violacoes": 0,
+      "detalhes": []
+    },
+    {
+      "rota": "crianca/sessao",
+      "tema": "claro",
+      "violacoes": 0,
+      "detalhes": []
+    },
+    {
+      "rota": "erro",
+      "tema": "claro",
+      "violacoes": 0,
+      "detalhes": []
+    },
+    {
+      "rota": "inicio",
+      "tema": "escuro",
+      "violacoes": 0,
+      "detalhes": []
+    },
+    {
+      "rota": "metodo",
+      "tema": "escuro",
+      "violacoes": 0,
+      "detalhes": []
+    },
+    {
+      "rota": "professor",
+      "tema": "escuro",
+      "violacoes": 0,
+      "detalhes": []
+    },
+    {
+      "rota": "professor/criar",
+      "tema": "escuro",
+      "violacoes": 0,
+      "detalhes": []
+    },
+    {
+      "rota": "professor/biblioteca",
+      "tema": "escuro",
+      "violacoes": 0,
+      "detalhes": []
+    },
+    {
+      "rota": "professor/sessoes",
+      "tema": "escuro",
+      "violacoes": 0,
+      "detalhes": []
+    },
+    {
+      "rota": "crianca",
+      "tema": "escuro",
+      "violacoes": 0,
+      "detalhes": []
+    },
+    {
+      "rota": "crianca/sessao",
+      "tema": "escuro",
+      "violacoes": 0,
+      "detalhes": []
+    },
+    {
+      "rota": "erro",
+      "tema": "escuro",
+      "violacoes": 0,
+      "detalhes": []
+    }
+  ]
+}

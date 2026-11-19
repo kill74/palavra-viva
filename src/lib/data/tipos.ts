@@ -160,7 +160,7 @@ export const DESCRICAO_TIPO: Record<TipoAtividade, string> = {
   frase: 'Ler uma frase curta e escolher a imagem que combina.',
   rima: 'Ouvir a palavra e escolher outra que termina da mesma forma.',
   ditado: 'Ouvir a palavra e escolher a forma escrita correta.',
-  ordem: 'Ouvir a palavra e colocas as sílabas pela ordem certa.'
+  ordem: 'Ouvir a palavra e colocar as sílabas pela ordem certa.'
 };
 
 /** Agrupa os formatos no estúdio de criação. */

@@ -1,6 +1,6 @@
 import { ESCRITAS_DEMO, RECURSOS_DEMO, SESSOES_DEMO, TURMA } from '#lib/data/demo';
 import type { Crianca, Recurso, RegistoEscrita, Sessao } from '#lib/data/tipos';
-import { comValidacao } from '#lib/utils/validacao';
+import { comValidacao, recursoValido } from '#lib/utils/validacao';
 
 const CHAVE = 'palavra-viva:dados:v1';
 
@@ -112,13 +112,16 @@ class Dados {
   aprovarRecurso(id: string): Recurso | undefined {
     const atual = this.recurso(id);
     if (!atual) return undefined;
+    const revalidado = comValidacao(atual);
+    // A store é a guarda final: nenhum recurso com verificações em falta pode ser aprovado.
+    if (!recursoValido(revalidado)) return undefined;
     const atualizado = comValidacao({
-      ...atual,
+      ...revalidado,
       estado: 'aprovado',
       aprovadoEm: new Date().toISOString()
     });
     this.atualizarRecurso(atualizado);
-    return atualizado;
+    return this.recurso(id);
   }
 
   devolverARascunho(id: string): Recurso | undefined {
@@ -130,7 +133,7 @@ class Dados {
       aprovadoEm: undefined
     });
     this.atualizarRecurso(atualizado);
-    return atualizado;
+    return this.recurso(id);
   }
 
   eliminarRecurso(id: string): void {

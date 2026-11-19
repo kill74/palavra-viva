@@ -50,7 +50,7 @@ function distratoresFonicos(palavraId: string, quantidade: number, seed: string)
   const alvo = obterPalavra(palavraId);
   return PALAVRAS.filter((p) => p.id !== alvo.id && proximidade(alvo, p) >= 3)
     .sort((a, b) => proximidade(alvo, b) - proximidade(alvo, a) || hash(`${seed}-${a.id}`) - hash(`${seed}-${b.id}`))
-    .slice(0, Math.max(quantidade, 3))
+    .slice(0, quantidade)
     .map((p) => p.palavra);
 }
 
@@ -100,7 +100,8 @@ export function apoiosSugeridos(fase: Fase): Apoios {
 
 export function criarRecurso(pedido: PedidoCriacao): Recurso {
   const palavra = obterPalavra(pedido.palavraId);
-  const seed = `${pedido.palavraId}-${pedido.crianca.id}-${pedido.fase}-${pedido.tipo}-${Date.now()}`;
+  // Seed estável: o mesmo pedido produz sempre a mesma distribuição de opções.
+  const seed = `${pedido.palavraId}-${pedido.crianca.id}-${pedido.fase}-${pedido.tipo}-${pedido.numeroOpcoes}`;
   const quantidade = Math.min(4, Math.max(2, pedido.numeroOpcoes));
 
   let opcoes: string[] = [];
@@ -114,7 +115,8 @@ export function criarRecurso(pedido: PedidoCriacao): Recurso {
     const extras = distratoresDeImagem(pedido.palavraId, quantidade - 1, seed);
     opcoes = baralhar([palavra.id, ...extras.map((p) => p.id)], seed);
   } else if (pedido.tipo === 'silabas' || pedido.tipo === 'ordem') {
-    opcoes = distratoresDeSilaba(palavra.silabas, Math.max(1, quantidade - 1), seed);
+    // As opções destes formatos são as sílabas extra: no mínimo duas, para respeitar a validação.
+    opcoes = distratoresDeSilaba(palavra.silabas, Math.max(2, quantidade - 1), seed);
     respostaCorreta = palavra.palavra;
   } else if (pedido.tipo === 'ditado') {
     const extras = distratoresFonicos(pedido.palavraId, quantidade - 1, seed);
@@ -122,16 +124,22 @@ export function criarRecurso(pedido: PedidoCriacao): Recurso {
     respostaCorreta = palavra.palavra;
   } else if (pedido.tipo === 'rima') {
     const candidatas = baralhar(rimasDe(pedido.palavraId), seed);
-    const resposta = candidatas[0] ?? distratoresDePalavra(pedido.palavraId, 1, seed)[0];
-    const extras = distratoresDePalavra(
-      resposta?.id ?? pedido.palavraId,
-      quantidade - 1,
-      `${seed}-rima`
-    )
+    // Fallback explícito para o caso (improvável com o léxico atual) de não haver rimas:
+    // devolve sempre uma Palavra do catálogo, nunca uma string solta.
+    const resposta = candidatas[0] ?? PALAVRAS.find((p) => p.id !== pedido.palavraId) ?? palavra;
+    const extras = distratoresDePalavra(resposta.id, Math.max(1, quantidade - 1), `${seed}-rima`)
       .map((p) => p.palavra)
-      .filter((p) => p !== resposta?.palavra && p !== palavra.palavra);
-    opcoes = baralhar([resposta?.palavra ?? palavra.palavra, ...extras], `${seed}-rima`);
-    respostaCorreta = resposta?.palavra;
+      .filter((p) => p !== resposta.palavra && p !== palavra.palavra);
+    // A validação exige entre 2 e 4 opções; se o léxico não der distratores
+    // suficientes, completa com outras palavras conhecidas e diferentes do alvo.
+    if (extras.length === 0) {
+      const alternativa = PALAVRAS.find(
+        (p) => p.id !== resposta.id && p.id !== palavra.id && p.palavra !== resposta.palavra
+      );
+      if (alternativa) extras.push(alternativa.palavra);
+    }
+    opcoes = baralhar([resposta.palavra, ...extras], `${seed}-rima`);
+    respostaCorreta = resposta.palavra;
   }
 
   const prompt = construirPrompt({
