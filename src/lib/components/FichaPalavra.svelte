@@ -75,7 +75,7 @@
   .imagem {
     width: min(100%, 15rem);
     padding: 0.4rem;
-    border-radius: 50%;
+    border-radius: var(--raio-circulo);
     background: color-mix(in srgb, var(--sol) 24%, var(--papel-ficha));
   }
 

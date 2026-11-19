@@ -128,7 +128,7 @@
   .audio__botao.grande {
     min-height: 56px;
     padding: 0.8rem 1.15rem;
-    font-size: 1.12rem;
+    font-size: var(--texto-destaque);
   }
 
   .audio__botao.fantasma {
@@ -147,7 +147,7 @@
   .audio__botao.solido {
     border-color: var(--tinta-ficha);
     background: var(--cobalto);
-    color: #fff;
+    color: var(--sobre-acento);
   }
 
   .audio__botao.tocando :global(svg) {

@@ -116,7 +116,7 @@
   .imagem {
     width: min(100%, 11rem);
     padding: 0.35rem;
-    border-radius: 50%;
+    border-radius: var(--raio-circulo);
     background: color-mix(in srgb, var(--sol) 24%, var(--papel-ficha));
   }
 
@@ -154,11 +154,11 @@
   .opcao-letra {
     padding: 0.55rem 0.9rem;
     border: 2px solid var(--linha-ficha);
-    border-radius: 5px;
+    border-radius: var(--raio-ficha);
     background: var(--papel-ficha);
     color: var(--tinta-ficha);
     font-family: var(--fonte-titulo);
-    font-size: 1.3rem;
+    font-size: var(--texto-dado);
     font-weight: 700;
   }
 
@@ -182,7 +182,7 @@
     height: 4.5rem;
     padding: 0.2rem;
     border: 2px solid var(--linha-ficha);
-    border-radius: 5px;
+    border-radius: var(--raio-ficha);
     background: var(--papel-ficha);
   }
 
@@ -218,7 +218,7 @@
     width: 3rem;
     height: 3rem;
     border: 2px dashed var(--linha-ficha);
-    border-radius: 5px;
+    border-radius: var(--raio-ficha);
     color: var(--tinta-fraca);
     font-weight: 700;
   }

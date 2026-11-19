@@ -561,7 +561,7 @@
     display: flex;
     gap: 0.4rem;
     padding: 0.32rem 0.2rem;
-    border-radius: 4px;
+    border-radius: var(--raio-ficha);
     color: var(--tinta-suave);
     font-size: var(--texto-s);
     font-weight: 700;
@@ -635,9 +635,9 @@
   .bloco code {
     padding: 0.1rem 0.3rem;
     border: 1px solid var(--linha);
-    border-radius: 3px;
+    border-radius: var(--raio-ficha);
     background: var(--papel-alto);
-    font-size: 0.85em;
+    font-size: var(--texto-s);
   }
 
   .triade {
@@ -661,17 +661,17 @@
     height: 1.8rem;
     margin-bottom: 0.5rem;
     border: 1.5px solid var(--tinta-ficha);
-    border-radius: 50%;
+    border-radius: var(--raio-circulo);
     background: var(--sol);
     color: var(--tinta-ficha);
     font-family: var(--fonte-titulo);
-    font-size: 0.85rem;
+    font-size: var(--texto-exemplo);
     font-weight: 700;
   }
 
   .triade h3 {
     margin: 0 0 0.2rem;
-    font-size: 1.2rem;
+    font-size: var(--texto-l);
   }
 
   .triade p {
@@ -717,20 +717,20 @@
     gap: 0.45rem;
     padding: 0.35rem 0.5rem;
     border: 1px solid var(--linha);
-    border-radius: 4px;
+    border-radius: var(--raio-ficha);
     background: var(--papel-alto);
   }
 
   .sequencia__ordem {
     color: var(--tinta-fraca);
-    font-size: 0.68rem;
+    font-size: var(--texto-mini);
     font-variant-numeric: tabular-nums;
   }
 
   .sequencia__palavra {
     color: var(--tinta);
     font-family: var(--fonte-titulo);
-    font-size: 1.05rem;
+    font-size: var(--texto-marca);
     font-weight: 700;
     letter-spacing: -0.02em;
     line-height: 1;
@@ -739,7 +739,7 @@
   .sequencia__silabas {
     flex: 1;
     color: var(--tinta-suave);
-    font-size: 0.72rem;
+    font-size: var(--texto-mini);
   }
 
   .sequencia :global(.audio) {
@@ -784,17 +784,17 @@
     height: 1.8rem;
     flex: none;
     border: 1.5px solid var(--linha-forte);
-    border-radius: 50%;
+    border-radius: var(--raio-circulo);
     background: var(--papel-ficha);
     color: var(--tinta-ficha);
     font-family: var(--fonte-titulo);
-    font-size: 0.85rem;
+    font-size: var(--texto-exemplo);
     font-weight: 700;
   }
 
   .fase h3 {
     margin: 0;
-    font-size: 1.1rem;
+    font-size: var(--texto-destaque);
   }
 
   .fase p {
@@ -878,7 +878,7 @@
     width: 4.6rem;
     flex: none;
     padding: 0.2rem;
-    border-radius: 50%;
+    border-radius: var(--raio-circulo);
     background: var(--sol-fundo);
   }
 
@@ -886,7 +886,7 @@
     margin: 0;
     color: var(--tinta-ficha);
     font-family: var(--fonte-titulo);
-    font-size: 1.7rem;
+    font-size: var(--texto-palavra);
     font-weight: 700;
     letter-spacing: -0.04em;
     line-height: 1;
@@ -918,7 +918,7 @@
     height: 3.2rem;
     padding: 0.15rem;
     border: 1.5px solid var(--linha);
-    border-radius: 5px;
+    border-radius: var(--raio-ficha);
     background: var(--papel-ficha);
   }
 
@@ -965,16 +965,16 @@
     width: 1.8rem;
     height: 1.8rem;
     border: 1.5px solid var(--linha-forte);
-    border-radius: 50%;
+    border-radius: var(--raio-circulo);
     background: var(--sol-fundo);
     color: var(--tinta-ficha);
-    font-size: 0.75rem;
+    font-size: var(--texto-xs);
     font-weight: 700;
   }
 
   .validacao-passos h4 {
     margin: 0;
-    font-size: 1rem;
+    font-size: var(--texto-marca);
   }
 
   .validacao-passos p {
@@ -1026,11 +1026,11 @@
     overflow: auto;
     padding: 0.65rem;
     border: 1.5px solid var(--linha);
-    border-radius: 4px;
+    border-radius: var(--raio-ficha);
     background: var(--papel-ficha);
     color: var(--tinta-ficha);
     font-family: ui-monospace, 'SFMono-Regular', Consolas, monospace;
-    font-size: 0.72rem;
+    font-size: var(--texto-mini);
     line-height: 1.45;
     white-space: pre-wrap;
   }
@@ -1076,7 +1076,7 @@
     margin: 0 !important;
     color: var(--tinta-ficha) !important;
     font-family: var(--fonte-titulo);
-    font-size: 2.5rem;
+    font-size: var(--texto-exibicao);
     font-weight: 700;
     letter-spacing: -0.05em;
     line-height: 1;
@@ -1124,7 +1124,7 @@
 
   .decisoes h3 {
     margin: 0.2rem 0 0.3rem;
-    font-size: 1.1rem;
+    font-size: var(--texto-destaque);
   }
 
   .decisoes p {
@@ -1181,15 +1181,15 @@
     width: 1.7rem;
     height: 1.7rem;
     border: 1.5px solid var(--coral);
-    border-radius: 50%;
+    border-radius: var(--raio-circulo);
     color: var(--erro);
-    font-size: 0.75rem;
+    font-size: var(--texto-xs);
     font-weight: 700;
   }
 
   .limites h3 {
     margin: 0 0 0.15rem;
-    font-size: 1.02rem;
+    font-size: var(--texto-marca);
   }
 
   .limites p {

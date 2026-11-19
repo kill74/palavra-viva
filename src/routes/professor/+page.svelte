@@ -289,7 +289,7 @@
 
   .aluno h3 {
     margin: 0;
-    font-size: 1.55rem;
+    font-size: var(--texto-silaba);
     letter-spacing: -0.03em;
   }
 
@@ -307,11 +307,11 @@
     height: 2.4rem;
     flex: none;
     border: 1.5px solid var(--linha-forte);
-    border-radius: 50%;
+    border-radius: var(--raio-circulo);
     background: var(--cor-aluno);
-    color: #fff;
+    color: var(--sobre-acento);
     font-family: var(--fonte-titulo);
-    font-size: 1.2rem;
+    font-size: var(--texto-l);
     font-weight: 700;
     line-height: 1;
   }
@@ -349,14 +349,14 @@
 
   .aluno__numeros dt {
     color: var(--tinta-fraca);
-    font-size: 0.68rem;
+    font-size: var(--texto-mini);
   }
 
   .aluno__numeros dd {
     margin: 0;
     color: var(--tinta);
     font-family: var(--fonte-titulo);
-    font-size: 1.15rem;
+    font-size: var(--texto-destaque);
     font-weight: 700;
     line-height: 1.1;
     font-variant-numeric: tabular-nums;
@@ -425,10 +425,10 @@
     width: 1.35rem;
     height: 1.35rem;
     margin-right: 0.3rem;
-    border-radius: 50%;
+    border-radius: var(--raio-circulo);
     background: var(--sol);
     color: var(--tinta-ficha);
-    font-size: 0.75rem;
+    font-size: var(--texto-xs);
   }
 
   .fila {
@@ -465,7 +465,7 @@
     margin: 0;
     color: var(--tinta-ficha);
     font-family: var(--fonte-titulo);
-    font-size: 1.35rem;
+    font-size: var(--texto-dado);
     font-weight: 700;
     letter-spacing: -0.03em;
     line-height: 1.05;
@@ -551,7 +551,7 @@
 
   .atalho h3 {
     margin: 0;
-    font-size: 1.15rem;
+    font-size: var(--texto-destaque);
   }
 
   .atalho p {

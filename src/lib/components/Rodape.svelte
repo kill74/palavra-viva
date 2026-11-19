@@ -43,7 +43,7 @@
     border-top: 6px solid var(--cobalto);
     background: var(--rodape-fundo);
     color: var(--rodape-texto);
-    --coral-texto: #ffb3a6;
+    --coral-texto: var(--coral-texto-escuro);
   }
 
   .rodape__interior {
@@ -62,7 +62,7 @@
 
   .rodape__marca p {
     margin: 0;
-    color: #c7d1e5;
+    color: var(--rodape-texto-suave);
     font-size: var(--texto-s);
     line-height: 1.55;
   }
@@ -90,7 +90,7 @@
   }
 
   a {
-    color: #e8edf7;
+    color: var(--rodape-link);
     font-size: var(--texto-s);
     text-decoration: none;
     text-underline-offset: 3px;
@@ -113,7 +113,7 @@
 
   .rodape__fim p {
     margin: 0;
-    color: #b9c4d9;
+    color: var(--rodape-texto-fraco);
     font-size: var(--texto-xs);
   }
 

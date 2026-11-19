@@ -466,12 +466,12 @@
 
   .area--crianca {
     background: var(--cobalto);
-    color: #fff;
+    color: var(--sobre-acento);
   }
 
   .area--crianca h3,
   .area.area--crianca p {
-    color: #fff;
+    color: var(--sobre-acento);
   }
 
   .area__topo {
@@ -483,7 +483,7 @@
   }
 
   .area--crianca .area__topo {
-    color: #fff;
+    color: var(--sobre-acento);
   }
 
   .area h3 {
@@ -499,8 +499,8 @@
   }
 
   .area--crianca .etiqueta {
-    color: #fff;
-    border-color: #fff;
+    color: var(--sobre-acento);
+    border-color: var(--sobre-acento);
     background: transparent;
   }
 
@@ -527,7 +527,7 @@
   }
 
   .area--crianca .link {
-    color: #fff;
+    color: var(--sobre-acento);
     text-decoration-color: var(--sol);
   }
 
@@ -543,7 +543,7 @@
     margin: 0.3rem 0;
     padding: 0.55rem;
     border: 2px solid var(--tinta-ficha);
-    border-radius: 5px;
+    border-radius: var(--raio-ficha);
     background: var(--papel-ficha);
     color: var(--tinta-ficha);
   }
@@ -552,7 +552,7 @@
     width: 4.6rem;
     flex: none;
     padding: 0.15rem;
-    border-radius: 50%;
+    border-radius: var(--raio-circulo);
     background: var(--sol-fundo);
   }
 
@@ -565,7 +565,7 @@
 
   .mini-ficha__palavra {
     font-family: var(--fonte-titulo);
-    font-size: 1.8rem;
+    font-size: var(--texto-palavra);
     font-weight: 700;
     letter-spacing: -0.04em;
     line-height: 1;
@@ -612,17 +612,17 @@
     width: 2.1rem;
     height: 2.1rem;
     border: 2px solid var(--linha-forte);
-    border-radius: 50%;
+    border-radius: var(--raio-circulo);
     background: var(--papel);
     color: var(--tinta);
     font-family: var(--fonte-titulo);
-    font-size: 1rem;
+    font-size: var(--texto-marca);
     font-weight: 700;
   }
 
   .percurso h3 {
     margin: 0;
-    font-size: 1.12rem;
+    font-size: var(--texto-destaque);
     letter-spacing: -0.015em;
     line-height: 1.15;
   }
@@ -640,11 +640,11 @@
     margin-top: 0.1rem;
     padding: 0.18rem 0.45rem;
     border: 1.5px solid var(--linha);
-    border-radius: 4px;
+    border-radius: var(--raio-ficha);
     background: var(--papel-ficha);
     color: var(--tinta-ficha);
     font-family: var(--fonte-titulo);
-    font-size: 0.85rem;
+    font-size: var(--texto-exemplo);
     font-weight: 700;
     line-height: 1.2;
   }
@@ -705,7 +705,7 @@
     width: 2rem;
     height: 2rem;
     border: 2px solid var(--linha-ficha);
-    border-radius: 50%;
+    border-radius: var(--raio-circulo);
     background: var(--sol);
     color: var(--tinta-ficha);
     font-family: var(--fonte-titulo);
@@ -715,7 +715,7 @@
   .estudio h3 {
     margin: 0;
     color: var(--tinta-ficha);
-    font-size: 1.15rem;
+    font-size: var(--texto-destaque);
     line-height: 1.15;
   }
 
@@ -732,7 +732,7 @@
     margin: 0.1rem 0;
     padding: 0.6rem;
     border: 1.5px solid var(--linha);
-    border-radius: 4px;
+    border-radius: var(--raio-ficha);
     background: var(--papel-ficha-baixo);
   }
 
@@ -765,7 +765,7 @@
     align-items: center;
     padding: 0.5rem;
     border: 1.5px solid var(--linha);
-    border-radius: 4px;
+    border-radius: var(--raio-ficha);
     background: var(--papel-ficha-baixo);
   }
 
@@ -777,7 +777,7 @@
   .proposta__palavra {
     color: var(--tinta-ficha) !important;
     font-family: var(--fonte-titulo);
-    font-size: 1.6rem;
+    font-size: var(--texto-silaba);
     font-weight: 700;
     letter-spacing: -0.04em;
     line-height: 1;
@@ -804,7 +804,7 @@
     height: 3rem;
     padding: 0.15rem;
     border: 1.5px solid var(--linha);
-    border-radius: 4px;
+    border-radius: var(--raio-ficha);
   }
 
   .proposta__opcoes span.correta {
@@ -926,7 +926,7 @@
     margin: 0;
     color: var(--tinta-ficha);
     font-family: var(--fonte-titulo);
-    font-size: 1.4rem;
+    font-size: var(--texto-dado);
     font-weight: 700;
     line-height: 1;
   }
@@ -942,7 +942,7 @@
 
   .cta {
     background: var(--cobalto);
-    color: #fff;
+    color: var(--sobre-acento);
   }
 
   .cta__interior {
@@ -955,14 +955,14 @@
 
   .cta h2 {
     margin: 0 0 0.5rem;
-    color: #fff;
+    color: var(--sobre-acento);
     font-size: clamp(2rem, 1.4rem + 2.5vw, 3.4rem);
   }
 
   .cta p {
     max-width: 48ch;
     margin: 0;
-    color: #e9eeff;
+    color: var(--sobre-acento-suave);
     line-height: 1.5;
   }
 
@@ -974,8 +974,8 @@
   }
 
   .cta__acoes .botao--fantasma {
-    color: #fff;
-    border-color: #fff;
+    color: var(--sobre-acento);
+    border-color: var(--sobre-acento);
   }
 
   .cta__acoes .botao--fantasma:hover {
@@ -985,7 +985,7 @@
 
   .cta__metodo {
     margin-top: 0.2rem;
-    color: #fff;
+    color: var(--sobre-acento);
     font-size: var(--texto-s);
     font-weight: 700;
     text-underline-offset: 3px;

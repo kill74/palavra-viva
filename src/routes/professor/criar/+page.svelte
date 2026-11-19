@@ -401,7 +401,7 @@
     min-height: 46px;
     padding: 0.55rem 0.65rem;
     border: 2px solid var(--linha-ficha);
-    border-radius: 5px;
+    border-radius: var(--raio-ficha);
     background: var(--papel-ficha);
     color: var(--tinta-ficha);
     font-size: var(--texto-s);
@@ -427,11 +427,11 @@
     width: 1.7rem;
     height: 1.7rem;
     border: 1.5px solid var(--tinta-ficha);
-    border-radius: 50%;
+    border-radius: var(--raio-circulo);
     background: var(--sol);
     color: var(--tinta-ficha);
     font-family: var(--fonte-titulo);
-    font-size: 1rem;
+    font-size: var(--texto-marca);
     line-height: 1;
   }
 
@@ -549,7 +549,7 @@
     width: 3.4rem;
     height: 3.4rem;
     border: 1.5px solid var(--linha);
-    border-radius: 50%;
+    border-radius: var(--raio-circulo);
     background: var(--sol-fundo);
     color: var(--tinta-ficha);
   }
@@ -678,11 +678,11 @@
     overflow: auto;
     padding: 0.7rem;
     border: 1.5px solid var(--linha);
-    border-radius: 4px;
+    border-radius: var(--raio-ficha);
     background: var(--papel-ficha);
     color: var(--tinta-ficha);
     font-family: ui-monospace, 'SFMono-Regular', Consolas, monospace;
-    font-size: 0.76rem;
+    font-size: var(--texto-xs);
     line-height: 1.45;
     white-space: pre-wrap;
   }

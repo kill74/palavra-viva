@@ -44,19 +44,45 @@
   --coral: #f05a47;
   --coral-texto: #c43a2a;
   --coral-fundo: #ffe3dd;
+  /* Variantes sempre claras para fichas no tema escuro. */
+  --coral-texto-ficha: #c43a2a;
+  --coral-fundo-ficha: #ffe3dd;
   --sol: #f6c445;
   --sol-fundo: #fff0c2;
+  --sol-fundo-ficha: #fff0c2;
   --verde: #3e7c6a;
   --verde-fundo: #dff0e8;
-  --rosa: #e86a92;
+  --verde-fundo-ficha: #dff0e8;
+  --erro-ficha: #a52a1f;
+  --sucesso-ficha: #1a6047;
+  --cobalto-fundo-ficha: #e3e9ff;
+  /* Usada nas letras decorativas da área da criança; avaliada na Fase 4. */
   --menta: #8fd3c7;
   --erro: #a52a1f;
   --sucesso: #1a6047;
   --foco: #1746c9;
   --sombra-ficha: #1b2a4a;
-  --sombra-suave: rgba(27, 42, 74, 0.14);
+  --sombra-leve: rgba(15, 25, 48, 0.35);
+  --veu-imagem: rgba(10, 18, 34, 0.62);
+
+  /* Texto sobre superfícies de acento e variações de cobalto por estado. */
+  --sobre-acento: #ffffff;
+  --sobre-acento-suave: #e9eeff;
+  --cobalto-hover: #1d49c8;
+  --cobalto-escuro: #2d5be8;
+
+  /* Rodapé: neutros frios, fora da paleta principal. */
   --rodape-fundo: #1b2a4a;
   --rodape-texto: #f4efe3;
+  --rodape-texto-suave: #c7d1e5;
+  --rodape-link: #e8edf7;
+  --rodape-texto-fraco: #b9c4d9;
+  --coral-texto-escuro: #ffb3a6;
+
+  /* Impressão: papel e tinta, não temas de ecrã. */
+  --impressao-tinta: #000000;
+  --impressao-papel: #ffffff;
+
   --fonte-titulo: 'Bricolage', 'Trebuchet MS', sans-serif;
   --fonte-texto: 'Atkinson', 'Verdana', sans-serif;
   --esp-1: 0.25rem;
@@ -73,6 +99,21 @@
   --raio-ficha: 6px;
   --raio-botao: 8px;
   --raio-pill: 999px;
+  --raio-circulo: 50%;
+
+  /* Escala fixa para fichas e superfícies pequenas (a escala fluida abaixo
+     é para títulos de página). Substitui os valores avulso dos componentes. */
+  --texto-mini: 0.7rem;
+  --texto-exemplo: 0.85rem;
+  --texto-marca: 1rem;
+  --texto-destaque: 1.15rem;
+  --texto-dado: 1.4rem;
+  --texto-silaba: 1.6rem;
+  --texto-palavra: 1.8rem;
+  --texto-grande: 2rem;
+  --texto-exibicao: 2.5rem;
+  --texto-impressao: 4rem;
+
   --texto-xs: 0.78rem;
   --texto-s: 0.9rem;
   --texto-m: 1.0625rem;
@@ -137,24 +178,6 @@ body {
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
-}
-
-body::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  background-image:
-    linear-gradient(to right, color-mix(in srgb, var(--tinta) 4%, transparent) 1px, transparent 1px),
-    linear-gradient(to bottom, color-mix(in srgb, var(--tinta) 4%, transparent) 1px, transparent 1px);
-  background-size: 32px 32px;
-  mask-image: linear-gradient(to bottom, black, transparent 75%);
-  opacity: 0.55;
-}
-
-html[data-tema='escuro'] body::after {
-  opacity: 0.25;
 }
 
 h1,
@@ -408,15 +431,15 @@ main:focus {
 
 .botao--primario {
   background: var(--cobalto);
-  color: #fff;
+  color: var(--sobre-acento);
 }
 
 .botao--primario:hover {
-  background: #1d49c8;
+  background: var(--cobalto-hover);
 }
 
 html[data-tema='escuro'] .botao--primario {
-  background: #2d5be8;
+  background: var(--cobalto-escuro);
 }
 
 .botao--secundario {
@@ -448,7 +471,7 @@ html[data-tema='escuro'] .botao--primario {
 .botao--grande {
   min-height: 54px;
   padding: 0.95rem 1.4rem;
-  font-size: 1.15rem;
+  font-size: var(--texto-destaque);
 }
 
 .botao--bloco {
@@ -616,7 +639,7 @@ html[data-tema='escuro'] .botao--primario {
   min-height: 46px;
   padding: 0.55rem 0.7rem;
   border: 2px solid var(--linha-forte);
-  border-radius: 5px;
+  border-radius: var(--raio-ficha);
   background: var(--papel-ficha);
   color: var(--tinta-ficha);
   font-size: var(--texto-s);
@@ -708,17 +731,17 @@ table.tabela {
 .ficha,
 .superficie-ficha {
   --papel-alto: var(--papel-ficha-baixo);
-  --tinta: #1b2a4a;
+  --tinta: var(--tinta-ficha);
   --tinta-suave: var(--tinta-suave-ficha);
   --tinta-fraca: var(--tinta-fraca-ficha);
   --link: var(--link-ficha);
-  --coral-texto: #c43a2a;
-  --erro: #a52a1f;
-  --sucesso: #1a6047;
-  --cobalto-fundo: #e3e9ff;
-  --coral-fundo: #ffe3dd;
-  --sol-fundo: #fff0c2;
-  --verde-fundo: #dff0e8;
+  --coral-texto: var(--coral-texto-ficha);
+  --erro: var(--erro-ficha);
+  --sucesso: var(--sucesso-ficha);
+  --cobalto-fundo: var(--cobalto-fundo-ficha);
+  --coral-fundo: var(--coral-fundo-ficha);
+  --sol-fundo: var(--sol-fundo-ficha);
+  --verde-fundo: var(--verde-fundo-ficha);
 }
 
 .ficha .ficha__topo {
@@ -842,7 +865,7 @@ table.tabela {
   min-height: 48px;
   padding: 0.68rem 0.8rem;
   border: 2px solid var(--linha-ficha);
-  border-radius: 5px;
+  border-radius: var(--raio-ficha);
   background: var(--papel-ficha);
   color: var(--tinta-ficha);
   font-size: var(--texto-m);
@@ -1072,13 +1095,12 @@ table.tabela {
 }
 
 @media print {
-  body::after,
   .nao-imprimir {
     display: none !important;
   }
 
   body {
-    background: #fff;
-    color: #000;
+    background: var(--impressao-papel);
+    color: var(--impressao-tinta);
   }
 }

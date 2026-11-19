@@ -56,7 +56,7 @@
 
   .validacao h4 {
     margin: 0;
-    font-size: 1rem;
+    font-size: var(--texto-marca);
     letter-spacing: -0.01em;
   }
 
@@ -94,7 +94,7 @@
     width: 1.25rem;
     height: 1.25rem;
     flex: none;
-    border-radius: 50%;
+    border-radius: var(--raio-circulo);
     background: var(--verde-fundo);
     color: var(--sucesso);
   }

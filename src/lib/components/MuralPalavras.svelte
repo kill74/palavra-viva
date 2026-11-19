@@ -106,7 +106,7 @@
     width: 0.65rem;
     height: 0.65rem;
     flex: none;
-    border-radius: 50%;
+    border-radius: var(--raio-circulo);
     background: var(--verde);
   }
 
@@ -156,7 +156,7 @@
     top: 0.3rem;
     left: 0.45rem;
     color: var(--tinta-fraca);
-    font-size: 0.68rem;
+    font-size: var(--texto-mini);
     font-weight: 700;
     line-height: 1;
     font-variant-numeric: tabular-nums;
@@ -168,7 +168,7 @@
     right: 0.42rem;
     width: 0.55rem;
     height: 0.55rem;
-    border-radius: 50%;
+    border-radius: var(--raio-circulo);
     background: var(--verde);
   }
 
@@ -201,14 +201,14 @@
     max-height: 90vh;
     padding: 0;
     border: 2px solid var(--tinta-ficha);
-    border-radius: 8px;
+    border-radius: var(--raio-botao);
     background: var(--papel-ficha);
     color: var(--tinta-ficha);
     box-shadow: 12px 12px 0 rgba(0, 0, 0, 0.35);
   }
 
   .detalhe::backdrop {
-    background: rgba(10, 18, 34, 0.62);
+    background: var(--veu-imagem);
     backdrop-filter: blur(3px);
   }
 
@@ -225,7 +225,7 @@
   .detalhe__topo h3 {
     margin: 0;
     color: var(--tinta-ficha);
-    font-size: 1.15rem;
+    font-size: var(--texto-destaque);
     letter-spacing: -0.02em;
   }
 

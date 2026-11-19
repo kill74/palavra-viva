@@ -484,7 +484,7 @@
     height: 2.4rem;
     flex: none;
     border: 1.5px solid var(--linha);
-    border-radius: 50%;
+    border-radius: var(--raio-circulo);
     background: var(--cobalto-fundo);
     color: var(--link);
   }
@@ -520,7 +520,7 @@
   .sessao__apoio {
     padding: 0.15rem 0.45rem;
     border-radius: var(--raio-pill);
-    font-size: 0.7rem;
+    font-size: var(--texto-mini);
     font-weight: 700;
     white-space: nowrap;
   }
@@ -597,7 +597,7 @@
     min-height: 42px;
     padding: 0.45rem 0.6rem;
     border: 1.5px solid var(--linha-forte);
-    border-radius: 5px;
+    border-radius: var(--raio-ficha);
     background: var(--papel-ficha);
     color: var(--tinta-ficha);
     font-size: var(--texto-s);
@@ -647,7 +647,7 @@
     margin: 0;
     color: var(--tinta);
     font-family: var(--fonte-titulo);
-    font-size: 1.05rem;
+    font-size: var(--texto-marca);
     font-weight: 700;
     letter-spacing: -0.02em;
   }

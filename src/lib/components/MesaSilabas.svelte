@@ -243,7 +243,7 @@
     min-width: 0;
     padding: 0.2rem;
     border: 2px solid transparent;
-    border-radius: 5px;
+    border-radius: var(--raio-ficha);
     background: var(--papel-ficha);
     cursor: pointer;
     transition: border-color var(--transicao), background-color var(--transicao);
@@ -270,7 +270,7 @@
     min-height: 12.5rem;
     padding: 0.8rem;
     border: 2px solid var(--linha-ficha);
-    border-radius: 6px;
+    border-radius: var(--raio-ficha);
     background: var(--papel-ficha);
     transition: background-color var(--transicao), border-color var(--transicao);
   }
@@ -322,11 +322,11 @@
     min-height: 3.5rem;
     padding: 0.2rem 0.55rem;
     border: 2px dashed var(--linha-ficha);
-    border-radius: 6px;
+    border-radius: var(--raio-ficha);
     background: transparent;
     color: var(--tinta-ficha);
     font-family: var(--fonte-titulo);
-    font-size: 1.65rem;
+    font-size: var(--texto-palavra);
     font-weight: 700;
     line-height: 1;
   }
@@ -362,7 +362,7 @@
     color: var(--tinta-ficha);
     box-shadow: 2px 2px 0 var(--tinta-ficha);
     font-family: var(--fonte-titulo);
-    font-size: 1.25rem;
+    font-size: var(--texto-l);
     font-weight: 700;
     line-height: 1;
     cursor: pointer;

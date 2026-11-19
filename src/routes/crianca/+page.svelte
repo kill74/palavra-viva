@@ -228,7 +228,7 @@
 <style>
   .abertura {
     background: var(--cobalto);
-    color: #fff;
+    color: var(--sobre-acento);
     overflow: hidden;
   }
 
@@ -248,7 +248,7 @@
     padding: 0.25rem 0.6rem;
     border: 1.5px solid rgba(255, 255, 255, 0.65);
     border-radius: var(--raio-pill);
-    color: #fff;
+    color: var(--sobre-acento);
     font-size: var(--texto-s);
     font-weight: 700;
   }
@@ -256,7 +256,7 @@
   .abertura h1 {
     max-width: 17ch;
     margin: 0;
-    color: #fff;
+    color: var(--sobre-acento);
     font-size: clamp(2.5rem, 1.5rem + 4vw, 4.6rem);
     line-height: 0.96;
   }
@@ -264,7 +264,7 @@
   .abertura__texto > p:not(.abertura__contexto) {
     max-width: 46ch;
     margin: 0.8rem 0 0;
-    color: #e9eeff;
+    color: var(--sobre-acento-suave);
     font-size: var(--texto-l);
     line-height: 1.45;
   }
@@ -284,18 +284,18 @@
     width: clamp(2.6rem, 7vw, 3.8rem);
     height: clamp(2.6rem, 7vw, 3.8rem);
     border: 2px solid var(--tinta-ficha);
-    border-radius: 6px;
+    border-radius: var(--raio-ficha);
     background: var(--sol);
     color: var(--tinta-ficha);
     font-family: var(--fonte-titulo);
     font-size: clamp(1.5rem, 4vw, 2.2rem);
     font-weight: 700;
-    box-shadow: 4px 4px 0 rgba(15, 25, 48, 0.35);
+    box-shadow: 4px 4px 0 var(--sombra-leve);
   }
 
   .letra:nth-child(2n) {
     background: var(--coral);
-    color: #fff;
+    color: var(--sobre-acento);
     transform: rotate(3deg);
   }
 
@@ -382,9 +382,9 @@
     display: grid;
     place-items: center;
     border: 2px solid var(--tinta-ficha);
-    border-radius: 50%;
+    border-radius: var(--raio-circulo);
     background: var(--cor-aluno);
-    color: #fff;
+    color: var(--sobre-acento);
     font-family: var(--fonte-titulo);
     font-weight: 700;
     line-height: 1;
@@ -394,12 +394,12 @@
     width: 4rem;
     height: 4rem;
     margin-bottom: 0.4rem;
-    font-size: 1.9rem;
+    font-size: var(--texto-palavra);
   }
 
   .crianca__nome {
     font-family: var(--fonte-titulo);
-    font-size: 1.45rem;
+    font-size: var(--texto-dado);
     font-weight: 700;
     letter-spacing: -0.03em;
     line-height: 1;
@@ -416,7 +416,7 @@
     border-radius: var(--raio-pill);
     background: var(--papel-ficha);
     color: var(--tinta-ficha);
-    font-size: 0.7rem;
+    font-size: var(--texto-mini);
     font-weight: 700;
   }
 
@@ -426,7 +426,7 @@
     right: 0.45rem;
     color: var(--cor-aluno);
     background: var(--papel-alto);
-    border-radius: 50%;
+    border-radius: var(--raio-circulo);
   }
 
   /* Atividades -------------------------------------------------------------- */
@@ -450,7 +450,7 @@
     height: 4.4rem;
     flex: none;
     background: var(--cobalto);
-    font-size: 2rem;
+    font-size: var(--texto-grande);
   }
 
   .atividades__ola {
@@ -496,7 +496,7 @@
     width: 2rem;
     height: 2rem;
     border: 1.5px solid var(--tinta-ficha);
-    border-radius: 50%;
+    border-radius: var(--raio-circulo);
     background: var(--sol);
     color: var(--tinta-ficha);
     font-family: var(--fonte-titulo);
@@ -509,7 +509,7 @@
     width: 5.2rem;
     height: 4.4rem;
     padding: 0.2rem;
-    border-radius: 50%;
+    border-radius: var(--raio-circulo);
     background: color-mix(in srgb, var(--sol) 26%, var(--papel-ficha));
   }
 
@@ -532,7 +532,7 @@
   .atividade h3 {
     margin: 0;
     color: var(--tinta-ficha);
-    font-size: 1.7rem;
+    font-size: var(--texto-palavra);
     letter-spacing: -0.04em;
     line-height: 1;
   }
@@ -556,7 +556,7 @@
     align-items: center;
     gap: 0.2rem;
     color: var(--tinta-fraca);
-    font-size: 0.68rem;
+    font-size: var(--texto-mini);
     font-weight: 700;
   }
 
@@ -604,7 +604,7 @@
     flex-direction: column;
     padding: 0.3rem 0.55rem;
     border: 1.5px solid var(--linha);
-    border-radius: 5px;
+    border-radius: var(--raio-ficha);
     background: var(--papel-ficha);
   }
 
@@ -618,7 +618,7 @@
 
   .conhece__silabas {
     color: var(--tinta-fraca);
-    font-size: 0.68rem;
+    font-size: var(--texto-mini);
   }
 
   .conhece__vazia {
@@ -667,14 +667,14 @@
     width: 2.8rem;
     height: 2.8rem;
     border: 1.5px solid var(--linha-forte);
-    border-radius: 50%;
+    border-radius: var(--raio-circulo);
     background: var(--sol-fundo);
     color: var(--tinta-ficha);
   }
 
   .passos h3 {
     margin: 0;
-    font-size: 1.2rem;
+    font-size: var(--texto-l);
   }
 
   .passos p {

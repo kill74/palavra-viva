@@ -502,7 +502,7 @@
     flex: none;
     padding: 0.2rem;
     border: 1.5px solid var(--linha);
-    border-radius: 50%;
+    border-radius: var(--raio-circulo);
     background: var(--papel-ficha);
   }
 
@@ -517,7 +517,7 @@
   .item__palavra {
     color: var(--tinta);
     font-family: var(--fonte-titulo);
-    font-size: 1.25rem;
+    font-size: var(--texto-l);
     font-weight: 700;
     letter-spacing: -0.03em;
     line-height: 1.05;
@@ -581,7 +581,7 @@
     height: 2.2rem;
     flex: none;
     border: 1.5px solid var(--tinta-ficha);
-    border-radius: 50%;
+    border-radius: var(--raio-circulo);
     background: var(--papel-ficha);
     color: var(--tinta-ficha);
     cursor: pointer;
@@ -589,7 +589,7 @@
 
   .fechar:hover {
     background: var(--coral);
-    color: #fff;
+    color: var(--sobre-acento);
   }
 
   .detalhe__corpo {
@@ -674,10 +674,10 @@
     overflow: auto;
     padding: 0.6rem;
     border: 1.5px solid var(--linha);
-    border-radius: 4px;
+    border-radius: var(--raio-ficha);
     background: var(--papel-alto);
     font-family: ui-monospace, 'SFMono-Regular', Consolas, monospace;
-    font-size: 0.72rem;
+    font-size: var(--texto-mini);
     line-height: 1.45;
     white-space: pre-wrap;
   }
@@ -698,7 +698,7 @@
     width: 3rem;
     height: 3rem;
     border: 1.5px solid var(--linha);
-    border-radius: 50%;
+    border-radius: var(--raio-circulo);
     background: var(--sol-fundo);
     color: var(--tinta-ficha);
   }
@@ -741,51 +741,51 @@
     .impressao {
       display: block;
       padding: 2rem;
-      color: #000;
-      background: #fff;
+      color: var(--impressao-tinta);
+      background: var(--impressao-papel);
     }
 
     .impressao h1 {
-      font-size: 1.4rem;
+      font-size: var(--texto-dado);
     }
 
     .impressao__meta {
       margin: 0.2rem 0 1.5rem;
-      font-size: 0.9rem;
+      font-size: var(--texto-s);
     }
 
     .impressao__palavra {
       margin: 0;
       font-family: var(--fonte-titulo);
-      font-size: 4rem;
+      font-size: var(--texto-impressao);
       font-weight: 700;
       letter-spacing: -0.04em;
     }
 
     .impressao__silabas {
       margin: 0.2rem 0 1rem;
-      font-size: 1.4rem;
+      font-size: var(--texto-dado);
       font-weight: 700;
     }
 
     .impressao__frase {
       margin: 0 0 2rem;
-      font-size: 1.2rem;
+      font-size: var(--texto-l);
     }
 
     .impressao__linhas {
       margin: 1.5rem 0 0.5rem;
-      font-size: 0.95rem;
+      font-size: var(--texto-marca);
     }
 
     .impressao__linha {
       height: 3.5rem;
-      border-bottom: 1px solid #000;
+      border-bottom: 1px solid var(--impressao-tinta);
     }
 
     .impressao__nota {
       margin-top: 1.5rem;
-      font-size: 0.75rem;
+      font-size: var(--texto-xs);
     }
   }
 </style>

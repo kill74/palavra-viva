@@ -29,7 +29,7 @@
 
   .marca__texto {
     font-family: var(--fonte-titulo);
-    font-size: 1.35rem;
+    font-size: var(--texto-dado);
     font-weight: 700;
     letter-spacing: -0.045em;
     white-space: nowrap;

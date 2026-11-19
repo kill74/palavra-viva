@@ -42,7 +42,7 @@
     width: 3rem;
     height: 3rem;
     border: 1.5px solid var(--linha);
-    border-radius: 50%;
+    border-radius: var(--raio-circulo);
     color: var(--cobalto);
     background: var(--cobalto-fundo);
   }

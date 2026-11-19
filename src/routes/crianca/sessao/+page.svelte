@@ -698,7 +698,7 @@
     gap: 0.35rem;
     color: var(--link);
     font-family: var(--fonte-titulo);
-    font-size: 1.05rem;
+    font-size: var(--texto-marca);
     font-weight: 700;
     letter-spacing: -0.03em;
   }
@@ -782,11 +782,11 @@
     width: 2rem;
     height: 2rem;
     border: 1.5px solid var(--tinta-ficha);
-    border-radius: 50%;
+    border-radius: var(--raio-circulo);
     background: var(--sol);
     color: var(--tinta-ficha);
     font-family: var(--fonte-titulo);
-    font-size: 0.9rem;
+    font-size: var(--texto-s);
     font-weight: 700;
   }
 
@@ -805,7 +805,7 @@
     border-radius: var(--raio-pill);
     color: var(--sucesso);
     background: var(--verde-fundo);
-    font-size: 0.65rem;
+    font-size: var(--texto-mini);
     font-weight: 700;
   }
 
@@ -871,7 +871,7 @@
   .imagem-alvo {
     width: min(100%, 13rem);
     padding: 0.4rem;
-    border-radius: 50%;
+    border-radius: var(--raio-circulo);
     background: color-mix(in srgb, var(--sol) 30%, var(--papel-ficha));
   }
 
@@ -893,7 +893,7 @@
     min-width: 8rem;
     padding: 0.6rem 1.1rem;
     border: 2.5px solid var(--tinta-ficha);
-    border-radius: 7px;
+    border-radius: var(--raio-botao);
     background: var(--papel-ficha);
     color: var(--tinta-ficha);
     box-shadow: 4px 4px 0 var(--tinta-ficha);
@@ -985,7 +985,7 @@
     min-height: 8.6rem;
     padding: 0.5rem;
     border: 2.5px solid var(--tinta-ficha);
-    border-radius: 7px;
+    border-radius: var(--raio-botao);
     background: var(--papel-ficha);
     cursor: pointer;
     transition: transform var(--transicao), box-shadow var(--transicao), background-color var(--transicao);
@@ -1070,11 +1070,11 @@
     height: 3.4rem;
     padding: 0.2rem 0.5rem;
     border: 2.5px dashed var(--linha-forte);
-    border-radius: 6px;
+    border-radius: var(--raio-ficha);
     background: transparent;
     color: var(--tinta-fraca);
     font-family: var(--fonte-titulo);
-    font-size: 1.25rem;
+    font-size: var(--texto-l);
     font-weight: 700;
     cursor: pointer;
   }
@@ -1109,7 +1109,7 @@
     color: var(--tinta-ficha);
     box-shadow: 3px 3px 0 var(--tinta-ficha);
     font-family: var(--fonte-titulo);
-    font-size: 1.3rem;
+    font-size: var(--texto-dado);
     font-weight: 700;
     cursor: pointer;
     transition: transform var(--transicao), box-shadow var(--transicao), background-color var(--transicao);
@@ -1223,7 +1223,7 @@
     width: 2.2rem;
     height: 2.2rem;
     flex: none;
-    border-radius: 50%;
+    border-radius: var(--raio-circulo);
     background: currentColor;
   }
 
@@ -1233,7 +1233,7 @@
 
   .resposta__caixa--erro .resposta__icone :global(svg),
   .resposta__caixa--certo .resposta__icone :global(svg) {
-    color: #fff;
+    color: var(--sobre-acento);
   }
 
   .rodape-sessao {
@@ -1261,7 +1261,7 @@
     width: 4.5rem;
     height: 4.5rem;
     border: 2px solid var(--linha-forte);
-    border-radius: 50%;
+    border-radius: var(--raio-circulo);
     background: var(--sol-fundo);
     color: var(--tinta-ficha);
   }
@@ -1309,7 +1309,7 @@
     width: 4rem;
     height: 4rem;
     border: 2px solid var(--sucesso);
-    border-radius: 50%;
+    border-radius: var(--raio-circulo);
     background: var(--verde-fundo);
     color: var(--sucesso);
   }
@@ -1354,7 +1354,7 @@
   .fim__palavra {
     color: var(--tinta-ficha);
     font-family: var(--fonte-titulo);
-    font-size: 1.25rem;
+    font-size: var(--texto-l);
     font-weight: 700;
     letter-spacing: -0.03em;
   }
@@ -1368,7 +1368,7 @@
   .fim__selo {
     padding: 0.15rem 0.45rem;
     border-radius: var(--raio-pill);
-    font-size: 0.7rem;
+    font-size: var(--texto-mini);
     font-weight: 700;
     white-space: nowrap;
   }

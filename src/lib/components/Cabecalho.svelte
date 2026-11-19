@@ -116,8 +116,7 @@
     top: 0;
     z-index: 30;
     border-bottom: 1.5px solid var(--linha);
-    background: color-mix(in srgb, var(--papel) 94%, transparent);
-    backdrop-filter: blur(12px);
+    background: var(--papel);
   }
 
   .cabecalho__interior {
@@ -132,7 +131,7 @@
     display: inline-flex;
     align-items: center;
     text-decoration: none;
-    border-radius: 4px;
+    border-radius: var(--raio-ficha);
   }
 
   .navegacao ul {
@@ -147,7 +146,7 @@
     align-items: center;
     min-height: 44px;
     padding: 0.35rem 0.6rem;
-    border-radius: 4px;
+    border-radius: var(--raio-ficha);
     color: var(--tinta);
     font-size: var(--texto-s);
     font-weight: 700;
@@ -181,7 +180,7 @@
     width: 44px;
     height: 44px;
     border: 1.5px solid var(--linha-forte);
-    border-radius: 50%;
+    border-radius: var(--raio-circulo);
     background: transparent;
     color: var(--tinta);
     cursor: pointer;
@@ -218,7 +217,7 @@
     align-items: center;
     min-height: 48px;
     padding: 0.4rem 0.6rem;
-    border-radius: 4px;
+    border-radius: var(--raio-ficha);
     color: var(--tinta);
     font-weight: 700;
     text-decoration: none;
@@ -250,7 +249,7 @@
 
   @media (max-width: 380px) {
     .cabecalho :global(.marca__texto) {
-      font-size: 1.15rem;
+      font-size: var(--texto-destaque);
     }
   }
 </style>
