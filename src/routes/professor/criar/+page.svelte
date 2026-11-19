@@ -1,6 +1,11 @@
 <script lang="ts">
   import { resolve } from '$app/paths';
-  import { PALAVRAS, PALAVRAS_NUCLEARES, obterPalavra } from '#lib/data/palavras';
+  import {
+    PALAVRAS,
+    PALAVRAS_NUCLEARES,
+    obterPalavra,
+    palavraSegueSequencia
+  } from '#lib/data/palavras';
   import { MODELO_IA, PROMPT_VALIDACAO } from '#lib/data/prompts';
   import {
     FASES,
@@ -16,9 +21,11 @@
   import {
     apoiosSugeridos,
     criarRecurso,
-    numeroOpcoesSugerido
+    numeroOpcoesSugerido,
+    rimasDe
   } from '#lib/utils/gerador';
-  import { comValidacao, validarRecurso } from '#lib/utils/validacao';
+  import { proximidade } from '#lib/utils/similaridade';
+  import { comValidacao, recursoValido, validarRecurso } from '#lib/utils/validacao';
   import CamposRecurso from '#lib/components/CamposRecurso.svelte';
   import Icone from '#lib/components/Icone.svelte';
   import ListaValidacao from '#lib/components/ListaValidacao.svelte';
@@ -42,8 +49,31 @@
   const crianca = $derived(dados.crianca(criancaId) ?? dados.criancas[0]);
   const palavra = $derived(obterPalavra(palavraId));
   const validacao = $derived(proposta ? validarRecurso(proposta) : []);
-  const valido = $derived(validacao.length > 0 && validacao.every((item) => item.ok));
+  const valido = $derived(proposta ? recursoValido(comValidacao(proposta)) : false);
   const falhas = $derived(validacao.filter((item) => !item.ok).length);
+
+  // A sequência do método é respeitada como aviso à professora, não como bloqueio:
+  // ela decide quando uma palavra fora de ordem é pedagogicamente adequada.
+  const trabalhadas = $derived([
+    ...new Set(dados.recursos.filter((r) => r.criancaId === criancaId).map((r) => r.palavraId))
+  ]);
+  const naSequencia = $derived(palavraSegueSequencia(palavraId, trabalhadas));
+
+  // Algumas palavras não têm rimas nem parónimos no léxico atual: não devem
+  // gerar propostas que falhariam as verificações automáticas.
+  const podeGerar = $derived(
+    PALAVRAS.filter((p) => {
+      if (tipo === 'rima') return rimasDe(p.id).length >= 1;
+      if (tipo === 'ditado') return PALAVRAS.some((q) => q.id !== p.id && proximidade(p, q) >= 3);
+      return true;
+    })
+  );
+
+  $effect(() => {
+    if (!podeGerar.some((p) => p.id === palavraId)) {
+      palavraId = podeGerar[0]?.id ?? palavraId;
+    }
+  });
 
   function escolherCrianca(id: string) {
     criancaId = id;
@@ -178,12 +208,12 @@
           <label for="palavra">Palavra</label>
           <select id="palavra" bind:value={palavraId}>
             <optgroup label="As 28 palavras">
-              {#each PALAVRAS_NUCLEARES as p (p.id)}
+              {#each PALAVRAS_NUCLEARES.filter((p) => podeGerar.some((q) => q.id === p.id)) as p (p.id)}
                 <option value={p.id}>{String(p.ordem).padStart(2, '0')} · {p.palavra}</option>
               {/each}
             </optgroup>
             <optgroup label="Palavras derivadas">
-              {#each derivadas as p (p.id)}
+              {#each derivadas.filter((p) => podeGerar.some((q) => q.id === p.id)) as p (p.id)}
                 <option value={p.id}>{p.palavra}</option>
               {/each}
             </optgroup>
@@ -191,6 +221,12 @@
           <p class="campo__ajuda">
             {palavra.silabas.join(' · ')} · «{palavra.frase}»
           </p>
+          {#if !naSequencia}
+            <p class="aviso aviso--info">
+              <Icone nome="livro" tamanho={16} />
+              <span>Esta palavra ainda não segue a sequência das palavras já trabalhadas por {crianca?.nome ?? 'esta criança'}. A decisão é tua: podes avançar se fizer sentido.</span>
+            </p>
+          {/if}
         </div>
 
         <div class="grelha">

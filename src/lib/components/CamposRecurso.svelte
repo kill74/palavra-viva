@@ -6,11 +6,7 @@
 
   let { recurso = $bindable() }: { recurso: Recurso } = $props();
 
-  let silabasTexto = $state(recurso.silabas.join('-'));
-  let opcoesTexto = $state(textoDasOpcoes(recurso));
-
-  const reconhecida = $derived(porTexto(recurso.palavra));
-
+  // Declarado antes dos estados: textoDasOpcoes() é chamada na inicialização.
   const tiposPalavra = ['reconhecimento', 'rima', 'ditado'];
   const tiposSilaba = ['silabas', 'ordem'];
 
@@ -18,6 +14,11 @@
     if (tiposPalavra.includes(r.tipo) || tiposSilaba.includes(r.tipo)) return r.opcoes.join(', ');
     return r.opcoes.map((id) => porId.get(id)?.palavra ?? id).join(', ');
   }
+
+  let silabasTexto = $state(recurso.silabas.join('-'));
+  let opcoesTexto = $state(textoDasOpcoes(recurso));
+
+  const reconhecida = $derived(porTexto(recurso.palavra));
 
   function mudarPalavra(valor: string) {
     const anterior = porId.get(recurso.palavraId);
@@ -54,8 +55,23 @@
       if (!recurso.opcoes.includes(encontrada.palavra)) {
         recurso.opcoes = [encontrada.palavra, ...recurso.opcoes].slice(0, 4);
       }
-    } else if (recurso.tipo === 'ordem') {
+    } else if (tiposSilaba.includes(recurso.tipo)) {
+      // Sílabas e ordem guardam a palavra como resposta e as sílabas extra em opções.
+      // Ao trocar a palavra, a resposta e as extra têm de acompanhar a nova forma.
       recurso.respostaCorreta = encontrada.palavra;
+      const usadas = new Set(encontrada.silabas.map((s) => s.toLocaleLowerCase('pt-PT')));
+      const quantidade = Math.min(4, Math.max(2, recurso.opcoes.length));
+      const extras = recurso.opcoes.filter((o) => !usadas.has(o.toLocaleLowerCase('pt-PT')));
+      const pool = PALAVRAS.flatMap((p) => p.silabas).filter(
+        (s) => !usadas.has(s.toLocaleLowerCase('pt-PT'))
+      );
+      for (const silaba of pool) {
+        if (extras.length >= quantidade) break;
+        if (!extras.some((o) => o.toLocaleLowerCase('pt-PT') === silaba.toLocaleLowerCase('pt-PT'))) {
+          extras.push(silaba);
+        }
+      }
+      recurso.opcoes = extras.slice(0, quantidade);
     } else if (recurso.tipo === 'associacao' || recurso.tipo === 'frase') {
       recurso.opcoes = recurso.opcoes.map((id) =>
         anterior && id === anterior.id ? encontrada.id : id

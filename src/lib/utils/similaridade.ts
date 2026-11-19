@@ -12,7 +12,12 @@ export function ultimaSilaba(p: PalavraCatalogo): string {
 }
 
 export function ultimaVogal(p: PalavraCatalogo): string {
-  const vogais = p.palavra.toLocaleLowerCase('pt-PT').match(/[aeiouáéíóúãõâêôà]/g);
+  // Sem acentos: «mamã» e «menina» partilham a vogal final /a/ para rima assonante.
+  const semAcentos = p.palavra
+    .toLocaleLowerCase('pt-PT')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '');
+  const vogais = semAcentos.match(/[aeiou]/g);
   return vogais ? vogais[vogais.length - 1] : '';
 }
 

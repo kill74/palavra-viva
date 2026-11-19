@@ -1,0 +1,50 @@
+{
+  "data": "2026-11-19T22:43:58.178Z",
+  "base": "http://127.0.0.1:4173",
+  "total": 10,
+  "passou": 10,
+  "falhou": 0,
+  "casos": [
+    {
+      "caso": "Alternância e persistência do tema",
+      "resultado": "passou"
+    },
+    {
+      "caso": "Menu móvel: abrir, foco e fechar com Escape",
+      "resultado": "passou"
+    },
+    {
+      "caso": "Escolha de criança e entrada na sessão",
+      "resultado": "passou"
+    },
+    {
+      "caso": "Resposta certa, errada, nova tentativa, ajuda e conclusão",
+      "resultado": "passou"
+    },
+    {
+      "caso": "Sessão gravada e visível nos registos",
+      "resultado": "passou"
+    },
+    {
+      "caso": "Biblioteca: aprovar e devolver um rascunho",
+      "resultado": "passou"
+    },
+    {
+      "caso": "Estúdio: gerar, validar e aprovar um recurso",
+      "resultado": "passou"
+    },
+    {
+      "caso": "Exportação CSV",
+      "resultado": "passou"
+    },
+    {
+      "caso": "Página 404",
+      "resultado": "passou"
+    },
+    {
+      "caso": "Sem erros na consola",
+      "resultado": "passou"
+    }
+  ],
+  "errosConsola": []
+}

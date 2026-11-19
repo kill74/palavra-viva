@@ -1,0 +1,168 @@
+{
+  "data": "2026-11-19T22:46:57.155Z",
+  "ferramenta": "Lighthouse 13.6.0",
+  "totalPontuacoes": 64,
+  "minimo": 94,
+  "linhas": [
+    {
+      "rota": "/",
+      "perfil": "mobile",
+      "performance": 100,
+      "accessibility": 100,
+      "best-practices": 100,
+      "seo": 100,
+      "lcp": "1.5 s",
+      "cls": "0.016"
+    },
+    {
+      "rota": "/",
+      "perfil": "desktop",
+      "performance": 100,
+      "accessibility": 100,
+      "best-practices": 100,
+      "seo": 100,
+      "lcp": "0.4 s",
+      "cls": "0.001"
+    },
+    {
+      "rota": "/metodo/",
+      "perfil": "mobile",
+      "performance": 100,
+      "accessibility": 100,
+      "best-practices": 100,
+      "seo": 100,
+      "lcp": "1.5 s",
+      "cls": "0"
+    },
+    {
+      "rota": "/metodo/",
+      "perfil": "desktop",
+      "performance": 100,
+      "accessibility": 100,
+      "best-practices": 100,
+      "seo": 100,
+      "lcp": "0.4 s",
+      "cls": "0"
+    },
+    {
+      "rota": "/professor/",
+      "perfil": "mobile",
+      "performance": 100,
+      "accessibility": 100,
+      "best-practices": 100,
+      "seo": 100,
+      "lcp": "1.1 s",
+      "cls": "0"
+    },
+    {
+      "rota": "/professor/",
+      "perfil": "desktop",
+      "performance": 98,
+      "accessibility": 100,
+      "best-practices": 100,
+      "seo": 100,
+      "lcp": "0.3 s",
+      "cls": "0.095"
+    },
+    {
+      "rota": "/professor/criar/",
+      "perfil": "mobile",
+      "performance": 100,
+      "accessibility": 100,
+      "best-practices": 100,
+      "seo": 100,
+      "lcp": "1.4 s",
+      "cls": "0.001"
+    },
+    {
+      "rota": "/professor/criar/",
+      "perfil": "desktop",
+      "performance": 100,
+      "accessibility": 100,
+      "best-practices": 100,
+      "seo": 100,
+      "lcp": "0.3 s",
+      "cls": "0"
+    },
+    {
+      "rota": "/professor/biblioteca/",
+      "perfil": "mobile",
+      "performance": 100,
+      "accessibility": 100,
+      "best-practices": 100,
+      "seo": 100,
+      "lcp": "1.4 s",
+      "cls": "0"
+    },
+    {
+      "rota": "/professor/biblioteca/",
+      "perfil": "desktop",
+      "performance": 100,
+      "accessibility": 100,
+      "best-practices": 100,
+      "seo": 100,
+      "lcp": "0.3 s",
+      "cls": "0.001"
+    },
+    {
+      "rota": "/professor/sessoes/",
+      "perfil": "mobile",
+      "performance": 100,
+      "accessibility": 100,
+      "best-practices": 100,
+      "seo": 100,
+      "lcp": "1.2 s",
+      "cls": "0"
+    },
+    {
+      "rota": "/professor/sessoes/",
+      "perfil": "desktop",
+      "performance": 97,
+      "accessibility": 100,
+      "best-practices": 100,
+      "seo": 100,
+      "lcp": "0.3 s",
+      "cls": "0.1"
+    },
+    {
+      "rota": "/crianca/",
+      "perfil": "mobile",
+      "performance": 100,
+      "accessibility": 100,
+      "best-practices": 100,
+      "seo": 100,
+      "lcp": "1.1 s",
+      "cls": "0"
+    },
+    {
+      "rota": "/crianca/",
+      "perfil": "desktop",
+      "performance": 100,
+      "accessibility": 100,
+      "best-practices": 100,
+      "seo": 100,
+      "lcp": "0.3 s",
+      "cls": "0.001"
+    },
+    {
+      "rota": "/crianca/sessao/?crianca=alice",
+      "perfil": "mobile",
+      "performance": 94,
+      "accessibility": 100,
+      "best-practices": 100,
+      "seo": 100,
+      "lcp": "3.0 s",
+      "cls": "0"
+    },
+    {
+      "rota": "/crianca/sessao/?crianca=alice",
+      "perfil": "desktop",
+      "performance": 100,
+      "accessibility": 100,
+      "best-practices": 100,
+      "seo": 100,
+      "lcp": "0.6 s",
+      "cls": "0"
+    }
+  ]
+}

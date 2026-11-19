@@ -73,6 +73,31 @@
   let escolhidas = $state<string[]>([]);
   let erro = $state(false);
   let sucesso = $state(false);
+  let arrastando = $state<string | null>(null);
+
+  function comecarArrasto(evento: DragEvent, chip: Chip) {
+    if (usada(chip.id) || completo || sucesso) {
+      evento.preventDefault();
+      return;
+    }
+    arrastando = chip.id;
+    evento.dataTransfer?.setData('text/plain', chip.id);
+    if (evento.dataTransfer) evento.dataTransfer.effectAllowed = 'move';
+  }
+
+  function permitirSoltar(evento: DragEvent) {
+    if (!arrastando) return;
+    evento.preventDefault();
+    if (evento.dataTransfer) evento.dataTransfer.dropEffect = 'move';
+  }
+
+  function soltar(evento: DragEvent) {
+    evento.preventDefault();
+    const id = evento.dataTransfer?.getData('text/plain') || arrastando;
+    arrastando = null;
+    const chip = chips.find((c) => c.id === id);
+    if (chip) adicionar(chip);
+  }
 
   const palavra = $derived(obterPalavra(alvoId));
   const completo = $derived(escolhidas.length === palavra.silabas.length);
@@ -157,9 +182,16 @@
     </div>
 
     <div class="jogo">
-      <p class="instrucao">Toca nas sílabas por ordem. Cada toque deixa ouvir a parte.</p>
+      <p class="instrucao">Arrasta ou toca nas sílabas por ordem. Cada sílaba deixa ouvir a parte.</p>
 
-      <div class="slots" role="group" aria-label="Sílabas escolhidas">
+      <div
+        class="slots"
+        class:arrastavel={Boolean(arrastando)}
+        role="group"
+        aria-label="Sílabas escolhidas"
+        ondragover={permitirSoltar}
+        ondrop={soltar}
+      >
         {#each palavra.silabas as _, indice}
           {#if escolhidas[indice]}
             <button
@@ -183,8 +215,11 @@
             type="button"
             class="chip"
             disabled={usada(chip.id) || completo || sucesso}
-            aria-label="Sílaba {chip.texto}"
+            draggable={!usada(chip.id) && !completo && !sucesso}
+            aria-label="Sílaba {chip.texto}. Arrasta para os espaços ou toca para colocar."
             onclick={() => adicionar(chip)}
+            ondragstart={(evento) => comecarArrasto(evento, chip)}
+            ondragend={() => (arrastando = null)}
           >
             {chip.texto}
           </button>
@@ -312,6 +347,14 @@
     flex-wrap: wrap;
     gap: 0.45rem;
     min-height: 3.6rem;
+    border-radius: var(--raio-ficha);
+    transition: background-color var(--transicao), outline-color var(--transicao);
+  }
+
+  .slots.arrastavel {
+    outline: 2px dashed var(--cobalto);
+    outline-offset: 4px;
+    background: var(--cobalto-fundo);
   }
 
   .slot {

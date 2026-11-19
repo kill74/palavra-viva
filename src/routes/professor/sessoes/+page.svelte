@@ -6,6 +6,8 @@
   import { dados } from '#lib/stores/dados.svelte';
   import { parametroUrl } from '#lib/utils/consulta';
   import { csv, dataCurta, dataLonga, descarregar, duracao, hora, idCurto, plural } from '#lib/utils/formato';
+  import { recursoEstatico } from '#lib/utils/caminho';
+  import BotaoAudio from '#lib/components/BotaoAudio.svelte';
   import EstadoVazio from '#lib/components/EstadoVazio.svelte';
   import Icone from '#lib/components/Icone.svelte';
 
@@ -334,6 +336,13 @@
         A aplicação não substitui a cópia à mão. Usa a ficha impressa da biblioteca e registra aqui
         quando a criança concluiu a tarefa.
       </p>
+      <BotaoAudio
+        src={recursoEstatico('audio/instrucoes/copia.mp3')}
+        rotulo="Ouvir a instrução da cópia"
+        rotuloAria="Ouvir a instrução da cópia em papel"
+        variante="fantasma"
+        tamanho="pequeno"
+      />
 
       <form class="escrita__form" onsubmit={registarEscrita}>
         <div class="campo">

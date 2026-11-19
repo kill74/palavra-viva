@@ -35,7 +35,7 @@
           type="button"
           class="palavra superficie-ficha"
           class:trabalhada={trabalhada(palavra) > 0}
-          aria-label="Abrir detalhes de {palavra.palavra}{trabalhada(palavra) > 0 ? ', já trabalhada' : ''}"
+          aria-label="Abrir detalhes da palavra {String(palavra.ordem).padStart(2, '0')} {palavra.palavra}{trabalhada(palavra) > 0 ? ', já trabalhada' : ''}"
           onclick={() => abrir(palavra)}
         >
           <span class="ordem" aria-hidden="true">{String(palavra.ordem).padStart(2, '0')}</span>

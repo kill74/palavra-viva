@@ -80,7 +80,9 @@
 
     <ul class="criancas" aria-label="Escolher criança">
       {#each dados.criancas as crianca (crianca.id)}
-        {@const aprovadas = dados.recursosDaCrianca(crianca.id).length}
+        {@const recursos = dados.recursosDaCrianca(crianca.id)}
+        {@const aprovadas = recursos.length}
+        {@const proxima = recursos[0]}
         <li>
           <button
             type="button"
@@ -95,6 +97,7 @@
             <span class="crianca__meta">{crianca.idade} anos · fase {crianca.fase}</span>
             <span class="crianca__atividades">
               {aprovadas} {plural(aprovadas, 'atividade pronta', 'atividades prontas')}
+              {#if proxima}· {NOMES_TIPO[proxima.tipo]}{/if}
             </span>
             {#if selecionadaId === crianca.id}
               <span class="crianca__check"><Icone nome="check-circulo" tamanho={20} /></span>
