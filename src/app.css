@@ -461,8 +461,22 @@ html[data-tema='escuro'] .botao--primario {
   box-shadow: 3px 3px 0 var(--tinta-ficha);
 }
 
+/* Única ação destrutiva do projeto: sai do grupo de ações normais. */
+.botao--perigo {
+  border-color: var(--erro);
+  background: transparent;
+  color: var(--erro);
+  box-shadow: none;
+}
+
+.botao--perigo:hover {
+  border-color: var(--coral-texto);
+  background: var(--coral-fundo);
+  color: var(--coral-texto);
+}
+
 .botao--pequeno {
-  min-height: 38px;
+  min-height: 40px;
   padding: 0.45rem 0.75rem;
   font-size: var(--texto-s);
   box-shadow: 2px 2px 0 var(--tinta-ficha);

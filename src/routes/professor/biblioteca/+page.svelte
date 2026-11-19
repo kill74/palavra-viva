@@ -335,7 +335,7 @@
               <button type="button" class="botao botao--secundario botao--pequeno" onclick={imprimir}>
                 <Icone nome="impressora" tamanho={16} /> Imprimir
               </button>
-              <button type="button" class="botao botao--fantasma botao--pequeno" onclick={eliminar}>
+              <button type="button" class="botao botao--perigo botao--pequeno" onclick={eliminar}>
                 Eliminar
               </button>
             </div>

@@ -118,7 +118,7 @@
   }
 
   .audio__botao.pequeno {
-    min-height: 36px;
+    min-height: 40px;
     padding: 0.35rem 0.55rem;
     border-width: 1.5px;
     font-size: var(--texto-xs);

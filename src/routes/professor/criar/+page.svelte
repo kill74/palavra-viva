@@ -444,7 +444,7 @@
 
   input[type='range'] {
     width: 100%;
-    min-height: 34px;
+    min-height: 40px;
     accent-color: var(--cobalto);
   }
 

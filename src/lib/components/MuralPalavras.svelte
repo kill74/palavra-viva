@@ -230,7 +230,7 @@
   }
 
   .fechar {
-    min-height: 38px;
+    min-height: 40px;
     padding: 0.35rem 0.7rem;
     border: 1.5px solid var(--tinta-ficha);
     border-radius: var(--raio-pill);
