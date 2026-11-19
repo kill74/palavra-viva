@@ -398,7 +398,7 @@
 
 {#if selecionado}
   <section class="impressao" aria-hidden="true">
-    <h1>Palavra Viva · ficha para copiar</h1>
+    <h2>Palavra Viva · ficha para copiar</h2>
     <p class="impressao__meta">{NOMES_FASE[selecionado.fase]} · {dados.crianca(selecionado.criancaId)?.nome}</p>
     <p class="impressao__palavra">{selecionado.palavra}</p>
     <p class="impressao__silabas">{selecionado.silabas.join(' · ')}</p>
@@ -745,7 +745,7 @@
       background: var(--impressao-papel);
     }
 
-    .impressao h1 {
+    .impressao h2 {
       font-size: var(--texto-dado);
     }
 
