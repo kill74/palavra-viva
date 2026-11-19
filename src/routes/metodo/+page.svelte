@@ -489,7 +489,6 @@
     background: var(--papel-ficha);
     color: var(--tinta-ficha);
     box-shadow: 9px 9px 0 var(--sombra-ficha);
-    transform: rotate(1.4deg);
   }
 
   .metodo-hero__ficha .ficha__topo {
@@ -1058,7 +1057,6 @@
     background: var(--papel-ficha);
     color: var(--tinta-ficha);
     box-shadow: 6px 6px 0 var(--sombra-ficha);
-    transform: rotate(-0.7deg);
   }
 
   .ficha-escrita__topo.ficha-escrita__topo {

@@ -64,6 +64,7 @@
   --sombra-ficha: #1b2a4a;
   --sombra-leve: rgba(15, 25, 48, 0.35);
   --veu-imagem: rgba(10, 18, 34, 0.62);
+  --sombra-modal: rgba(0, 0, 0, 0.35);
 
   /* Texto sobre superfícies de acento e variações de cobalto por estado. */
   --sobre-acento: #ffffff;
@@ -95,7 +96,6 @@
   --esp-8: 4rem;
   --esp-9: 6rem;
   --largura: 74rem;
-  --medida: 64ch;
   --raio-ficha: 6px;
   --raio-botao: 8px;
   --raio-pill: 999px;
@@ -143,7 +143,6 @@ html[data-tema='escuro'] {
   --sucesso: #8bdbbd;
   --foco: #ffd86b;
   --sombra-ficha: #050b16;
-  --sombra-suave: rgba(0, 0, 0, 0.35);
   --rodape-fundo: #070d19;
 }
 
@@ -281,11 +280,6 @@ main:focus {
   margin-inline: auto;
 }
 
-.container--estreito {
-  width: min(100% - 2rem, 52rem);
-  margin-inline: auto;
-}
-
 .secao {
   padding-block: clamp(3.5rem, 8vw, 7rem);
 }
@@ -293,10 +287,6 @@ main:focus {
 .secao--alt {
   background: var(--papel-alto);
   border-block: 1.5px solid var(--linha);
-}
-
-.secao--aperto {
-  padding-block: clamp(2.5rem, 5vw, 4.5rem);
 }
 
 .secao__cabeca {
@@ -314,42 +304,11 @@ main:focus {
   line-height: 1.45;
 }
 
-.pilha {
-  display: flex;
-  flex-direction: column;
-  gap: var(--esp-4);
-}
-
-.pilha--grande {
-  gap: var(--esp-6);
-}
-
 .linha {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: var(--esp-3);
-}
-
-.linha--separada {
-  justify-content: space-between;
-}
-
-.medida {
-  max-width: var(--medida);
-}
-
-.medida--estreita {
-  max-width: 50ch;
-}
-
-.centrado {
-  text-align: center;
-}
-
-.centrado .medida,
-.centrado .medida--estreita {
-  margin-inline: auto;
 }
 
 .visualmente-oculto {
@@ -715,20 +674,6 @@ table.tabela {
   text-align: right;
 }
 
-.lista-limpa {
-  display: flex;
-  flex-direction: column;
-  gap: 0.55rem;
-  margin: 0;
-}
-
-.nota-rodape {
-  margin: 1.2rem 0 0;
-  color: var(--tinta-fraca);
-  font-size: var(--texto-s);
-  line-height: 1.45;
-}
-
 /* Fichas, etiquetas e avisos ------------------------------------------------ */
 
 .ficha {
@@ -764,10 +709,6 @@ table.tabela {
 
 .ficha--sombra {
   box-shadow: 7px 7px 0 var(--sombra-ficha);
-}
-
-.ficha--sombra-suave {
-  box-shadow: 4px 4px 0 color-mix(in srgb, var(--cobalto) 28%, transparent);
 }
 
 .ficha__topo {
@@ -903,58 +844,6 @@ table.tabela {
   line-height: 1.4;
 }
 
-.campo__erro {
-  color: var(--erro);
-  font-size: var(--texto-s);
-  font-weight: 700;
-}
-
-.lista-opcoes {
-  display: grid;
-  gap: var(--esp-2);
-}
-
-.opcao-radio {
-  display: flex;
-  gap: var(--esp-3);
-  align-items: flex-start;
-  padding: 0.75rem 0.85rem;
-  border: 2px solid var(--linha);
-  border-radius: var(--raio-ficha);
-  background: var(--papel-alto);
-  cursor: pointer;
-  transition: border-color var(--transicao), background-color var(--transicao);
-}
-
-.opcao-radio:hover {
-  border-color: var(--linha-forte);
-}
-
-.opcao-radio:has(input:checked) {
-  border-color: var(--cobalto);
-  background: var(--cobalto-fundo);
-}
-
-.opcao-radio input {
-  width: 20px;
-  height: 20px;
-  margin-top: 0.15rem;
-  accent-color: var(--cobalto);
-  flex: none;
-}
-
-.opcao-radio strong {
-  display: block;
-  font-size: var(--texto-s);
-}
-
-.opcao-radio span {
-  display: block;
-  color: var(--tinta-suave);
-  font-size: var(--texto-s);
-  line-height: 1.35;
-}
-
 /* Métricas e barras --------------------------------------------------------- */
 
 .numero {
@@ -1010,15 +899,6 @@ table.tabela {
   40% { transform: translateX(5px); }
   60% { transform: translateX(-4px); }
   80% { transform: translateX(3px); }
-}
-
-@keyframes aparecer {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes girar {
-  to { transform: rotate(360deg); }
 }
 
 @keyframes encaixar {
@@ -1094,17 +974,12 @@ table.tabela {
 }
 
 @media (max-width: 560px) {
-  .container,
-  .container--estreito {
+  .container {
     width: min(100% - 1.25rem, var(--largura));
   }
 
   .botao {
     min-height: 48px;
-  }
-
-  .linha--separada {
-    align-items: stretch;
   }
 }
 

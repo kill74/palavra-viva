@@ -204,12 +204,11 @@
     border-radius: var(--raio-botao);
     background: var(--papel-ficha);
     color: var(--tinta-ficha);
-    box-shadow: 12px 12px 0 rgba(0, 0, 0, 0.35);
+    box-shadow: 12px 12px 0 var(--sombra-modal);
   }
 
   .detalhe::backdrop {
     background: var(--veu-imagem);
-    backdrop-filter: blur(3px);
   }
 
   .detalhe__topo {

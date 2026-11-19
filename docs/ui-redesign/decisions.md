@@ -220,4 +220,27 @@ para ação, marcadores para estado, nada de cor por decoração.
 `+error.svelte`, `metodo/+page.svelte`, `professor/{,criar,biblioteca,sessoes}/+page.svelte`,
 `crianca/{,sessao}/+page.svelte`.
 
-**Docs:** este ficheiro, `before/` (4 capturas existentes), `after/`.
+**Docs:** este ficheiro, `before/` (4 capturas existentes), `after/` (10 rotas).
+
+---
+
+## 7. Resultado da verificação final
+
+- `svelte-check`: 0 erros, 0 avisos. Build estático: OK.
+- Nenhum valor literal de cor, tamanho de fonte ou raio resta em componentes.
+- Nenhum `!important` em componentes; os que restam em `app.css` são os
+  legítimos (`.visualmente-oculto`, `[hidden]`, `prefers-reduced-motion`, impressão).
+- Nenhum CSS, keyframe, token órfão ou componente morto detetado (a escala
+  `--esp-1 … --esp-9` mantém-se completa por desenho do sistema).
+- Auditoria automatizada nas 9 rotas × 2 temas: um `h1` por página, nomes
+  acessíveis em todos os controlos, `alt` em todas as imagens, `lang="pt-PT"`.
+  Corrigido o `h1` duplicado da ficha de impressão.
+- Navegação por teclado verificada: foco visível em todos os primeiros 8 tab
+  stops das páginas principais.
+- Lista de sinais de IA revista uma última vez: sem gradientes, sem blur
+  decorativo, sem faisca/✨, sem setas decorativas em botões, sem animação
+  de entrada generalizada, sem copy de marketing.
+
+**Ficou por decidir:** o vocabulário «prompt» mantém-se na interface da
+professora. É jargão, mas é o nome do artefacto que precisa de ser revisto e
+substituí-lo por «pedido» colidiria com o «pedido» de contexto já existente.
