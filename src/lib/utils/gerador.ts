@@ -2,6 +2,9 @@ import { PALAVRAS, obterPalavra } from '#lib/data/palavras';
 import { MODELO_IA, construirPrompt } from '#lib/data/prompts';
 import type { Apoios, Crianca, Fase, Recurso, TipoAtividade } from '#lib/data/tipos';
 import { comValidacao } from './validacao';
+import { proximidade, rimasDe } from './similaridade';
+
+export { rimasDe } from './similaridade';
 
 export type PedidoCriacao = {
   crianca: Crianca;
@@ -42,14 +45,13 @@ function baralhar<T>(itens: T[], seed: string): T[] {
   return copia;
 }
 
-function proximidade(a: (typeof PALAVRAS)[number], b: (typeof PALAVRAS)[number]): number {
-  let pontos = 0;
-  if (a.silabas[0] === b.silabas[0]) pontos += 5;
-  if (a.silabas[a.silabas.length - 1] === b.silabas[b.silabas.length - 1]) pontos += 3;
-  if (a.palavra.length === b.palavra.length) pontos += 2;
-  if (Math.abs(a.palavra.length - b.palavra.length) <= 1) pontos += 1;
-  if (a.palavra[0] === b.palavra[0]) pontos += 2;
-  return pontos;
+/** Distratores com proximidade fónica garantida para ditados. */
+function distratoresFonicos(palavraId: string, quantidade: number, seed: string) {
+  const alvo = obterPalavra(palavraId);
+  return PALAVRAS.filter((p) => p.id !== alvo.id && proximidade(alvo, p) >= 3)
+    .sort((a, b) => proximidade(alvo, b) - proximidade(alvo, a) || hash(`${seed}-${a.id}`) - hash(`${seed}-${b.id}`))
+    .slice(0, Math.max(quantidade, 3))
+    .map((p) => p.palavra);
 }
 
 function distratoresDePalavra(palavraId: string, quantidade: number, seed: string) {
@@ -102,14 +104,34 @@ export function criarRecurso(pedido: PedidoCriacao): Recurso {
   const quantidade = Math.min(4, Math.max(2, pedido.numeroOpcoes));
 
   let opcoes: string[] = [];
+  let respostaCorreta: string | undefined;
+
   if (pedido.tipo === 'reconhecimento') {
     const extras = distratoresDePalavra(pedido.palavraId, quantidade - 1, seed);
     opcoes = baralhar([palavra.palavra, ...extras.map((p) => p.palavra)], seed);
+    respostaCorreta = palavra.palavra;
   } else if (pedido.tipo === 'associacao' || pedido.tipo === 'frase') {
     const extras = distratoresDeImagem(pedido.palavraId, quantidade - 1, seed);
     opcoes = baralhar([palavra.id, ...extras.map((p) => p.id)], seed);
-  } else if (pedido.tipo === 'silabas') {
+  } else if (pedido.tipo === 'silabas' || pedido.tipo === 'ordem') {
     opcoes = distratoresDeSilaba(palavra.silabas, Math.max(1, quantidade - 1), seed);
+    respostaCorreta = palavra.palavra;
+  } else if (pedido.tipo === 'ditado') {
+    const extras = distratoresFonicos(pedido.palavraId, quantidade - 1, seed);
+    opcoes = baralhar([palavra.palavra, ...extras], seed);
+    respostaCorreta = palavra.palavra;
+  } else if (pedido.tipo === 'rima') {
+    const candidatas = baralhar(rimasDe(pedido.palavraId), seed);
+    const resposta = candidatas[0] ?? distratoresDePalavra(pedido.palavraId, 1, seed)[0];
+    const extras = distratoresDePalavra(
+      resposta?.id ?? pedido.palavraId,
+      quantidade - 1,
+      `${seed}-rima`
+    )
+      .map((p) => p.palavra)
+      .filter((p) => p !== resposta?.palavra && p !== palavra.palavra);
+    opcoes = baralhar([resposta?.palavra ?? palavra.palavra, ...extras], `${seed}-rima`);
+    respostaCorreta = resposta?.palavra;
   }
 
   const prompt = construirPrompt({
@@ -134,6 +156,7 @@ export function criarRecurso(pedido: PedidoCriacao): Recurso {
     tipo: pedido.tipo,
     fase: pedido.fase,
     opcoes,
+    respostaCorreta,
     apoios: { ...pedido.apoios },
     estado: 'rascunho',
     origem: 'ia-previa',
@@ -158,6 +181,12 @@ export function feedbackCerto(tipo: TipoAtividade, palavra: string, silabas: str
       return `Certo. ${silabas.join(' + ')} = ${palavra}.`;
     case 'frase':
       return `Certo. A frase fala de «${palavra}».`;
+    case 'rima':
+      return `Certo. Termina como «${palavra}».`;
+    case 'ditado':
+      return `Certo. Ouviste «${palavra}» e escolheste bem.`;
+    case 'ordem':
+      return `Certo. ${silabas.join(' + ')} = ${palavra}.`;
     default:
       return `Já conheces «${palavra}».`;
   }
@@ -173,6 +202,12 @@ export function feedbackErrado(tipo: TipoAtividade, palavra: string, silabas: st
       return `Ainda não. A palavra começa por «${silabas[0]}». Tenta outra ordem.`;
     case 'frase':
       return `Ainda não. Procura «${palavra}» na frase e escolhe a imagem que lhe corresponde.`;
+    case 'rima':
+      return `Ainda não. Ouve outra vez: a palavra termina como «${palavra}». Procura uma palavra com o mesmo fim.`;
+    case 'ditado':
+      return `Ainda não. Ouve outra vez com atenção e compara o som com cada palavra escrita.`;
+    case 'ordem':
+      return `Ainda não. A palavra começa por «${silabas[0]}». Tenta outra ordem.`;
     default:
       return 'Explora a palavra com calma. Podes ouvir outra vez.';
   }

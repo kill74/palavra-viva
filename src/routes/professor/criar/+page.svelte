@@ -4,6 +4,7 @@
   import { MODELO_IA, PROMPT_VALIDACAO } from '#lib/data/prompts';
   import {
     FASES,
+    GRUPOS_TIPO,
     NOMES_FASE,
     NOMES_TIPO,
     type Apoios,
@@ -23,7 +24,6 @@
   import ListaValidacao from '#lib/components/ListaValidacao.svelte';
   import PreviaRecurso from '#lib/components/PreviaRecurso.svelte';
 
-  const TIPOS: TipoAtividade[] = ['cartao', 'reconhecimento', 'associacao', 'silabas', 'frase'];
   const derivadas = PALAVRAS.filter((p) => !p.nuclear);
 
   let criancaId = $state(dados.criancas[0]?.id ?? 'alice');
@@ -206,8 +206,12 @@
           <div class="campo">
             <label for="tipo">Tipo de atividade</label>
             <select id="tipo" bind:value={tipo}>
-              {#each TIPOS as t (t)}
-                <option value={t}>{NOMES_TIPO[t]}</option>
+              {#each GRUPOS_TIPO as grupo (grupo.titulo)}
+                <optgroup label={grupo.titulo}>
+                  {#each grupo.tipos as t (t)}
+                    <option value={t}>{NOMES_TIPO[t]}</option>
+                  {/each}
+                </optgroup>
               {/each}
             </select>
           </div>

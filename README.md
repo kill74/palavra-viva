@@ -121,6 +121,9 @@ Atalhos úteis:
 - `/professor/biblioteca?recurso=rec-alice-galinha` — rascunho de associação som–imagem.
 - `/professor/sessoes?crianca=alice` — registos filtrados por criança.
 - `/crianca/sessao?crianca=alice&recurso=rec-alice-menina` — abrir uma atividade concreta.
+- `/crianca/sessao?crianca=alice&recurso=rec-alice-ditado` — ditado com parónimos e áudio.
+- `/crianca/sessao?crianca=alice&recurso=rec-alice-rima` — rima sem a palavra da pergunta nas opções.
+- `/crianca/sessao?crianca=alice&recurso=rec-alice-ordem` — sílabas sem a palavra escrita.
 
 ---
 
@@ -150,6 +153,8 @@ num ecrã mobile.
 - Fila de propostas por aprovar e atalhos para criação, biblioteca e registos.
 - **Estúdio de criação** com criança, palavra, fase, tipo, número de opções e apoios.
 - Prompt completo e visível, proposta editável, feedback e seis verificações.
+- Oito formatos em três grupos (descoberta, reconhecimento e construção), com sugestões de
+  apoios e opções por fase.
 - Marcação automática de rascunho; aprovação, devolução a rascunho e eliminação.
 - Biblioteca com procura, filtros por estado e tipo, pré-visualização e exportação CSV.
 - Registo de sessões com tentativas, ajudas, áudio, dica, resposta autónoma/apoiada e tempo.
@@ -165,6 +170,9 @@ num ecrã mobile.
 - **Associação** som–imagem, com o áudio sem revelar a solução.
 - **Sílabas**: ouvir cada parte, reconstruir a palavra e ouvir o resultado.
 - **Frase curta**: ler e escolher a imagem correspondente.
+- **Rima**: ouvir a palavra e escolher outra que termina da mesma forma.
+- **Ditado com áudio**: ouvir e escolher a forma escrita entre parónimos, sem imagem.
+- **Ordem de sílabas**: reconstruir a palavra apenas com imagem e áudio, sem a ver escrita.
 - Feedback imediato, nova tentativa, ajuda registada e conclusão da sessão.
 - Distinção explícita entre resposta **autónoma** (certa à primeira) e **apoiada**.
 
@@ -185,6 +193,11 @@ num ecrã mobile.
 O protótipo usa **geração prévia**, como o enunciado permite: não há chamadas a APIs em
 tempo de execução. O pedido da professora produz um prompt completo (guardado no recurso)
 e uma proposta composta a partir do léxico validado. A decisão final é humana.
+
+A escolha de distratores usa **similaridade fónica** (`src/lib/utils/similaridade.ts`):
+parónimos com a mesma sílaba inicial ou final são preferidos a opções aleatórias, o que torna
+o reconhecimento e o ditado mais exigentes. Nas rimas, a resposta é retirada do léxico validado
+pela sílaba final e a palavra da pergunta nunca aparece entre as opções.
 
 As seis verificações automáticas estão em `src/lib/utils/validacao.ts`:
 
@@ -336,7 +349,9 @@ o projeto.
 | IA generativa para criar recursos | `src/lib/utils/gerador.ts`, `src/lib/data/prompts.ts`, `src/routes/professor/criar/+page.svelte` |
 | Input: palavra, fase, tipo e número de opções | `src/routes/professor/criar/+page.svelte`, `src/lib/components/CamposRecurso.svelte`, `src/lib/data/tipos.ts` |
 | Revisão, correção e aprovação antes da criança | `src/routes/professor/biblioteca/+page.svelte`, `src/lib/utils/validacao.ts`, `src/lib/components/ListaValidacao.svelte` |
-| Pelo menos dois tipos de recurso | `src/routes/crianca/sessao/+page.svelte` (cartão, reconhecimento, associação, sílabas, frase), `src/lib/data/tipos.ts` |
+| Pelo menos dois tipos de recurso | `src/routes/crianca/sessao/+page.svelte` (cartão, reconhecimento, associação, sílabas, frase, rima, ditado e ordem), `src/lib/data/tipos.ts` |
+| Distratores por similaridade fónica | `src/lib/utils/similaridade.ts`, `src/lib/utils/gerador.ts` (`distratoresFonicos`, `rimasDe`) |
+| Rima, ditado e ordem de sílabas | `src/lib/data/tipos.ts`, `src/lib/utils/gerador.ts`, `src/lib/utils/validacao.ts`, `src/routes/crianca/sessao/+page.svelte` |
 | Área da professora e área da criança | `src/routes/professor/`, `src/routes/crianca/`, `src/lib/components/Cabecalho.svelte` |
 | Instruções curtas e áudio repetível | `src/routes/crianca/sessao/+page.svelte`, `src/lib/components/BotaoAudio.svelte`, `src/lib/utils/audio.ts` |
 | Botões legíveis e interação simples | `src/app.css`, `src/lib/components/`, `src/routes/crianca/` |
@@ -386,6 +401,7 @@ src/
       tema.svelte.ts         tema claro/escuro persistente
     utils/
       gerador.ts             composição determinística de propostas
+      similaridade.ts        proximidade fónica, rimas e parónimos
       validacao.ts           seis regras de validação
       audio.ts               reprodução e estados de áudio
       consulta.ts            leitura de query params só no cliente
@@ -416,9 +432,9 @@ static/
   humana.
 - **LCP mobile simulado.** A pontuação de desempenho cumpre ≥95; o LCP mobile do Lighthouse
   é influenciado pela simulação Slow 4G. Em desktop é 0,5 s.
-- **Melhorias prioritárias:** testes automatizados em CI, métricas de campo, mais palavras
-  e distratores, modo offline/PWA, importação/exportação de dados da turma e um fluxo de
-  revisão com histórico de versões.
+- **Melhorias prioritárias:** testes automatizados em CI, métricas de campo, expansão do
+  léxico com novas ilustrações e áudios validados, modo offline/PWA, importação/exportação
+  de dados da turma e um fluxo de revisão com histórico de versões.
 
 ---
 
