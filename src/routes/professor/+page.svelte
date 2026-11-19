@@ -61,10 +61,10 @@
         </p>
         <div class="pagina__acao">
           <a class="botao botao--primario" href={resolve('/professor/criar')}>
-            <Icone nome="faisca" tamanho={18} /> Criar um recurso
+            <Icone nome="lapis" tamanho={18} /> Criar um recurso
           </a>
           <a class="botao botao--secundario" href={resolve('/professor/biblioteca')}>
-            <Icone nome="livro" tamanho={18} /> Abrir biblioteca
+            <Icone nome="livro" tamanho={18} /> Abrir a biblioteca
           </a>
         </div>
         <p class="pagina__nota">
@@ -146,7 +146,7 @@
           <div class="aluno__acoes">
             <a class="link" href={resolve('/professor/sessoes') + '?crianca=' + crianca.id}>Ver registos</a>
             <a class="botao botao--pequeno botao--secundario" href={resolve('/crianca/sessao') + '?crianca=' + crianca.id}>
-              Abrir sessão <Icone nome="seta" tamanho={15} />
+              Abrir sessão
             </a>
           </div>
         </article>
@@ -197,7 +197,7 @@
                   <SeloEstado estado={recurso.estado} />
                 </div>
                 <a class="botao botao--pequeno botao--secundario" href={resolve('/professor/biblioteca') + '?recurso=' + recurso.id}>
-                  Rever <Icone nome="seta" tamanho={14} />
+                  Rever
                 </a>
               </div>
             </li>
@@ -205,7 +205,7 @@
         </ul>
       {/if}
       <div class="fila-rodape">
-        <a class="link" href={resolve('/professor/biblioteca')}>Ver todos os recursos</a>
+        <a class="link" href={resolve('/professor/biblioteca')}>Abrir a biblioteca</a>
       </div>
     </div>
   </div>
@@ -216,7 +216,7 @@
     <h2 id="atalhos-titulo" class="titulo-atalhos">O que precisas agora?</h2>
     <div class="atalhos">
       <a class="atalho" href={resolve('/professor/criar')}>
-        <Icone nome="faisca" tamanho={24} />
+        <Icone nome="lapis" tamanho={24} />
         <h3>Criar com IA</h3>
         <p>Dar o contexto, receber uma proposta e revê-la antes de aprovar.</p>
       </a>

@@ -306,7 +306,7 @@
       <Icone nome="seta-esquerda" tamanho={20} /> <span>Sair</span>
     </a>
     <div class="barra__marca">
-      <Icone nome="faisca" tamanho={18} />
+      <Icone nome="livro" tamanho={18} />
       <span>Palavra Viva</span>
     </div>
     {#if crianca && !terminou}
@@ -338,7 +338,7 @@
         voltar às tuas palavras ou pedir-lhe para preparar uma.
       </p>
       <div class="linha">
-        <a class="botao botao--secundario" href={resolve('/crianca') + '?crianca=' + crianca.id}>Voltar</a>
+        <a class="botao botao--secundario" href={resolve('/crianca') + '?crianca=' + crianca.id}>Voltar às atividades</a>
         <a class="botao botao--primario" href={resolve('/professor/biblioteca')}>Ver a biblioteca</a>
       </div>
     </main>
@@ -348,8 +348,8 @@
       <div class="fim__ficha superficie-ficha">
         <div class="fim__topo">
           <span class="fim__marca"><Icone nome="check-circulo" tamanho={28} /></span>
-          <p class="fim__contexto">Sessão terminada</p>
-          <h1>Muito bem, {crianca.nome}!</h1>
+          <p class="fim__contexto">{crianca.nome}</p>
+          <h1>A sessão terminou.</h1>
           <p>
             {#if respostas.length > 0}
               Fizeste {respostas.length} {respostas.length === 1 ? 'atividade' : 'atividades'}.
@@ -398,7 +398,7 @@
           <span class="etapa__numero">{String(indice + 1).padStart(2, '0')}</span>
           <span class="etapa__texto">{NOMES_TIPO[atividade.tipo]} · {NOMES_FASE[atividade.fase]}</span>
           {#if atividade.origem === 'ia-previa'}
-            <span class="etapa__selo"><Icone nome="faisca" tamanho={13} /> revisto</span>
+            <span class="etapa__selo"><Icone nome="check" tamanho={13} /> revisto</span>
           {/if}
         </div>
 
@@ -606,12 +606,12 @@
               />
             {/if}
             <button type="button" class="botao botao--fantasma botao--pequeno" onclick={usarDica}>
-              <Icone nome="faisca" tamanho={16} /> {dicaVisivel ? 'Dica mostrada' : 'Quero uma dica'}
+              <Icone nome="olho" tamanho={16} /> {dicaVisivel ? 'Dica mostrada' : 'Quero uma dica'}
             </button>
           </div>
 
           {#if dicaVisivel}
-            <p class="dica" role="status"><Icone nome="faisca" tamanho={18} /> {dica}</p>
+            <p class="dica" role="status"><Icone nome="olho" tamanho={18} /> {dica}</p>
           {/if}
         {/if}
 
@@ -629,7 +629,7 @@
               <span class="resposta__icone"><Icone nome="check" tamanho={22} /></span>
               <p>{feedback}</p>
               <button type="button" class="botao botao--primario botao--pequeno" onclick={avancar}>
-                {indice + 1 >= total ? 'Ver o fim' : 'Continuar'} <Icone nome="seta" tamanho={16} />
+                {indice + 1 >= total ? 'Ver o fim' : 'Continuar'}
               </button>
             </div>
           {:else if resultado === 'revelado'}
@@ -637,7 +637,7 @@
               <span class="resposta__icone"><Icone nome="olho" tamanho={22} /></span>
               <p>{feedback}</p>
               <button type="button" class="botao botao--secundario botao--pequeno" onclick={avancar}>
-                {indice + 1 >= total ? 'Ver o fim' : 'Seguir'} <Icone nome="seta" tamanho={16} />
+                {indice + 1 >= total ? 'Ver o fim' : 'Continuar'}
               </button>
             </div>
           {/if}

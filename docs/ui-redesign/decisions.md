@@ -191,7 +191,7 @@ por defeito de qualquer projeto parecido» e o que mudou:
 | Roxo/índigo por defeito; creme+serifa+terracota; quase-preto+néon | Ausente. Cobalto em vez de índigo; Atkinson/Bricolage, não serifa; coral e sol com papel funcional | **Manter** — é a identidade, não cliché |
 | Glassmorphism sem função | `backdrop-filter: blur(12px)` no cabeçalho | **Removido** (Fase 2) — fundo sólido `var(--papel)` mantém a legibilidade ao scroll |
 | Todos os cartões iguais, mesma sombra suave | Sombras deslocadas com N variável; fichas claras | **Manter** — N varia com o tamanho do objeto; `--sombra-suave` sem uso sai |
-| Ícones em círculos coloridos / emojis / ✨ | Botões de tema e menu circulares (funcionais); sem emojis | **Manter** os botões; círculos numerados do percurso/estúdio são sequências reais |
+| Ícones em círculos coloridos / emojis / ✨ | Botões de tema e menu circulares (funcionais); sem emojis, mas o ícone «faisca» (✨) aparecia em 9 sítios | **Removido** o faisca na Fase 5 (substituído por livro/check/olho/lápis conforme o papel); mantidos os botões circulares e os círculos numerados, que são sequências reais |
 | Etiquetas MAIÚSCULAS sobre cada título | Só em cabeçalho de tabela | **Manter** — não é etiqueta decorativa sobre título |
 | Uma palavra destacada por título | Ausente | **Não introduzir** |
 | Numeração 01/02/03 em não-sequência | 1–5 e 1–3, ambos sequências reais | **Manter** |

@@ -18,7 +18,6 @@
     | 'crianca'
     | 'menu'
     | 'fechar'
-    | 'faisca'
     | 'escudo'
     | 'impressora'
     | 'descarregar'
@@ -98,9 +97,6 @@
     <path d="M4 7h16M4 12h16M4 17h16" />
   {:else if nome === 'fechar'}
     <path d="M6 6l12 12M18 6 6 18" />
-  {:else if nome === 'faisca'}
-    <path d="M12 3l1.7 5.3L19 10l-5.3 1.7L12 17l-1.7-5.3L5 10l5.3-1.7L12 3Z" />
-    <path d="M19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8L19 16Z" />
   {:else if nome === 'escudo'}
     <path d="M12 2.5 20 5v6c0 5-3.2 8.5-8 10.5C7.2 19.5 4 16 4 11V5l8-2.5Z" />
     <path d="m8.5 11.5 2.3 2.3 4.8-5" />

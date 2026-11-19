@@ -187,7 +187,7 @@
         </p>
         <div class="pagina__acao">
           <a class="botao botao--primario" href={resolve('/professor/criar')}>
-            <Icone nome="faisca" tamanho={18} /> Criar recurso
+            <Icone nome="lapis" tamanho={18} /> Criar recurso
           </a>
           <button type="button" class="botao botao--secundario" onclick={exportar}>
             <Icone nome="descarregar" tamanho={18} /> Exportar CSV

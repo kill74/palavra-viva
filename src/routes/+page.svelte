@@ -313,10 +313,9 @@
 <section class="cta" aria-labelledby="cta-titulo">
   <div class="container cta__interior">
     <div>
-      <h2 id="cta-titulo">A próxima palavra pode ser hoje.</h2>
+      <h2 id="cta-titulo">Prepara a próxima palavra.</h2>
       <p>
-        Prepara uma atividade, revê a proposta e abre a sessão da criança. O percurso completo
-        está a um clique.
+        Cria um recurso, revê a proposta e abre a sessão da criança.
       </p>
     </div>
     <div class="cta__acoes">

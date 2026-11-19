@@ -159,7 +159,7 @@ export function feedbackCerto(tipo: TipoAtividade, palavra: string, silabas: str
     case 'frase':
       return `Certo. A frase fala de «${palavra}».`;
     default:
-      return `Muito bem. Já conheces «${palavra}».`;
+      return `Já conheces «${palavra}».`;
   }
 }
 

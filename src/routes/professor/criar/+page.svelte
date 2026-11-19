@@ -137,7 +137,7 @@
 
     <div class="pagina__cabeca">
       <div>
-        <p class="contexto"><Icone nome="faisca" tamanho={18} /> Estúdio de recursos</p>
+        <p class="contexto"><Icone nome="lapis" tamanho={18} /> Estúdio de recursos</p>
         <h1>Um pedido pequeno, uma proposta revista.</h1>
       </div>
       <div>
@@ -146,7 +146,7 @@
           rascunho até a aprovares. A criança nunca vê o que ainda não foi revisto.
         </p>
         <p class="pagina__nota">
-          <Icone nome="escudo" tamanho={15} /> Geração prévia. Sem chamadas a APIs em tempo de execução.
+          <Icone nome="escudo" tamanho={15} /> A proposta é preparada antes da aula. Nada é enviado para fora do browser.
         </p>
       </div>
     </div>
@@ -256,7 +256,7 @@
         </div>
 
         <button class="botao botao--primario botao--bloco" type="submit">
-          <Icone nome="faisca" tamanho={19} /> Gerar proposta
+          <Icone nome="lapis" tamanho={19} /> Gerar proposta
         </button>
 
         <p class="nota-ia">

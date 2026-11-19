@@ -48,7 +48,7 @@
   <div class="container abertura__interior">
     <div class="abertura__texto">
       <p class="abertura__contexto"><Icone nome="crianca" tamanho={18} /> Área da criança</p>
-      <h1>Olá! Vamos ler uma palavra?</h1>
+      <h1>Vamos ler uma palavra.</h1>
       <p>
         Escolhe o teu nome. Depois ouve com atenção, olha para as imagens e escolhe. Se não
         acertares à primeira, podes tentar outra vez.
@@ -160,7 +160,7 @@
                   href={resolve('/crianca/sessao') + '?crianca=' + selecionada.id + '&recurso=' + atividade.id}
                   aria-label="Começar a atividade {NOMES_TIPO[atividade.tipo]} com a palavra {atividade.palavra}"
                 >
-                  Começar <Icone nome="seta" tamanho={16} />
+                  Começar
                 </a>
               </article>
             </li>
