@@ -326,19 +326,19 @@
     align-items: start;
   }
 
-  .ajuda {
-    margin: 0.6rem 0 0 !important;
+  .ajuda.ajuda {
+    margin: 0.6rem 0 0;
     color: var(--tinta-suave);
-    font-size: var(--texto-l) !important;
+    font-size: var(--texto-l);
   }
 
-  .nota-turma {
+  .nota-turma.nota-turma {
     padding: 0.7rem 0.85rem;
     border: 1.5px solid var(--linha);
     border-radius: var(--raio-ficha);
     background: var(--papel-alto);
-    color: var(--tinta-fraca) !important;
-    font-size: var(--texto-s) !important;
+    color: var(--tinta-fraca);
+    font-size: var(--texto-s);
     line-height: 1.45;
   }
 
@@ -585,7 +585,7 @@
     font-size: var(--texto-l);
   }
 
-  .conhece__cabeca p {
+  :where(.conhece__cabeca) p {
     margin: 0;
     color: var(--tinta-fraca);
     font-size: var(--texto-s);
@@ -677,7 +677,7 @@
     font-size: var(--texto-l);
   }
 
-  .passos p {
+  :where(.passos) p {
     margin: 0;
     color: var(--tinta-suave);
     font-size: var(--texto-s);

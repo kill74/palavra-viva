@@ -45,8 +45,10 @@ valor novo entra com esta verificação. A ficha permanece clara no tema escuro 
 é a decisão que preserva a metáfora de papel e o contraste; por isso existe um
 conjunto de tokens `-ficha` e não um `!important` por componente.
 
-**Limpeza:** `--rosa` e `--sombra-suave` não têm usos; saem na Fase 7. `--menta`
-tem um uso pontual — serê avaliado na Fase 4 antes de o fundir com `--verde`.
+**Limpeza:** `--rosa` e `--sombra-suave` não tinham usos e saíram na Fase 2.
+`--menta` tem um uso pontual nas letras decorativas da área da criança: foi
+avaliado na Fase 4 e **mantido**, porque não é um estado nem uma ação — fundi-lo
+com `--verde` retiraria a variedade às fichas de letras.
 
 ---
 
@@ -193,7 +195,7 @@ por defeito de qualquer projeto parecido» e o que mudou:
 | Etiquetas MAIÚSCULAS sobre cada título | Só em cabeçalho de tabela | **Manter** — não é etiqueta decorativa sobre título |
 | Uma palavra destacada por título | Ausente | **Não introduzir** |
 | Numeração 01/02/03 em não-sequência | 1–5 e 1–3, ambos sequências reais | **Manter** |
-| Fade+slide em todas as secções | Hero com 6 elementos escalonados | **Reduzir** (Fase 4) a 1–2 elementos |
+| Fade+slide em todas as secções | Hero com 6 elementos escalonados | **Reduzido** (Fase 4) ao título, um só elemento |
 | Hero genérico (número + stats + gradiente) | Hero com demonstração interativa | **Manter** — é o ponto memorável |
 | Tudo centrado | Alinhamento à esquerda por defeito | **Manter** |
 | Copy de marketing / setas em todos os botões | Ausente; `→` só em notação `pa + to → pato` | **Manter** a notação; copy auditada na Fase 5 |

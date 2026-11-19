@@ -380,24 +380,10 @@
     display: block;
   }
 
+  /* Uma única entrada, no título. O resto da página aparece de imediato. */
   @media (prefers-reduced-motion: no-preference) {
-    .hero__contexto,
-    h1 .linha,
-    .hero__sub,
-    .hero__acoes,
-    .hero__nota {
+    h1 {
       animation: entrar-texto 600ms cubic-bezier(0.2, 0.7, 0.3, 1) both;
-    }
-
-    .hero__contexto { animation-delay: 40ms; }
-    h1 .linha:first-child { animation-delay: 110ms; }
-    h1 .linha:last-child { animation-delay: 180ms; }
-    .hero__sub { animation-delay: 260ms; }
-    .hero__acoes { animation-delay: 330ms; }
-    .hero__nota { animation-delay: 400ms; }
-
-    .hero__mesa {
-      animation: entrar-ficha 700ms cubic-bezier(0.2, 0.7, 0.3, 1) 220ms both;
     }
   }
 
@@ -719,7 +705,7 @@
     line-height: 1.15;
   }
 
-  .estudio p {
+  :where(.estudio) p {
     margin: 0;
     color: var(--tinta-suave);
     font-size: var(--texto-s);
@@ -774,8 +760,8 @@
     flex: none;
   }
 
-  .proposta__palavra {
-    color: var(--tinta-ficha) !important;
+  .proposta__palavra.proposta__palavra {
+    color: var(--tinta-ficha);
     font-family: var(--fonte-titulo);
     font-size: var(--texto-silaba);
     font-weight: 700;
@@ -783,13 +769,13 @@
     line-height: 1;
   }
 
-  .proposta__silabas {
-    color: var(--link-ficha) !important;
+  .proposta__silabas.proposta__silabas {
+    color: var(--link-ficha);
     font-weight: 700;
   }
 
-  .proposta__frase {
-    color: var(--tinta-suave) !important;
+  .proposta__frase.proposta__frase {
+    color: var(--tinta-suave);
   }
 
   .proposta__opcoes {
@@ -812,19 +798,19 @@
     background: var(--verde-fundo);
   }
 
-  .rascunho {
+  .rascunho.rascunho {
     display: flex;
     align-items: center;
     gap: 0.3rem;
-    color: var(--erro) !important;
+    color: var(--erro);
     font-weight: 700;
   }
 
-  .revisao {
+  .revisao.revisao {
     padding: 0.5rem 0.6rem;
     border-left: 3px solid var(--coral);
     background: var(--coral-fundo);
-    color: var(--erro) !important;
+    color: var(--erro);
   }
 
   /* Registo ----------------------------------------------------------------- */
@@ -843,17 +829,17 @@
     gap: 0.9rem;
   }
 
-  .registo__texto p {
+  :where(.registo__texto) p {
     max-width: 48ch;
     margin: 0;
     color: var(--tinta-suave);
     line-height: 1.55;
   }
 
-  .cita {
+  .cita.cita {
     padding-left: 0.8rem;
     border-left: 4px solid var(--coral);
-    color: var(--tinta) !important;
+    color: var(--tinta);
     font-family: var(--fonte-titulo);
     font-size: var(--texto-l);
     font-weight: 650;

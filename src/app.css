@@ -307,7 +307,7 @@ main:focus {
   margin-bottom: clamp(2rem, 4vw, 3.5rem);
 }
 
-.secao__cabeca > p {
+:where(.secao__cabeca) > p {
   max-width: 46ch;
   color: var(--tinta-suave);
   font-size: var(--texto-l);
@@ -560,7 +560,7 @@ html[data-tema='escuro'] .botao--primario {
   font-size: clamp(2.4rem, 1.4rem + 3.6vw, 4.3rem);
 }
 
-.pagina__cabeca p {
+:where(.pagina__cabeca) p {
   max-width: 52ch;
   margin: 0;
   color: var(--tinta-suave);
@@ -1082,7 +1082,7 @@ table.tabela {
   }
 
   .secao__cabeca > p,
-  .pagina__cabeca p {
+  :where(.pagina__cabeca) p {
     font-size: var(--texto-m);
   }
 }

@@ -254,11 +254,11 @@
     color: var(--link);
   }
 
-  .subtitulo {
+  .subtitulo.subtitulo {
     max-width: 48ch;
-    margin-top: 0.5rem !important;
+    margin-top: 0.5rem;
     color: var(--tinta-suave);
-    font-size: var(--texto-m) !important;
+    font-size: var(--texto-m);
     line-height: 1.45;
   }
 
@@ -492,7 +492,7 @@
     color: var(--sucesso);
   }
 
-  .fila-vazia p {
+  :where(.fila-vazia) p {
     margin: 0;
     color: var(--tinta-suave);
     font-size: var(--texto-s);
@@ -554,7 +554,7 @@
     font-size: var(--texto-destaque);
   }
 
-  .atalho p {
+  :where(.atalho) p {
     margin: 0;
     color: var(--tinta-suave);
     font-size: var(--texto-s);

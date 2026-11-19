@@ -674,19 +674,19 @@
     font-size: var(--texto-l);
   }
 
-  .triade p {
+  :where(.triade) p {
     margin: 0;
     color: var(--tinta-suave);
     font-size: var(--texto-s);
     line-height: 1.45;
   }
 
-  .destaque {
-    margin: 1.4rem 0 0 !important;
+  .destaque.destaque {
+    margin: 1.4rem 0 0;
     padding: 0.9rem 1rem;
     border-left: 5px solid var(--coral);
     background: var(--papel-alto);
-    color: var(--tinta) !important;
+    color: var(--tinta);
     font-family: var(--fonte-titulo);
     font-size: var(--texto-l);
     font-weight: 650;
@@ -746,12 +746,12 @@
     flex: none;
   }
 
-  .nota {
+  .nota.nota {
     max-width: 68ch;
-    margin: 0.8rem 0 0 !important;
-    color: var(--tinta-fraca) !important;
-    font-size: var(--texto-s) !important;
-    line-height: 1.5 !important;
+    margin: 0.8rem 0 0;
+    color: var(--tinta-fraca);
+    font-size: var(--texto-s);
+    line-height: 1.5;
   }
 
   /* Fases ------------------------------------------------------------------- */
@@ -797,17 +797,17 @@
     font-size: var(--texto-destaque);
   }
 
-  .fase p {
+  :where(.fase) p {
     margin: 0;
     color: var(--tinta-suave);
     font-size: var(--texto-s);
     line-height: 1.45;
   }
 
-  .fase__exemplo {
-    margin-top: 0.4rem !important;
-    color: var(--link) !important;
-    font-size: var(--texto-xs) !important;
+  .fase__exemplo.fase__exemplo {
+    margin-top: 0.4rem;
+    color: var(--link);
+    font-size: var(--texto-xs);
     font-weight: 700;
   }
 
@@ -927,17 +927,17 @@
     background: var(--verde-fundo);
   }
 
-  .revisao-caixa {
+  .revisao-caixa.revisao-caixa {
     display: flex;
     align-items: flex-start;
     gap: 0.45rem;
-    margin: 0 0 0.8rem !important;
+    margin: 0 0 0.8rem;
     padding: 0.7rem 0.8rem;
     border-left: 4px solid var(--coral);
     background: var(--coral-fundo);
-    color: var(--erro) !important;
-    font-size: var(--texto-s) !important;
-    line-height: 1.5 !important;
+    color: var(--erro);
+    font-size: var(--texto-s);
+    line-height: 1.5;
   }
 
   .revisao-caixa :global(svg) {
@@ -977,16 +977,16 @@
     font-size: var(--texto-marca);
   }
 
-  .validacao-passos p {
+  :where(.validacao-passos) p {
     margin: 0.1rem 0 0;
     color: var(--tinta-suave);
     font-size: var(--texto-s);
     line-height: 1.45;
   }
 
-  .validacao-passos__exemplo {
-    color: var(--tinta-fraca) !important;
-    font-size: var(--texto-xs) !important;
+  .validacao-passos__exemplo.validacao-passos__exemplo {
+    color: var(--tinta-fraca);
+    font-size: var(--texto-xs);
   }
 
   .prompt-caixa {
@@ -1045,7 +1045,7 @@
     margin-top: 1rem;
   }
 
-  .escrita-bloco p {
+  :where(.escrita-bloco) p {
     margin: 0 0 0.8rem;
     color: var(--tinta-suave);
     line-height: 1.6;
@@ -1061,20 +1061,20 @@
     transform: rotate(-0.7deg);
   }
 
-  .ficha-escrita__topo {
-    margin: 0 0 0.8rem !important;
+  .ficha-escrita__topo.ficha-escrita__topo {
+    margin: 0 0 0.8rem;
     padding-bottom: 0.4rem;
     border-bottom: 1.5px solid var(--linha-ficha);
-    color: var(--tinta-fraca) !important;
-    font-size: var(--texto-xs) !important;
+    color: var(--tinta-fraca);
+    font-size: var(--texto-xs);
     font-weight: 700;
     letter-spacing: 0.06em;
     text-transform: uppercase;
   }
 
-  .ficha-escrita__palavra {
-    margin: 0 !important;
-    color: var(--tinta-ficha) !important;
+  .ficha-escrita__palavra.ficha-escrita__palavra {
+    margin: 0;
+    color: var(--tinta-ficha);
     font-family: var(--fonte-titulo);
     font-size: var(--texto-exibicao);
     font-weight: 700;
@@ -1082,16 +1082,16 @@
     line-height: 1;
   }
 
-  .ficha-escrita__silabas {
-    margin: 0.2rem 0 0.5rem !important;
-    color: var(--link-ficha) !important;
+  .ficha-escrita__silabas.ficha-escrita__silabas {
+    margin: 0.2rem 0 0.5rem;
+    color: var(--link-ficha);
     font-weight: 700;
   }
 
-  .ficha-escrita__frase {
-    margin: 0 0 1rem !important;
-    color: var(--tinta-suave) !important;
-    font-size: var(--texto-s) !important;
+  .ficha-escrita__frase.ficha-escrita__frase {
+    margin: 0 0 1rem;
+    color: var(--tinta-suave);
+    font-size: var(--texto-s);
   }
 
   .ficha-escrita__linha {
@@ -1127,7 +1127,7 @@
     font-size: var(--texto-destaque);
   }
 
-  .decisoes p {
+  :where(.decisoes) p {
     margin: 0;
     color: var(--tinta-suave);
     font-size: var(--texto-s);
@@ -1192,7 +1192,7 @@
     font-size: var(--texto-marca);
   }
 
-  .limites p {
+  :where(.limites) p {
     margin: 0;
     color: var(--tinta-suave);
     font-size: var(--texto-s);
@@ -1240,7 +1240,7 @@
     font-size: var(--texto-xl);
   }
 
-  .fim-doc p {
+  :where(.fim-doc) p {
     margin: 0.2rem 0 0;
     color: var(--tinta-suave);
     font-size: var(--texto-s);
