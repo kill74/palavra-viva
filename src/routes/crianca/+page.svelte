@@ -1,39 +1,70 @@
 <script lang="ts">
+  import { afterNavigate } from '$app/navigation';
   import { resolve } from '$app/paths';
   import { onMount } from 'svelte';
   import { PALAVRAS_NUCLEARES, obterPalavra } from '#lib/data/palavras';
   import { DESCRICAO_TIPO, NOMES_FASE, NOMES_TIPO } from '#lib/data/tipos';
   import { dados } from '#lib/stores/dados.svelte';
+  import { sessao } from '#lib/stores/sessao.svelte';
   import { parametroUrl } from '#lib/utils/consulta';
   import { dataCurta, plural } from '#lib/utils/formato';
+  import { proximoRecurso } from '#lib/utils/recomendacao';
+  import Conquistas from '#lib/components/Conquistas.svelte';
   import EstadoVazio from '#lib/components/EstadoVazio.svelte';
   import Icone from '#lib/components/Icone.svelte';
   import Ilustracao from '#lib/components/Ilustracao.svelte';
 
   let selecionadaId = $state('');
 
-  onMount(() => {
+  function aplicarSelecaoInicial() {
     const inicial = parametroUrl('crianca');
     if (inicial && dados.criancas.some((c) => c.id === inicial)) {
       selecionadaId = inicial;
+    } else if (
+      parametroUrl('escolher') !== '1' &&
+      sessao.perfil === 'crianca' &&
+      sessao.criancaId
+    ) {
+      selecionadaId = sessao.criancaId;
+    } else if (parametroUrl('escolher') === '1') {
+      // «Mudar de criança»: abre a grelha sem pré-selecionar ninguém.
+      selecionadaId = '';
+    }
+  }
+
+  onMount(aplicarSelecaoInicial);
+  // A mesma rota com outra query não remonta o componente; o afterNavigate
+  // garante que o botão «Mudar» funcione mesmo já estando em /crianca.
+  // Só agimos quando a URL pede explicitamente uma escolha ou uma criança,
+  // para não sobrescrever a seleção atual noutras navegações.
+  afterNavigate(() => {
+    if (parametroUrl('escolher') === '1' || parametroUrl('crianca')) {
+      aplicarSelecaoInicial();
     }
   });
+
+  function escolher(id: string) {
+    selecionadaId = id;
+    if (sessao.perfil === 'crianca' && sessao.criancaId !== id) {
+      sessao.trocarCrianca(id);
+    }
+    document.getElementById('atividades')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
 
   const selecionada = $derived(selecionadaId ? dados.crianca(selecionadaId) : undefined);
   const atividades = $derived(
     selecionada ? dados.recursosDaCrianca(selecionada.id) : []
   );
   const sessoes = $derived(selecionada ? dados.sessoesDaCrianca(selecionada.id) : []);
+  const proximaAtividade = $derived(
+    selecionada ? proximoRecurso(selecionada, dados.recursos, dados.sessoes) : undefined
+  );
   const palavrasConhecidas = $derived(
     selecionada
       ? selecionada.palavrasTrabalhadas.map((id) => obterPalavra(id)).filter((p) => p.nuclear)
       : []
   );
 
-  function escolher(id: string) {
-    selecionadaId = id;
-    document.getElementById('atividades')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
 </script>
 
 <svelte:head>
@@ -170,6 +201,16 @@
           {/each}
         </ul>
       {/if}
+
+      <div class="cantinho">
+        <Conquistas {sessoes} criancaId={selecionada.id} />
+        <a
+          class="botao botao--primario botao--grande"
+          href={resolve('/crianca/sessao') + '?crianca=' + selecionada.id + (proximaAtividade ? '&recurso=' + proximaAtividade.id : '')}
+        >
+          <Icone nome="play" tamanho={20} /> Continuar a ler
+        </a>
+      </div>
 
       <div class="conhece">
         <div class="conhece__cabeca">
@@ -565,6 +606,16 @@
 
   .atividade__acao {
     white-space: nowrap;
+  }
+
+  .cantinho {
+    display: grid;
+    gap: 1rem;
+    margin-top: 1.2rem;
+  }
+
+  .cantinho :global(.botao) {
+    justify-self: start;
   }
 
   .conhece {

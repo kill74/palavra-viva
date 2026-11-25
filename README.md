@@ -36,6 +36,26 @@ A aplicação separa dois percursos que se encontram numa revisão obrigatória:
 
 **Demonstração pública:** https://kill74.github.io/palavra-viva/
 
+### Entrar e biblioteca individual
+
+As áreas da professora e da criança são agora precedidas de uma página de entrada em
+`/entrar`. A professora usa o código de demonstração **1234**; a criança escolhe o nome na
+grelha da turma. A sessão fica guardada em `localStorage` na chave
+`palavra-viva:sessao:v1`. **Não é autenticação real**: o código está visível na própria
+página e não há dados pessoais nem servidor. O objetivo é separar os dois percursos e dar
+contexto ao cabeçalho. As páginas `/` e `/metodo` continuam públicas.
+
+A biblioteca de cada criança está em `/professor/crianca?crianca=alice`: mostra as seis
+fases do percurso, o que a criança já fez, o que tem aprovado para a próxima sessão e o que
+ainda está em rascunho. Pode-se procurar por palavra/tipo e filtrar por fase, e cada recurso
+tem «Ver como a criança vê» com a pré-visualização exata. Na área da criança, o bloco
+«O meu cantinho» reúne conquistas derivadas das sessões reais e um atalho «Continuar a ler»
+para a atividade recomendada; o cabeçalho permite «Mudar» de criança sem sair da sessão.
+
+No painel da professora é possível registar e editar crianças, repor a demonstração e
+guardar/carregar uma cópia completa dos dados em JSON. A cópia é validada antes de substituir
+os registos (versão, referências e identificadores), recusando ficheiros inconsistentes.
+
 <p align="center">
   <img src="docs/screenshots/home-escuro.webp" alt="Página inicial do Palavra Viva no tema escuro: «Ler começa numa palavra que a criança já conhece.»" width="100%">
 </p>
@@ -65,6 +85,9 @@ deno task preview --port 4173
 
 # build para GitHub Pages, servido em /palavra-viva/
 BASE_PATH=/palavra-viva deno task build
+
+# testes unitários dos utilitários de recomendação e conquistas
+deno task test
 ```
 
 O site é totalmente pré-renderizado com `@sveltejs/adapter-static`. O resultado em `build/`
@@ -104,16 +127,18 @@ location.reload();
 
 ## Percurso de demonstração (3 minutos)
 
-1. **`/`** — conhecer a proposta, a sequência das 28 palavras e a oficina de sílabas.
-2. **`/professor`** — ver a turma fictícia, os percursos em curso e a fila de revisão.
-3. **`/professor/criar`** — pedir um recurso para a Alice, escolher palavra, fase e tipo;
+1. **`/entrar`** — escolher «Sou professora» e escrever o código `1234`.
+2. **`/`** — conhecer a proposta, a sequência das 28 palavras e a oficina de sílabas.
+3. **`/professor`** — ver a turma fictícia, registar ou editar crianças e rever a fila.
+4. **`/professor/crianca?crianca=alice`** — percorrer a biblioteca individual da Alice.
+5. **`/professor/criar`** — pedir um recurso para a Alice, escolher palavra, fase e tipo;
    observar o prompt, a proposta, as seis verificações e aprovar.
-4. **`/professor/biblioteca?recurso=rec-alice-galinha`** — abrir um rascunho preparado,
+6. **`/professor/biblioteca?recurso=rec-alice-galinha`** — abrir um rascunho preparado,
    corrigir campos, confirmar a validação e aprovar.
-5. **`/crianca`** — escolher a Alice e entrar numa atividade aprovada.
-6. **`/crianca/sessao?crianca=alice`** — ouvir, responder, errar, tentar outra vez, usar
+7. **`/crianca`** — escolher a Alice, ver «O meu cantinho» e entrar numa atividade aprovada.
+8. **`/crianca/sessao?crianca=alice`** — ouvir, responder, errar, tentar outra vez, usar
    ajuda e concluir a sessão.
-7. **`/professor/sessoes`** — consultar tentativas, ajudas, respostas autónomas/apoiadas,
+9. **`/professor/sessoes`** — consultar tentativas, ajudas, respostas autónomas/apoiadas,
    registar uma ficha de escrita em papel e exportar CSV.
 
 Atalhos úteis:
@@ -278,27 +303,35 @@ deno task build  → site estático escrito em build/
 ### Testes funcionais
 
 Script: `scripts/testes-funcionais.mjs`. Executados com Playwright contra o build de
-pré-visualização; resultado em `docs/verificacao/testes-funcionais.json` (10/10):
+pré-visualização; resultado em `docs/verificacao/testes-funcionais.json` (12/12):
 
 - alternância e persistência do tema claro/escuro;
 - menu móvel, foco e fecho com `Escape`;
+- entrada pelos perfis simulados (professora e criança);
 - escolha de criança e entrada numa sessão;
 - resposta certa, resposta errada, nova tentativa, ajuda e conclusão;
 - gravação da sessão e atualização dos registos;
+- regresso ao perfil da professora;
 - aprovação e devolução de recursos na biblioteca;
 - criação, validação e aprovação de um recurso no estúdio;
 - exportação CSV;
 - página 404;
 - ausência de erros na consola.
 
+Testes unitários: `deno task test` verifica a recomendação da próxima atividade, o
+resumo de sessões, as conquistas e a validação das cópias importadas (11 testes em
+`src/lib/utils/recomendacao.test.ts` e `src/lib/utils/backup.test.ts`).
+
 ### Acessibilidade
 
-Auditoria axe-core (WCAG 2 A/AA + 2.1 A/AA) em 9 rotas, nos temas claro e escuro.
-Script: `scripts/auditar-acessibilidade.mjs`; resultado em `docs/verificacao/axe-core.json`:
+Auditoria axe-core (WCAG 2 A/AA + 2.1 A/AA) em 11 rotas, nos temas claro e escuro
+(22 combinações, **0 violações**). Script: `scripts/auditar-acessibilidade.mjs`;
+resultado em `docs/verificacao/axe-core.json`. Cada combinação usa um contexto isolado
+com a sessão simulada adequada, para auditar as páginas reais e não o redirecionamento.
 
 ```text
-claro  home · método · professor · criar · biblioteca · sessões · criança · sessão · erro  → ok
-escuro home · método · professor · criar · biblioteca · sessões · criança · sessão · erro  → ok
+claro  início · entrar · método · professor · criar · biblioteca · sessões · biblioteca da criança · criança · sessão · erro  → ok
+escuro início · entrar · método · professor · criar · biblioteca · sessões · biblioteca da criança · criança · sessão · erro  → ok
 ```
 
 0 violações de contraste, nomes acessíveis, estrutura ou teclado.
@@ -413,11 +446,23 @@ src/
       audio.ts               reprodução e estados de áudio
       consulta.ts            leitura de query params só no cliente
       formato.ts             datas, percentagens e plurais
+      recomendacao.ts        próxima atividade, resumo e conquistas
+      recomendacao.test.ts   testes unitários da recomendação
+      backup.ts              cópia completa em JSON e validação de esquema
+      backup.test.ts         testes unitários da cópia
+  stores/
+    dados.svelte.ts          turma, recursos e sessões (localStorage)
+    sessao.svelte.ts         perfil simulado e chave de demonstração
+  components/
+    EditorCrianca.svelte     registo e edição de crianças
+    LinhaFases.svelte        percurso visual pelas seis fases
+    Conquistas.svelte        medalhas da área da criança
   routes/
     +page.svelte             visão geral e oficina de sílabas
+    entrar/                  escolha de perfil e código de demonstração
     metodo/                  método, sequência, IA, testes e referências
-    professor/               painel, criar, biblioteca, sessões
-    crianca/                 escolha e sessão de atividades
+    professor/               painel, criar, biblioteca, sessões, biblioteca individual
+    crianca/                 escolha, cantinho e sessão de atividades
 static/
   audio/                     160 MP3 pt-PT pré-gerados
   palavras/                  34 ilustrações SVG originais
@@ -432,6 +477,9 @@ static/
   com API exigiria validação humana, limites de custo, moderação e registo de proveniência.
 - **Sem reconhecimento de leitura oral.** A correção é por regras em respostas fechadas.
   A oralidade continua a ser observada pela professora.
+- **Entrada simulada.** O código `1234` não protege nada: serve apenas para separar os dois
+  percursos na demonstração. Um produto real exigiria contas, palavras-passe com hash,
+  sessões no servidor e autorização por perfil.
 - **Dados locais.** Não há contas, sincronização nem backend; limpar o `localStorage`
   repõe a demonstração. Para uso real seria necessário consentimento, retenção e proteção
   de dados de menores.

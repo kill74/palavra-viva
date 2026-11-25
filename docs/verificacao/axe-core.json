@@ -1,12 +1,18 @@
 {
-  "data": "2026-11-19T22:43:56.518Z",
+  "data": "2026-11-25T20:22:48.316Z",
   "ferramenta": "axe-core 4.14.1",
   "norma": "WCAG 2 A/AA + 2.1 A/AA",
-  "combinacoes": 18,
+  "combinacoes": 22,
   "totalViolacoes": 0,
   "resultados": [
     {
       "rota": "inicio",
+      "tema": "claro",
+      "violacoes": 0,
+      "detalhes": []
+    },
+    {
+      "rota": "entrar",
       "tema": "claro",
       "violacoes": 0,
       "detalhes": []
@@ -37,6 +43,12 @@
     },
     {
       "rota": "professor/sessoes",
+      "tema": "claro",
+      "violacoes": 0,
+      "detalhes": []
+    },
+    {
+      "rota": "professor/crianca",
       "tema": "claro",
       "violacoes": 0,
       "detalhes": []
@@ -66,6 +78,12 @@
       "detalhes": []
     },
     {
+      "rota": "entrar",
+      "tema": "escuro",
+      "violacoes": 0,
+      "detalhes": []
+    },
+    {
       "rota": "metodo",
       "tema": "escuro",
       "violacoes": 0,
@@ -91,6 +109,12 @@
     },
     {
       "rota": "professor/sessoes",
+      "tema": "escuro",
+      "violacoes": 0,
+      "detalhes": []
+    },
+    {
+      "rota": "professor/crianca",
       "tema": "escuro",
       "violacoes": 0,
       "detalhes": []

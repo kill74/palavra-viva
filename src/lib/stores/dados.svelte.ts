@@ -73,6 +73,20 @@ class Dados {
     this.guardar();
   }
 
+  /** Aplica uma cópia já validada por `validarCopia`. */
+  substituirTudo(copia: {
+    criancas: Crianca[];
+    recursos: Recurso[];
+    sessoes: Sessao[];
+    escritas: RegistoEscrita[];
+  }): void {
+    this.criancas = copia.criancas.map((c) => structuredClone(c));
+    this.recursos = copia.recursos.map((r) => comValidacao(structuredClone(r)));
+    this.sessoes = copia.sessoes.map((s) => structuredClone(s));
+    this.escritas = copia.escritas.map((e) => structuredClone(e));
+    this.guardar();
+  }
+
   crianca(id: string): Crianca | undefined {
     return this.criancas.find((c) => c.id === id);
   }
@@ -95,6 +109,16 @@ class Dados {
     return this.sessoes
       .filter((s) => s.criancaId === criancaId)
       .sort((a, b) => b.fim.localeCompare(a.fim));
+  }
+
+  adicionarCrianca(crianca: Crianca): void {
+    this.criancas = [...this.criancas, crianca];
+    this.guardar();
+  }
+
+  atualizarCrianca(crianca: Crianca): void {
+    this.criancas = this.criancas.map((c) => (c.id === crianca.id ? crianca : c));
+    this.guardar();
   }
 
   adicionarRecurso(recurso: Recurso): void {

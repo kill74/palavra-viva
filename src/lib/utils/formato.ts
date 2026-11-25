@@ -70,7 +70,9 @@ export function csv(linhas: Array<Array<string | number>>): string {
 }
 
 export function descarregar(nome: string, conteudo: string, tipo = 'text/csv;charset=utf-8'): void {
-  const blob = new Blob([`\uFEFF${conteudo}`], { type: tipo });
+  // O BOM ajuda o Excel a ler CSV; em JSON é inválido e impede a reimportação.
+  const prefixo = tipo.startsWith('text/csv') ? '\uFEFF' : '';
+  const blob = new Blob([`${prefixo}${conteudo}`], { type: tipo });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;

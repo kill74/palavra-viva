@@ -3,9 +3,64 @@
   import { PALAVRAS_NUCLEARES } from '#lib/data/palavras';
   import { NOMES_FASE, NOMES_TIPO } from '#lib/data/tipos';
   import { dados } from '#lib/stores/dados.svelte';
-  import { dataCurta, hora, plural } from '#lib/utils/formato';
+  import { sessao } from '#lib/stores/sessao.svelte';
+  import { dataCurta, descarregar, hora, plural } from '#lib/utils/formato';
+  import { criarCopia, validarCopia } from '#lib/utils/backup';
+  import EditorCrianca from '#lib/components/EditorCrianca.svelte';
   import Icone from '#lib/components/Icone.svelte';
   import SeloEstado from '#lib/components/SeloEstado.svelte';
+  import type { Crianca } from '#lib/data/tipos';
+
+  /** null = fechado; undefined = registar nova; Crianca = editar. */
+  let editando = $state<Crianca | undefined | null>(null);
+  let ficheiro = $state<HTMLInputElement>();
+  let avisoCopia = $state('');
+  let erroCopia = $state('');
+
+  function guardarCopia() {
+    const texto = criarCopia({
+      criancas: dados.criancas,
+      recursos: dados.recursos,
+      sessoes: dados.sessoes,
+      escritas: dados.escritas
+    });
+    const data = new Date().toISOString().slice(0, 10);
+    descarregar(`palavra-viva-copia-${data}.json`, texto, 'application/json;charset=utf-8');
+    avisoCopia = 'Cópia guardada no computador.';
+    erroCopia = '';
+  }
+
+  async function carregarCopia(event: Event) {
+    const alvo = event.currentTarget as HTMLInputElement;
+    const ficheiroEscolhido = alvo.files?.[0];
+    if (!ficheiroEscolhido) return;
+    avisoCopia = '';
+    erroCopia = '';
+    try {
+      const resultado = validarCopia(await ficheiroEscolhido.text());
+      if (!resultado.dados) {
+        erroCopia = `Não foi possível carregar a cópia: ${resultado.erros.slice(0, 3).join(' ')}`;
+        return;
+      }
+      const confirmar = window.confirm(
+        'Substituir todos os dados deste browser pela cópia escolhida? Os registos atuais serão perdidos.'
+      );
+      if (!confirmar) return;
+      dados.substituirTudo(resultado.dados);
+      sessao.validarCrianca();
+      avisoCopia = 'Cópia carregada com sucesso.';
+    } catch {
+      erroCopia = 'Não foi possível ler o ficheiro escolhido.';
+    } finally {
+      alvo.value = '';
+    }
+  }
+
+  function guardarCrianca(crianca: Crianca) {
+    if (editando === undefined) dados.adicionarCrianca(crianca);
+    else dados.atualizarCrianca(crianca);
+    editando = null;
+  }
 
   const stats = $derived(dados.estatisticas());
   const porAprovar = $derived(dados.recursosPorAprovar());
@@ -66,21 +121,51 @@
           <a class="botao botao--secundario" href={resolve('/professor/biblioteca')}>
             <Icone nome="livro" tamanho={18} /> Abrir a biblioteca
           </a>
+          <button
+            type="button"
+            class="botao botao--secundario botao--pequeno"
+            onclick={() => (editando = undefined)}
+          >
+            <Icone nome="mais" tamanho={16} /> Registar criança
+          </button>
+          <button
+            type="button"
+            class="botao botao--fantasma botao--pequeno"
+            onclick={() => {
+              if (window.confirm('Repor a demonstração? Os registos locais serão substituídos pelos dados iniciais.')) {
+                dados.repor();
+              }
+            }}
+          >
+            <Icone nome="refresh" tamanho={16} /> Repor demonstração
+          </button>
+          <button type="button" class="botao botao--fantasma botao--pequeno" onclick={guardarCopia}>
+            <Icone nome="descarregar" tamanho={16} /> Guardar cópia
+          </button>
+          <label class="botao botao--fantasma botao--pequeno carregar-copia">
+            <Icone nome="mais" tamanho={16} /> Carregar cópia
+            <input
+              bind:this={ficheiro}
+              type="file"
+              accept="application/json,.json"
+              aria-label="Carregar cópia de dados"
+              onchange={carregarCopia}
+            />
+          </label>
         </div>
+        {#if avisoCopia}
+          <p class="aviso-copia aviso-copia--ok" role="status">
+            <Icone nome="check-circulo" tamanho={17} /> {avisoCopia}
+          </p>
+        {/if}
+        {#if erroCopia}
+          <p class="aviso-copia aviso-copia--erro" role="alert">
+            <Icone nome="alerta" tamanho={17} /> {erroCopia}
+          </p>
+        {/if}
         <p class="pagina__nota">
           <Icone nome="escudo" tamanho={15} /> Turma fictícia de demonstração. Os dados ficam neste browser.
         </p>
-        <button
-          type="button"
-          class="botao botao--fantasma botao--pequeno"
-          onclick={() => {
-            if (window.confirm('Repor a demonstração? Os registos locais serão substituídos pelos dados iniciais.')) {
-              dados.repor();
-            }
-          }}
-        >
-          <Icone nome="refresh" tamanho={16} /> Repor demonstração
-        </button>
       </div>
     </div>
 
@@ -155,7 +240,28 @@
           </dl>
 
           <div class="aluno__acoes">
-            <a class="link" href={resolve('/professor/sessoes') + '?crianca=' + crianca.id}>Ver registos</a>
+            <button
+              type="button"
+              class="link"
+              aria-label="Editar os dados de {crianca.nome}"
+              onclick={() => (editando = crianca)}
+            >
+              Editar
+            </button>
+            <a
+              class="link"
+              aria-label="Ver biblioteca de {crianca.nome}"
+              href={resolve('/professor/crianca') + '?crianca=' + crianca.id}
+            >
+              Ver biblioteca
+            </a>
+            <a
+              class="link"
+              aria-label="Ver registos de {crianca.nome}"
+              href={resolve('/professor/sessoes') + '?crianca=' + crianca.id}
+            >
+              Ver registos
+            </a>
             <a class="botao botao--pequeno botao--secundario" href={resolve('/crianca/sessao') + '?crianca=' + crianca.id}>
               Abrir sessão
             </a>
@@ -249,6 +355,14 @@
     </div>
   </div>
 </section>
+
+{#if editando !== null}
+  <EditorCrianca
+    crianca={editando}
+    onguardar={guardarCrianca}
+    onfechar={() => (editando = null)}
+  />
+{/if}
 
 <style>
   .contexto {
@@ -377,8 +491,8 @@
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    justify-content: space-between;
-    gap: 0.4rem;
+    justify-content: flex-start;
+    gap: 0.4rem 0.8rem;
     margin-top: auto;
     padding-top: 0.6rem;
     border-top: 1.5px solid var(--linha);
@@ -386,6 +500,59 @@
 
   .aluno__acoes .link {
     font-size: var(--texto-s);
+  }
+
+  .aluno__acoes button.link {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    font-family: var(--fonte-texto);
+    cursor: pointer;
+  }
+
+  .aluno__acoes .botao {
+    margin-left: auto;
+  }
+
+  .carregar-copia {
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+  }
+
+  .carregar-copia input {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  .carregar-copia:focus-within {
+    outline: 3px solid var(--foco);
+    outline-offset: 2px;
+  }
+
+  .aviso-copia {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin: 0.8rem 0 0;
+    font-size: var(--texto-s);
+    font-weight: 700;
+  }
+
+  .aviso-copia--ok {
+    color: var(--sucesso);
+  }
+
+  .aviso-copia--erro {
+    color: var(--erro);
+  }
+
+  :global(html[data-tema='escuro']) .aviso-copia--ok {
+    color: var(--sucesso);
   }
 
   /* Revisão ----------------------------------------------------------------- */

@@ -17,27 +17,36 @@ const axeFonte = readFileSync(new URL('./vendor/axe.min.js', import.meta.url), '
 
 const rotas = [
   { nome: 'inicio', caminho: '/' },
+  { nome: 'entrar', caminho: '/entrar/' },
   { nome: 'metodo', caminho: '/metodo/' },
   { nome: 'professor', caminho: '/professor/' },
   { nome: 'professor/criar', caminho: '/professor/criar/' },
   { nome: 'professor/biblioteca', caminho: '/professor/biblioteca/' },
   { nome: 'professor/sessoes', caminho: '/professor/sessoes/' },
+  { nome: 'professor/crianca', caminho: '/professor/crianca/?crianca=alice' },
   { nome: 'crianca', caminho: '/crianca/' },
   { nome: 'crianca/sessao', caminho: '/crianca/sessao/?crianca=alice' },
   { nome: 'erro', caminho: '/rota-inexistente/' }
 ];
 
 const browser = await chromium.launch({ executablePath: '/usr/bin/chromium', args: ['--no-sandbox'] });
-const contexto = await browser.newContext();
-const pagina = await contexto.newPage();
 const resultados = [];
 
 for (const tema of ['claro', 'escuro']) {
-  await pagina.addInitScript((valor) => {
-    localStorage.setItem('palavra-viva:tema', valor);
-  }, tema);
-
   for (const rota of rotas) {
+    // Contexto novo por combinação: garante tema e sessão corretos sem
+    // deixar que uma navegação altere o estado da seguinte.
+    const contexto = await browser.newContext();
+    const perfil = rota.caminho.startsWith('/crianca') ? 'crianca' : 'professor';
+    await contexto.addInitScript(({ tema, perfil }) => {
+      localStorage.setItem('palavra-viva:tema', tema);
+      localStorage.setItem('palavra-viva:sessao:v1', JSON.stringify({
+        versao: 1,
+        perfil,
+        criancaId: perfil === 'crianca' ? 'alice' : null
+      }));
+    }, { tema, perfil });
+    const pagina = await contexto.newPage();
     await pagina.goto(`${BASE}${rota.caminho}`, { waitUntil: 'networkidle' });
     await pagina.evaluate(axeFonte);
     const resultado = await pagina.evaluate(async () => {
@@ -57,6 +66,7 @@ for (const tema of ['claro', 'escuro']) {
         nos: v.nodes.length
       }))
     });
+    await contexto.close();
   }
 }
 
