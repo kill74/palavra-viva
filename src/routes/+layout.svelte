@@ -12,8 +12,7 @@
   let { children } = $props();
 
   onMount(() => {
-    dados.carregar();
-    sessao.carregar();
+    void dados.carregar().then(() => sessao.carregar());
   });
   let principal = $state<HTMLElement>();
 
