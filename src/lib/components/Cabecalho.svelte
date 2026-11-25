@@ -1,8 +1,10 @@
 <script lang="ts">
   import { resolve } from '$app/paths';
-  import { afterNavigate } from '$app/navigation';
+  import { afterNavigate, goto } from '$app/navigation';
   import { page } from '$app/state';
   import { tema } from '#lib/stores/tema.svelte';
+  import { sessao } from '#lib/stores/sessao.svelte';
+  import { dados } from '#lib/stores/dados.svelte';
   import { onMount } from 'svelte';
   import Icone from './Icone.svelte';
   import Marca from './Marca.svelte';
@@ -16,6 +18,10 @@
     { href: resolve('/professor'), caminho: '/professor', texto: 'Professor' },
     { href: resolve('/crianca'), caminho: '/crianca', texto: 'Criança' }
   ];
+
+  const criancaAtiva = $derived(
+    sessao.criancaId ? dados.crianca(sessao.criancaId) : undefined
+  );
 
   onMount(() => tema.iniciar());
   afterNavigate(() => {
@@ -32,6 +38,11 @@
   function fecharMenu() {
     menuAberto = false;
     botaoMenu?.focus();
+  }
+
+  function sair() {
+    sessao.sair();
+    void goto(resolve('/entrar'));
   }
 </script>
 
@@ -64,6 +75,29 @@
     </nav>
 
     <div class="acoes">
+      {#if sessao.perfil === 'professor'}
+        <div class="identidade">
+          <span class="identidade__selo identidade__selo--professor">
+            <Icone nome="professor" tamanho={17} /> <span>Professora</span>
+          </span>
+          <button type="button" class="sair" title="Terminar a sessão" onclick={sair}>
+            Sair
+          </button>
+        </div>
+      {:else if sessao.perfil === 'crianca' && criancaAtiva}
+        <div class="identidade">
+          <span class="identidade__selo identidade__selo--crianca">
+            <Icone nome="crianca" tamanho={17} /> <span>{criancaAtiva.nome}</span>
+          </span>
+          <a class="sair" href={resolve('/crianca') + '?escolher=1'} title="Escolher outra criança">
+            Mudar
+          </a>
+          <button type="button" class="sair" title="Terminar a sessão" onclick={sair}>
+            Sair
+          </button>
+        </div>
+      {/if}
+
       <button
         type="button"
         class="tema"
@@ -173,6 +207,67 @@
     gap: 0.35rem;
   }
 
+  .identidade {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    margin-right: 0.25rem;
+    padding-right: 0.55rem;
+    border-right: 1.5px solid var(--linha);
+  }
+
+  .identidade__selo {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    min-height: 34px;
+    padding: 0.2rem 0.55rem;
+    border: 1.5px solid var(--linha-forte);
+    border-radius: var(--raio-pill);
+    font-size: var(--texto-s);
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .identidade__selo--professor {
+    color: var(--cobalto);
+    background: var(--cobalto-fundo);
+  }
+
+  .identidade__selo--crianca {
+    /* --coral-texto-ficha tem 4,33:1 sobre o fundo coral; o erro dá >5:1. */
+    color: var(--erro-ficha);
+    background: var(--coral-fundo-ficha);
+  }
+
+  :global(html[data-tema='escuro']) .identidade__selo--professor {
+    color: var(--tinta);
+  }
+
+  .sair {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0.3rem 0.45rem;
+    border: 0;
+    border-radius: var(--raio-ficha);
+    background: transparent;
+    color: var(--tinta-suave);
+    font-family: var(--fonte-texto);
+    font-size: var(--texto-s);
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color var(--transicao), color var(--transicao);
+  }
+
+  .sair:hover {
+    background: var(--sol-fundo);
+    color: var(--tinta);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
   .tema,
   .menu-botao {
     display: inline-grid;
@@ -232,6 +327,19 @@
   @media (max-width: 760px) {
     .navegacao {
       display: none;
+    }
+
+    .identidade {
+      margin-right: 0;
+      padding-right: 0.35rem;
+    }
+
+    .identidade__selo span {
+      display: none;
+    }
+
+    .identidade__selo {
+      padding: 0.2rem;
     }
 
     .menu-botao {

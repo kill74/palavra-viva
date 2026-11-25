@@ -16,6 +16,19 @@ let ignorarErrosConsola = false;
 
 const browser = await chromium.launch({ executablePath: '/usr/bin/chromium', args: ['--no-sandbox'] });
 const contexto = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+// As áreas reservadas exigem sessão simulada. Definimo-la antes de cada
+// navegação, tal como o tema, para os testes continuarem a exercitar as
+// páginas reais e não o redirecionamento para /entrar.
+await contexto.addInitScript(() => {
+  // Só definimos uma vez: os testes de perfil alteram a sessão depois.
+  if (!localStorage.getItem('palavra-viva:sessao:v1')) {
+    localStorage.setItem('palavra-viva:sessao:v1', JSON.stringify({
+      versao: 1,
+      perfil: 'professor',
+      criancaId: null
+    }));
+  }
+});
 const pagina = await contexto.newPage();
 pagina.on('console', (msg) => {
   if (msg.type() === 'error' && !ignorarErrosConsola) errosConsola.push(msg.text());
@@ -59,6 +72,17 @@ await caso('Menu móvel: abrir, foco e fechar com Escape', async () => {
   await pagina.setViewportSize({ width: 1280, height: 900 });
 });
 
+await caso('Entrar como criança pelo perfil simulado', async () => {
+  await pagina.goto(`${BASE}/entrar/`);
+  await pagina.getByRole('button', { name: /Sou criança/ }).click();
+  await pagina.getByRole('button', { name: /Alice/ }).click();
+  await pagina.waitForURL(/\/crianca\/$/);
+  const sessao = await pagina.evaluate(() => JSON.parse(localStorage.getItem('palavra-viva:sessao:v1')));
+  if (sessao.perfil !== 'crianca' || sessao.criancaId !== 'alice') {
+    throw new Error('A sessão de criança não foi guardada');
+  }
+});
+
 await caso('Escolha de criança e entrada na sessão', async () => {
   await pagina.goto(`${BASE}/crianca/`);
   await pagina.getByRole('button', { name: /Alice/ }).click();
@@ -87,6 +111,16 @@ await caso('Sessão gravada e visível nos registos', async () => {
   if (!(await pagina.getByText(/Respostas autónomas|autónoma/i).first().isVisible())) {
     throw new Error('Os registos não mostram a autonomia');
   }
+});
+
+await caso('Voltar ao perfil da professora', async () => {
+  await pagina.evaluate(() => {
+    localStorage.setItem('palavra-viva:sessao:v1', JSON.stringify({
+      versao: 1,
+      perfil: 'professor',
+      criancaId: null
+    }));
+  });
 });
 
 await caso('Biblioteca: aprovar e devolver um rascunho', async () => {

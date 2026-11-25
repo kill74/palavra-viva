@@ -6,7 +6,8 @@
     "build": "deno run -A npm:vite build",
     "preview": "deno run -A npm:vite preview",
     "sync": "deno run -A npm:@sveltejs/kit@3.1.1 sync",
-    "check": "deno run -A npm:svelte-check --tsconfig ./tsconfig.json"
+    "check": "deno run -A npm:svelte-check --tsconfig ./tsconfig.json",
+    "test": "deno test --allow-read src/lib/utils/recomendacao.test.ts src/lib/utils/backup.test.ts"
   },
   "imports": {
     "@sveltejs/adapter-static": "npm:@sveltejs/adapter-static@4.0.1",
