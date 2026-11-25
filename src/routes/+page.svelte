@@ -47,16 +47,16 @@
         a fase e o apoio; a criança ouve, lê e constrói. Nenhum recurso aparece sem revisão.
       </p>
       <div class="hero__acoes">
-        <a class="botao botao--primario botao--grande" href={resolve('/professor')}>
-          <Icone nome="lapis" tamanho={19} /> Preparar uma aula
+        <a class="botao botao--primario botao--grande" href={resolve('/entrar')}>
+          <Icone nome="seta" tamanho={19} /> Entrar
         </a>
-        <a class="botao botao--secundario botao--grande" href={resolve('/crianca')}>
-          <Icone nome="crianca" tamanho={19} /> Entrar como criança
+        <a class="botao botao--secundario botao--grande" href={resolve('/metodo')}>
+          <Icone nome="livro" tamanho={19} /> Conhecer o método
         </a>
       </div>
       <p class="hero__nota">
         <Icone nome="escudo" tamanho={16} />
-        Protótipo com dados fictícios. Os registos ficam neste browser.
+        A professora entra com a sua conta; as crianças escolhem o nome na turma.
       </p>
     </div>
 

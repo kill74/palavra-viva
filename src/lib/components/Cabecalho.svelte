@@ -14,9 +14,7 @@
 
   const ligacoes = [
     { href: resolve('/'), caminho: '/', texto: 'Início' },
-    { href: resolve('/metodo'), caminho: '/metodo', texto: 'Método' },
-    { href: resolve('/professor'), caminho: '/professor', texto: 'Professor' },
-    { href: resolve('/crianca'), caminho: '/crianca', texto: 'Criança' }
+    { href: resolve('/metodo'), caminho: '/metodo', texto: 'Método' }
   ];
 
   const criancaAtiva = $derived(
@@ -80,6 +78,9 @@
           <span class="identidade__selo identidade__selo--professor">
             <Icone nome="professor" tamanho={17} /> <span>Professora</span>
           </span>
+          <a class="sair" href={resolve('/professor')} title="Abrir o painel da turma">
+            A minha área
+          </a>
           <button type="button" class="sair" title="Terminar a sessão" onclick={sair}>
             Sair
           </button>
@@ -96,6 +97,10 @@
             Sair
           </button>
         </div>
+      {:else}
+        <a class="entrar-link" href={resolve('/entrar')}>
+          <Icone nome="seta" tamanho={16} /> Entrar
+        </a>
       {/if}
 
       <button
@@ -266,6 +271,26 @@
     color: var(--tinta);
     text-decoration: underline;
     text-underline-offset: 3px;
+  }
+
+  .entrar-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-height: 44px;
+    padding: 0.35rem 0.9rem;
+    border: 2px solid var(--cobalto);
+    border-radius: var(--raio-pill);
+    background: var(--cobalto);
+    color: var(--sobre-acento);
+    font-size: var(--texto-s);
+    font-weight: 700;
+    text-decoration: none;
+    transition: background-color var(--transicao);
+  }
+
+  .entrar-link:hover {
+    background: var(--cobalto-hover);
   }
 
   .tema,
