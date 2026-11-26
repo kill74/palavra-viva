@@ -31,3 +31,27 @@ Deno.test('base de dados: tabelas criadas e foreign keys íntegras', () => {
   }
   assertEquals(db.prepare('PRAGMA foreign_key_check').all().length, 0);
 });
+
+Deno.test('hashPassword: produz hash Argon2id com parâmetros OWASP', async () => {
+  const hash = await hashPassword('SenhaForte123');
+  const partes = hash.split('$');
+  assertEquals(partes[0], 'argon2id');
+  assertEquals(Number(partes[1]), 3);
+  assertEquals(Number(partes[2]), 65536);
+  assertEquals(Number(partes[3]), 4);
+  assertEquals(await verificarPassword('SenhaForte123', hash), true);
+  assertEquals(await verificarPassword('Errada12345', hash), false);
+});
+
+Deno.test('verificarPassword: aceita hash PBKDF2 legado', async () => {
+  // Hash gerado pelo formato antigo: pbkdf2$salt$hash
+  const sal = new Uint8Array(16).fill(7);
+  const material = await crypto.subtle.importKey('raw', new TextEncoder().encode('Legado12345'), 'PBKDF2', false, ['deriveBits']);
+  const bits = await crypto.subtle.deriveBits(
+    { name: 'PBKDF2', salt: sal, iterations: 210000, hash: 'SHA-256' }, material, 256
+  );
+  const b64 = (b: Uint8Array) => btoa(String.fromCharCode(...b));
+  const legado = `pbkdf2$${b64(sal)}$${b64(new Uint8Array(bits))}`;
+  assertEquals(await verificarPassword('Legado12345', legado), true);
+  assertEquals(await verificarPassword('Errada12345', legado), false);
+});

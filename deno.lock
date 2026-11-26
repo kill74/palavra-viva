@@ -3,6 +3,7 @@
   "specifiers": {
     "jsr:@std/assert@*": "1.0.19",
     "jsr:@std/internal@^1.0.12": "1.0.14",
+    "npm:@noble/hashes@1.8.0": "1.8.0",
     "npm:@sveltejs/adapter-node@6.0.6": "6.0.6_@sveltejs+kit@3.1.1__@sveltejs+vite-plugin-svelte@7.3.1___svelte@5.57.3___vite@8.3.6____@types+node@22.15.3___@types+node@22.15.3__svelte@5.57.3__typescript@6.0.3__vite@8.3.6___@types+node@22.15.3__@types+node@22.15.3_vite@8.3.6__@types+node@22.15.3",
     "npm:@sveltejs/adapter-static@4.0.1": "4.0.1_@sveltejs+kit@3.1.1__@sveltejs+vite-plugin-svelte@7.3.1___svelte@5.57.3___vite@8.3.6____@types+node@22.15.3___@types+node@22.15.3__svelte@5.57.3__typescript@6.0.3__vite@8.3.6___@types+node@22.15.3__@types+node@22.15.3_@types+node@22.15.3",
     "npm:@sveltejs/kit@*": "3.1.1_@sveltejs+vite-plugin-svelte@7.3.1__svelte@5.57.3__vite@8.3.6___@types+node@22.15.3__@types+node@22.15.3_svelte@5.57.3_typescript@6.0.3_vite@8.3.6__@types+node@22.15.3_@types+node@22.15.3",
@@ -55,6 +56,9 @@
         "@jridgewell/resolve-uri",
         "@jridgewell/sourcemap-codec"
       ]
+    },
+    "@noble/hashes@1.8.0": {
+      "integrity": "sha512-jCs9ldd7NwzpgXDIf6P3+NrHh9/sD6CQdxHyjQI+h/6rDNo88ypBxxz45UDuZHz9r3tNz7N/VInSVoVdtXEI4A=="
     },
     "@oxc-project/types@0.156.0": {
       "integrity": "sha512-1Duyg48TdJNdyhEB8Xn1L36bT9Pv6GUtlKjHxOys8xkaF/rQq3XJE+bAurSK/AgIz5mGFsb77cn9Pb20+WCScw=="
@@ -538,6 +542,7 @@
     ],
     "packageJson": {
       "dependencies": [
+        "npm:@noble/hashes@1.8.0",
         "npm:@sveltejs/adapter-node@6.0.6",
         "npm:@types/node@22.15.3"
       ]
