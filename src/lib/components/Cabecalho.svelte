@@ -76,7 +76,7 @@
     <div class="acoes">
       {#if sessao.perfil === 'professor'}
         <div class="identidade">
-          <span class="identidade__selo identidade__selo--professor">
+          <span class="identidade__nome">
             <Icone nome="professor" tamanho={17} /> <span>Professora</span>
           </span>
           <a class="sair" href={resolve('/professor')} title="Abrir o painel da turma">
@@ -90,7 +90,7 @@
         </div>
       {:else if sessao.perfil === 'crianca' && criancaAtiva}
         <div class="identidade">
-          <span class="identidade__selo identidade__selo--crianca">
+          <span class="identidade__nome" aria-label="Sessão de {criancaAtiva.nome}">
             <Icone nome="crianca" tamanho={17} /> <span>{criancaAtiva.nome}</span>
           </span>
           <a class="sair" href={resolve('/crianca') + '?escolher=1'} title="Escolher outra criança">
@@ -224,32 +224,19 @@
     border-right: 1.5px solid var(--linha);
   }
 
-  .identidade__selo {
+  /* Identificação informativa: não é botão nem link, por isso não tem cursor,
+     borda de acento nem hover. Só «Mudar» e «Sair» são clicáveis. */
+  .identidade__nome {
     display: inline-flex;
     align-items: center;
     gap: 0.35rem;
     min-height: 34px;
-    padding: 0.2rem 0.55rem;
-    border: 1.5px solid var(--linha-forte);
-    border-radius: var(--raio-pill);
+    padding: 0.2rem 0.35rem;
+    color: var(--tinta);
     font-size: var(--texto-s);
     font-weight: 700;
     white-space: nowrap;
-  }
-
-  .identidade__selo--professor {
-    color: var(--cobalto);
-    background: var(--cobalto-fundo);
-  }
-
-  .identidade__selo--crianca {
-    /* --coral-texto-ficha tem 4,33:1 sobre o fundo coral; o erro dá >5:1. */
-    color: var(--erro-ficha);
-    background: var(--coral-fundo-ficha);
-  }
-
-  :global(html[data-tema='escuro']) .identidade__selo--professor {
-    color: var(--tinta);
+    cursor: default;
   }
 
   .sair {
@@ -362,12 +349,11 @@
       padding-right: 0.35rem;
     }
 
-    .identidade__selo span {
-      display: none;
-    }
-
-    .identidade__selo {
-      padding: 0.2rem;
+    .identidade__nome {
+      max-width: 8rem;
+      overflow: hidden;
+      padding: 0.2rem 0.25rem;
+      text-overflow: ellipsis;
     }
 
     .menu-botao {
