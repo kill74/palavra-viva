@@ -161,6 +161,60 @@ export function sair(token: string | undefined): void {
   base().prepare('DELETE FROM sessoes_login WHERE id = ?').run(token);
 }
 
+/**
+ * Cria a conta de uma criança a pedido de uma professora autenticada.
+ * Não usa `politicaRegisto` (o registo público está fechado), mas mantém
+ * a validação de email/password.
+ */
+export async function criarContaCrianca(dados: {
+  email: string;
+  nome: string;
+  password: string;
+  criancaId: string;
+}): Promise<{ utilizadorId?: string; erros: string[] }> {
+  const erros = validarRegisto(dados.email, dados.nome, dados.password, 'crianca');
+  if (erros.length > 0) return { erros };
+
+  const email = dados.email.trim().toLocaleLowerCase('pt-PT');
+  const db = base();
+  if (db.prepare('SELECT id FROM utilizadores WHERE email = ?').get(email)) {
+    return { erros: ['Já existe uma conta com esse email.'] };
+  }
+
+  const id = idSeguro();
+  const hash = await hashPassword(dados.password);
+  transacao(() => {
+    db.prepare(`INSERT INTO utilizadores
+      (id, email, nome, papel, password_hash, criado_em) VALUES (?, ?, ?, 'crianca', ?, ?)`)
+      .run(id, email, dados.nome.trim(), hash, new Date().toISOString());
+    db.prepare('UPDATE criancas SET utilizador_id = ? WHERE id = ?').run(id, dados.criancaId);
+  });
+
+  return { utilizadorId: id, erros: [] };
+}
+
+/** Atualiza o email/password de uma conta de criança existente. */
+export async function atualizarContaCrianca(dados: {
+  utilizadorId: string;
+  email: string;
+  password: string;
+}): Promise<string[]> {
+  const email = dados.email.trim().toLocaleLowerCase('pt-PT');
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return ['Escreve um email válido.'];
+  if (dados.password.length < 10 || !/[A-ZÀ-Ú]/.test(dados.password) ||
+    !/[a-zà-ú]/.test(dados.password) || !/\d/.test(dados.password)) {
+    return ['A palavra-passe deve ter 10 caracteres, maiúscula, minúscula e número.'];
+  }
+  const db = base();
+  const duplicado = db.prepare('SELECT id FROM utilizadores WHERE email = ? AND id <> ?')
+    .get(email, dados.utilizadorId);
+  if (duplicado) return ['Já existe uma conta com esse email.'];
+  const hash = await hashPassword(dados.password);
+  db.prepare('UPDATE utilizadores SET email = ?, password_hash = ? WHERE id = ?')
+    .run(email, hash, dados.utilizadorId);
+  return [];
+}
+
 /** Devolve o id da criança associada a uma conta, se existir. */
 export function criancaDoUtilizador(utilizadorId: string): string | undefined {
   const linha = base().prepare('SELECT id FROM criancas WHERE utilizador_id = ? LIMIT 1')

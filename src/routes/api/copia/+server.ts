@@ -1,12 +1,12 @@
 import { error } from '@sveltejs/kit';
-import { MODO_SERVIDOR } from '#lib/ambiente';
+import { eModoServidor } from '#lib/ambiente-servidor';
 import { RepositorioDb } from '#lib/repositorios/db';
 import { validarCopia } from '#lib/utils/backup';
 import type { RequestHandler } from './$types';
 
 /** Só professoras podem exportar/importar, e apenas a sua própria turma. */
 function professoraId(locals: App.Locals): string {
-  if (!MODO_SERVIDOR) error(404, 'Não encontrado');
+  if (!eModoServidor()) error(404, 'Não encontrado');
   if (!locals.utilizador || locals.utilizador.papel !== 'professora') {
     error(403, 'Acesso reservado à professora.');
   }

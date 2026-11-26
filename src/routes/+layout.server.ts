@@ -1,11 +1,11 @@
 import { building } from '$app/environment';
-import { MODO_SERVIDOR } from '#lib/ambiente';
+import { eModoServidor } from '#lib/ambiente-servidor';
 import { criancaDoUtilizador } from '../../db/autenticacao.ts';
 import { RepositorioDb } from '#lib/repositorios/db';
 import type { LayoutServerLoad } from './$types';
 
 export const load: LayoutServerLoad = async ({ locals }) => {
-  if (building || !MODO_SERVIDOR) {
+  if (building || !eModoServidor()) {
     return { utilizador: null, criancaId: null, estado: null };
   }
   const utilizador = locals.utilizador;
