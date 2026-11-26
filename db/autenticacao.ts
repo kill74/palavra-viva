@@ -141,6 +141,13 @@ export function sair(token: string | undefined): void {
   base().prepare('DELETE FROM sessoes_login WHERE id = ?').run(token);
 }
 
+/** Devolve o id da criança associada a uma conta, se existir. */
+export function criancaDoUtilizador(utilizadorId: string): string | undefined {
+  const linha = base().prepare('SELECT id FROM criancas WHERE utilizador_id = ? LIMIT 1')
+    .get(utilizadorId) as { id: string } | undefined;
+  return linha?.id;
+}
+
 /** Cria a conta de criança associada a um registo já existente na turma demo. */
 export function ligarCrianca(utilizadorId: string, criancaId: string): void {
   base().prepare('UPDATE criancas SET utilizador_id = ? WHERE id = ?').run(utilizadorId, criancaId);

@@ -9,10 +9,30 @@
   import { onMount, untrack } from 'svelte';
   import '../app.css';
 
-  let { children } = $props();
+  import { MODO_SERVIDOR } from '#lib/ambiente';
+
+  let { children, data } = $props();
+
+  $effect(() => {
+    if (!MODO_SERVIDOR || !data) return;
+    if (data.utilizador) {
+      sessao.aplicarDoServidor(
+        data.utilizador.papel === 'professora' ? 'professor' : 'crianca',
+        data.utilizador.papel === 'crianca' ? data.criancaId : null
+      );
+    } else {
+      sessao.aplicarAnonima();
+    }
+  });
+
+  $effect(() => {
+    if (!MODO_SERVIDOR || !data?.estado) return;
+    dados.aplicarEstado(data.estado);
+  });
 
   onMount(() => {
-    void dados.carregar().then(() => sessao.carregar());
+    // No servidor a sessão já foi aplicada pelo efeito acima, a partir de `locals`.
+    if (!MODO_SERVIDOR) void dados.carregar().then(() => sessao.carregar());
   });
   let principal = $state<HTMLElement>();
 
@@ -35,6 +55,8 @@
    * As páginas públicas ('/' e '/metodo') e '/entrar' ficam sempre abertas.
    */
   $effect(() => {
+    // No servidor, a autoridade é o cookie validado em hooks.server.ts.
+    if (MODO_SERVIDOR) return;
     if (!sessao.carregada || !page.route.id || carregando) return;
 
     const rota = page.route.id;

@@ -29,6 +29,15 @@ class Dados {
     };
   }
 
+  /** Aplica um estado já carregado pelo servidor (build com base de dados). */
+  aplicarEstado(estado: EstadoDados): void {
+    this.criancas = estado.criancas;
+    this.recursos = estado.recursos.map((r) => comValidacao(r));
+    this.sessoes = estado.sessoes;
+    this.escritas = estado.escritas;
+    this.pronto = true;
+  }
+
   async carregar(): Promise<void> {
     try {
       const dados = await this.repositorio.carregar();

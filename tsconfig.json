@@ -5,6 +5,8 @@
     "src/service-worker",
     "src/**/*.test.ts",
     "src/lib/repositorios/db.ts",
+    "src/**/*.server.ts",
+    "src/hooks.server.ts",
     "db/**"
   ],
   "compilerOptions": {

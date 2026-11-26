@@ -1,10 +1,19 @@
 import { DatabaseSync } from 'node:sqlite';
-import { mkdirSync, readFileSync } from 'node:fs';
+import { mkdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
+import { ESQUEMA_INICIAL } from './schema.ts';
 
 /** Caminho da base de dados local. Pode ser alterado por variável de ambiente. */
 export function caminhoBase(): string {
-  return Deno.env.get('PALAVRA_VIVA_DB') ?? join(import.meta.dirname ?? '.', 'dados', 'palavra-viva.sqlite');
+  // Funciona tanto no Deno (testes e seed) como no Node (servidor gerado).
+  const ambiente = (globalThis as {
+    Deno?: { env?: { get(nome: string): string | undefined } };
+    process?: { env?: Record<string, string | undefined> };
+  });
+  const configurado = ambiente.Deno?.env?.get?.('PALAVRA_VIVA_DB') ??
+    ambiente.process?.env?.PALAVRA_VIVA_DB;
+  const raiz = import.meta.dirname ?? process.cwd();
+  return configurado ?? join(raiz, 'dados', 'palavra-viva.sqlite');
 }
 
 let instancia: DatabaseSync | undefined;
@@ -17,11 +26,7 @@ export function base(): DatabaseSync {
   const db = new DatabaseSync(caminho);
   db.exec('PRAGMA foreign_keys = ON');
   db.exec('PRAGMA journal_mode = WAL');
-  const migracao = readFileSync(
-    new URL('./migrations/001_inicial.sql', import.meta.url),
-    'utf8'
-  );
-  db.exec(migracao);
+  db.exec(ESQUEMA_INICIAL);
   instancia = db;
   return db;
 }

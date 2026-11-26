@@ -100,6 +100,22 @@ class Sessao {
     this.guardar();
   }
 
+  /** Sessão anónima no modo servidor (sem cookie válido). */
+  aplicarAnonima(): void {
+    this.perfil = null;
+    this.criancaId = null;
+    this.carregada = true;
+    this.saindo = false;
+  }
+
+  /** Usado pelo modo servidor, onde a sessão vem do cookie via `locals`. */
+  aplicarDoServidor(perfil: Perfil, criancaId: string | null): void {
+    this.perfil = perfil;
+    this.criancaId = criancaId;
+    this.carregada = true;
+    this.saindo = false;
+  }
+
   /** Chamado depois de a navegação para a página de entrada terminar. */
   fimDaSaida(): void {
     this.saindo = false;

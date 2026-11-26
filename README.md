@@ -94,6 +94,26 @@ O site é totalmente pré-renderizado com `@sveltejs/adapter-static`. O resultad
 pode ser servido por qualquer alojamento estático. O fallback `404.html` garante a página de
 erro em servidores estáticos.
 
+### Versão com base de dados e login real
+
+Além da demonstração estática, o projeto tem uma build com servidor, SQLite e contas reais:
+
+```bash
+deno task db:seed          # cria db/dados/palavra-viva.sqlite com a turma demo
+deno task build:server     # gera o servidor em servidor/
+deno task start            # arranca em http://localhost:3000
+```
+
+Contas de demonstração: `professora@palavraviva.pt` / `professora2026!` e
+`alice@palavraviva.pt` / `alice2026!` (as restantes seguem o mesmo padrão).
+
+Variáveis de ambiente: `ORIGIN` (origem de confiança para os formulários, obrigatória
+em form actions), `PORT` e `PALAVRA_VIVA_DB` (caminho do ficheiro SQLite). As passwords
+são guardadas com PBKDF2 e as sessões em cookies `HttpOnly` com expiração de 7 dias.
+
+O GitHub Pages continua a publicar a build estática (`deno task build`); a build com
+servidor é independente e destina-se ao trabalho com autenticação e base de dados.
+
 ### Publicação
 
 O workflow `.github/workflows/pages.yml` constrói o site com `BASE_PATH=/palavra-viva` e

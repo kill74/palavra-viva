@@ -7,15 +7,22 @@
   import { CODIGO_DEMONSTRACAO, sessao, type Perfil } from '#lib/stores/sessao.svelte';
   import { dados } from '#lib/stores/dados.svelte';
   import { parametroUrl } from '#lib/utils/consulta';
+  import { MODO_SERVIDOR } from '#lib/ambiente';
+  import FormularioConta from '#lib/components/FormularioConta.svelte';
+
 
   let etapa = $state<'escolha' | 'professor' | 'crianca'>('escolha');
   let codigo = $state('');
   let erro = $state('');
+  let registado = $state(false);
+  let erroUrl = $state('');
   let destino = $state('');
   let campoCodigo = $state<HTMLInputElement>();
 
   onMount(() => {
     destino = parametroUrl('destino') ?? '';
+    registado = parametroUrl('registado') === '1';
+    erroUrl = parametroUrl('erro') ?? '';
     const perfil = parametroUrl('perfil');
     if (perfil === 'professor') {
       etapa = 'professor';
@@ -147,8 +154,24 @@
             <Icone nome="seta-esquerda" tamanho={18} /> Voltar
           </button>
           <h2>Área da professora</h2>
-          <p class="ajuda">Escreve o código de demonstração para entrar no painel.</p>
+          <p class="ajuda">
+            {MODO_SERVIDOR
+              ? 'Entra com a tua conta para aceder ao painel da turma.'
+              : 'Escreve o código de demonstração para entrar no painel.'}
+          </p>
 
+          {#if erroUrl}
+            <p class="erro" role="alert" aria-live="assertive">
+              <Icone nome="alerta" tamanho={17} /> {erroUrl}
+            </p>
+          {/if}
+          {#if registado}
+            <p class="dica" role="status">Conta criada. Podes entrar agora.</p>
+          {/if}
+
+          {#if MODO_SERVIDOR}
+            <FormularioConta {destino} />
+          {:else}
           <label class="rotulo" for="codigo">Código de 4 dígitos</label>
           <input
             bind:this={campoCodigo}
@@ -175,6 +198,7 @@
           <button type="button" class="botao botao--primario botao--bloco" onclick={verificarCodigo}>
             <Icone nome="check" tamanho={19} /> Entrar no painel
           </button>
+          {/if}
         </div>
       {:else}
         <div class="passo">

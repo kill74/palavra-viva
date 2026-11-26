@@ -4,6 +4,7 @@
   import { page } from '$app/state';
   import { tema } from '#lib/stores/tema.svelte';
   import { sessao } from '#lib/stores/sessao.svelte';
+  import { MODO_SERVIDOR } from '#lib/ambiente';
   import { dados } from '#lib/stores/dados.svelte';
   import { onMount } from 'svelte';
   import Icone from './Icone.svelte';
@@ -81,9 +82,11 @@
           <a class="sair" href={resolve('/professor')} title="Abrir o painel da turma">
             A minha área
           </a>
-          <button type="button" class="sair" title="Terminar a sessão" onclick={sair}>
-            Sair
-          </button>
+          {#if MODO_SERVIDOR}
+            <form method="POST" action="/sair"><button type="submit" class="sair">Sair</button></form>
+          {:else}
+            <button type="button" class="sair" title="Terminar a sessão" onclick={sair}>Sair</button>
+          {/if}
         </div>
       {:else if sessao.perfil === 'crianca' && criancaAtiva}
         <div class="identidade">

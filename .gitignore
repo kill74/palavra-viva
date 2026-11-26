@@ -6,6 +6,9 @@ build/
 # Base de dados local (gerada por db/cliente.ts)
 db/dados/
 
+# Build do servidor (gerada por deno task build:server)
+servidor/
+
 # Sistema e editores
 .DS_Store
 Thumbs.db

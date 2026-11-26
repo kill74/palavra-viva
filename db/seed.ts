@@ -11,7 +11,7 @@ const PROFESSORA = {
   id: 'prof-demo',
   email: 'professora@palavraviva.pt',
   nome: 'Ana Ribeiro',
-  password: 'professora2026'
+  password: 'professora2026!'
 };
 
 const TURMA = { id: 'turma-1a', nome: '1.º A' };
@@ -26,7 +26,7 @@ const CRIANCAS = [
     nota: 'Reconhece as cinco primeiras palavras e já junta sílabas.',
     palavras: ['menina', 'menino', 'uva', 'sapato', 'bota'],
     email: 'alice@palavraviva.pt',
-    password: 'alice2026'
+    password: 'alice2026!'
   },
   {
     id: 'benjamim',
@@ -37,7 +37,7 @@ const CRIANCAS = [
     nota: 'Está a reconhecer a palavra sem depender da imagem.',
     palavras: ['menina', 'menino', 'uva'],
     email: 'benjamim@palavraviva.pt',
-    password: 'benjamim2026'
+    password: 'benjamim2026!'
   },
   {
     id: 'clara',
@@ -51,7 +51,7 @@ const CRIANCAS = [
       'janela', 'telhado', 'escada', 'chave'
     ],
     email: 'clara@palavraviva.pt',
-    password: 'clara2026'
+    password: 'clara2026!'
   },
   {
     id: 'duarte',
@@ -62,7 +62,7 @@ const CRIANCAS = [
     nota: 'Começou esta semana; apoia-se muito no som e na imagem.',
     palavras: ['menina', 'menino'],
     email: 'duarte@palavraviva.pt',
-    password: 'duarte2026'
+    password: 'duarte2026!'
   }
 ] as const;
 
