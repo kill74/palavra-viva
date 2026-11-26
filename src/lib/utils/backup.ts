@@ -16,6 +16,11 @@ export type Copia = {
  * Devolvemos uma lista de problemas em português, pronta a mostrar.
  */
 export function validarCopia(texto: string): { dados?: Copia; erros: string[] } {
+  // Limite de 5 MB: impede que um ficheiro gigante bloqueie o browser.
+  if (texto.length > 5 * 1024 * 1024) {
+    return { erros: ['O ficheiro é demasiado grande (máximo 5 MB).'] };
+  }
+
   let bruto: unknown;
   try {
     // Aceita BOM inicial, comum em ficheiros guardados por editores Windows.
@@ -42,6 +47,15 @@ export function validarCopia(texto: string): { dados?: Copia; erros: string[] } 
     else idsCriancas.add(c.id);
     if (!textoCurto(c?.nome)) erros.push('Uma criança não tem nome válido.');
     if (![1, 2, 3, 4, 5, 6].includes(c?.fase)) erros.push(`A criança ${c?.nome ?? '?'} tem uma fase inválida.`);
+    if (!Number.isInteger(c?.idade) || c.idade < 3 || c.idade > 12) {
+      erros.push(`A criança ${c?.nome ?? '?'} tem uma idade inválida.`);
+    }
+    if (!['coral', 'cobalto', 'verde', 'sol'].includes(c?.cor)) {
+      erros.push(`A criança ${c?.nome ?? '?'} tem uma cor inválida.`);
+    }
+    if (!Array.isArray(c?.palavrasTrabalhadas) || !c.palavrasTrabalhadas.every(textoCurto)) {
+      erros.push(`A criança ${c?.nome ?? '?'} tem palavras trabalhadas inválidas.`);
+    }
   }
 
   const idsRecursos = new Set<string>();
@@ -54,6 +68,20 @@ export function validarCopia(texto: string): { dados?: Copia; erros: string[] } 
     if (r?.estado !== 'rascunho' && r?.estado !== 'aprovado') {
       erros.push(`O recurso ${r?.id ?? '?'} tem um estado inválido.`);
     }
+    const apoios = r?.apoios as Record<string, unknown> | undefined;
+    if (
+      !apoios || typeof apoios.imagem !== 'boolean' ||
+      typeof apoios.audio !== 'boolean' || typeof apoios.silabas !== 'boolean'
+    ) {
+      erros.push(`O recurso ${r?.id ?? '?'} tem apoios inválidos.`);
+    }
+    if (!Array.isArray(r?.opcoes) || !r.opcoes.every(textoCurto) || r.opcoes.length > 6) {
+      erros.push(`O recurso ${r?.id ?? '?'} tem opções inválidas.`);
+    }
+    if (!Array.isArray(r?.validacao) || r.validacao.length !== 6 ||
+      !r.validacao.every((v) => objeto(v) && typeof v.ok === 'boolean' && textoCurto(v.detalhe))) {
+      erros.push(`O recurso ${r?.id ?? '?'} tem verificações inválidas.`);
+    }
   }
 
   const idsSessoes = new Set<string>();
@@ -62,7 +90,16 @@ export function validarCopia(texto: string): { dados?: Copia; erros: string[] } 
     else if (idsSessoes.has(s.id)) erros.push(`Identificador de sessão repetido: ${s.id}.`);
     else idsSessoes.add(s.id);
     if (!idsCriancas.has(s?.criancaId)) erros.push(`A sessão ${s?.id ?? '?'} aponta para uma criança inexistente.`);
-    if (!Array.isArray(s?.respostas)) erros.push(`A sessão ${s?.id ?? '?'} não tem respostas válidas.`);
+    if (!Array.isArray(s?.respostas) || s.respostas.length > 200 ||
+      !s.respostas.every((r) =>
+        objeto(r) && textoCurto(r.recursoId) && textoCurto(r.palavra) &&
+        typeof r.tentativas === 'number' && typeof r.ajudas === 'number' &&
+        typeof r.acertouPrimeira === 'boolean' && typeof r.tempoMs === 'number' &&
+        typeof r.usouAudio === 'boolean' && typeof r.usouDica === 'boolean' &&
+        typeof r.revelou === 'boolean'
+      )) {
+      erros.push(`A sessão ${s?.id ?? '?'} não tem respostas válidas.`);
+    }
   }
 
   const idsEscritas = new Set<string>();

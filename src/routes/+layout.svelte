@@ -10,6 +10,7 @@
   import '../app.css';
 
   import { MODO_SERVIDOR } from '#lib/ambiente';
+  import { pararAudio } from '#lib/utils/audio';
 
   let { children, data } = $props();
 
@@ -106,6 +107,8 @@
   });
 
   afterNavigate(({ from }) => {
+    // Áudio de uma atividade não pode continuar noutra página.
+    pararAudio();
     if (!from) return;
     principal?.focus({ preventScroll: true });
   });

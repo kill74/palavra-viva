@@ -96,11 +96,16 @@
     const partes = valor
       .split(',')
       .map((s) => s.trim())
-      .filter(Boolean);
+      .filter(Boolean)
+      .slice(0, 4);
     if (tiposPalavra.includes(recurso.tipo) || tiposSilaba.includes(recurso.tipo)) {
       recurso.opcoes = partes;
     } else {
-      recurso.opcoes = partes.map((parte) => porTexto(parte)?.id ?? parte);
+      // Só aceitamos palavras do léxico validado; uma opção desconhecida
+      // deixaria a atividade sem imagem/áudio correspondente.
+      recurso.opcoes = partes
+        .map((parte) => porTexto(parte)?.id)
+        .filter((id): id is string => Boolean(id));
     }
   }
 </script>
