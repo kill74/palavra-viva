@@ -3,8 +3,18 @@
   import Icone from '#lib/components/Icone.svelte';
   import { dados } from '#lib/stores/dados.svelte';
   import { sessao } from '#lib/stores/sessao.svelte';
-  import { dataLonga, percentagem } from '#lib/utils/formato';
+  import { dataLonga, percentagem, hora } from '#lib/utils/formato';
   import { resumoCrianca } from '#lib/utils/recomendacao';
+  import { MODO_SERVIDOR } from '#lib/ambiente';
+
+  let { data } = $props();
+  let mensagem = $state('');
+
+  async function terminarSessoes() {
+    if (!window.confirm('Terminar todas as sessões? Vais ser desligado.')) return;
+    await fetch('/api/sessoes', { method: 'POST' });
+    window.location.href = '/entrar/';
+  }
 
   const stats = $derived(dados.estatisticas());
   const alunos = $derived(
@@ -82,6 +92,27 @@
         {/each}
       </ul>
     </section>
+
+    {#if MODO_SERVIDOR && data?.sessoes && data.sessoes.length > 0}
+      <section class="bloco sessoes" aria-labelledby="sessoes-titulo">
+        <div class="bloco__cabeca">
+          <h2 id="sessoes-titulo">Sessões ativas</h2>
+          <p>{data.sessoes.length} {data.sessoes.length === 1 ? 'sessão' : 'sessões'}</p>
+        </div>
+        <ul>
+          {#each data.sessoes as sessao (sessao.id)}
+            <li>
+              <Icone nome="escudo" tamanho={16} />
+              <span>{dataLonga(sessao.criadoEm)} às {hora(sessao.criadoEm)}</span>
+              <small>Expira a {dataLonga(sessao.expiraEm)}</small>
+            </li>
+          {/each}
+        </ul>
+        <button type="button" class="botao botao--perigo botao--pequeno" onclick={terminarSessoes}>
+          Terminar todas as sessões
+        </button>
+      </section>
+    {/if}
 
     <p class="nota-final">
       <Icone nome="escudo" tamanho={16} />
@@ -286,6 +317,33 @@
 
   .alunos a :global(svg) {
     margin-left: auto;
+  }
+
+  .sessoes {
+    margin-top: 1.4rem;
+  }
+
+  .sessoes ul {
+    display: grid;
+    gap: 0.5rem;
+    margin: 0 0 1rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  .sessoes li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem 0.8rem;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid var(--linha);
+  }
+
+  .sessoes li small {
+    margin-left: auto;
+    color: var(--tinta-fraca);
+    font-size: var(--texto-mini);
   }
 
   .nota-final {

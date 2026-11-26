@@ -161,6 +161,27 @@ export function sair(token: string | undefined): void {
   base().prepare('DELETE FROM sessoes_login WHERE id = ?').run(token);
 }
 
+export type SessaoActiva = {
+  id: string;
+  criadoEm: string;
+  expiraEm: string;
+};
+
+/** Sessões válidas de um utilizador, para mostrar no perfil. */
+export function listarSessoes(utilizadorId: string): SessaoActiva[] {
+  const linhas = base().prepare(`SELECT id, criado_em, expira_em FROM sessoes_login
+    WHERE utilizador_id = ? AND expira_em > ? ORDER BY criado_em DESC`)
+    .all(utilizadorId, new Date().toISOString()) as Array<{
+      id: string; criado_em: string; expira_em: string;
+    }>;
+  return linhas.map((l) => ({ id: l.id, criadoEm: l.criado_em, expiraEm: l.expira_em }));
+}
+
+/** Termina todas as sessões, incluindo a atual. */
+export function terminarTodasSessoes(utilizadorId: string): void {
+  base().prepare('DELETE FROM sessoes_login WHERE utilizador_id = ?').run(utilizadorId);
+}
+
 /**
  * Cria a conta de uma criança a pedido de uma professora autenticada.
  * Não usa `politicaRegisto` (o registo público está fechado), mas mantém
