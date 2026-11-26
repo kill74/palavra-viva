@@ -63,6 +63,38 @@ try {
   caso('X-Frame-Options DENY', h.get('x-frame-options') === 'DENY');
   caso('X-Content-Type-Options nosniff', h.get('x-content-type-options') === 'nosniff');
   caso('Referrer-Policy', Boolean(h.get('referrer-policy')));
+  caso('HSTS ausente em HTTP local', h.get('strict-transport-security') === null);
+
+  // HSTS presente quando a origem configurada é HTTPS.
+  const portaHttps = porta + 500;
+  const servidorHttps = spawn('node', ['servidor/index.js'], {
+    cwd: process.cwd(),
+    env: {
+      ...process.env,
+      PORT: String(portaHttps),
+      ORIGIN: `https://localhost:${portaHttps}`,
+      MODO_SERVIDOR: '1',
+      PALAVRA_VIVA_DB: bd
+    },
+    stdio: 'ignore'
+  });
+  try {
+    let pronto = false;
+    for (let i = 0; i < 50; i++) {
+      try { if ((await fetch(`http://127.0.0.1:${portaHttps}/entrar/`)).ok) { pronto = true; break; } }
+      catch { /* a arrancar */ }
+      await new Promise((r) => setTimeout(r, 200));
+    }
+    if (pronto) {
+      const rh = await fetch(`http://127.0.0.1:${portaHttps}/entrar/`);
+      caso('HSTS presente em HTTPS',
+        (rh.headers.get('strict-transport-security') ?? '').includes('max-age=31536000'));
+    } else {
+      caso('HSTS presente em HTTPS', false);
+    }
+  } finally {
+    servidorHttps.kill();
+  }
 
   // 2. Open redirect e registo escalado (via HTTP direto)
   const post = (url, corpo, cookie) => fetch(`${BASE}${url}`, {

@@ -1,3 +1,12 @@
+/** Origem configurada para o servidor (usada em cookies e HSTS). */
+export function origemConfigurada(): string | undefined {
+  const ambiente = globalThis as {
+    process?: { env?: Record<string, string | undefined> };
+    Deno?: { env?: { get(nome: string): string | undefined } };
+  };
+  return ambiente.process?.env?.ORIGIN ?? ambiente.Deno?.env?.get?.('ORIGIN');
+}
+
 /** Detecta a build com servidor a partir do ambiente do processo Node/Deno. */
 export function eModoServidor(): boolean {
   const ambiente = globalThis as {

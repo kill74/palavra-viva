@@ -1,5 +1,6 @@
 import { building } from '$app/environment';
 import { redirect, type Handle } from '@sveltejs/kit';
+import { origemConfigurada } from '#lib/ambiente-servidor';
 import { validarSessao } from '../db/autenticacao.ts';
 
 export const handle: Handle = async ({ event, resolve }) => {
@@ -47,6 +48,15 @@ export const handle: Handle = async ({ event, resolve }) => {
   response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
   response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
   response.headers.set('Cross-Origin-Opener-Policy', 'same-origin');
+
+  // HSTS só faz sentido em HTTPS. Em HTTP local não é enviado, para não
+  // bloquear o desenvolvimento com ORIGIN=http://localhost.
+  if (origemConfigurada()?.startsWith('https://')) {
+    response.headers.set(
+      'Strict-Transport-Security',
+      'max-age=31536000; includeSubDomains'
+    );
+  }
 
   return response;
 };
