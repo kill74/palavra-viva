@@ -1,6 +1,7 @@
 import { assertEquals, assertNotEquals } from 'jsr:@std/assert';
 import {
   entrar,
+  politicaRegisto,
   registarUtilizador,
   sair,
   validarRegisto,
@@ -51,4 +52,28 @@ Deno.test('entrar: recusa password errada e email inexistente com a mesma mensag
   const errada = await entrar('entrar@palavraviva.pt', 'Errada12345');
   const inexistente = await entrar('ninguem@palavraviva.pt', 'SenhaForte123');
   assertEquals(errada.erro, inexistente.erro);
+});
+
+Deno.test('politicaRegisto: permite o primeiro registo e fecha os seguintes', async () => {
+  // Abrimos uma base isolada para este teste, porque os anteriores já criaram professoras.
+  const isolada = await Deno.makeTempFile({ suffix: '.sqlite' });
+  Deno.env.set('PALAVRA_VIVA_DB', isolada);
+  const { fecharBase } = await import('./cliente.ts');
+  fecharBase();
+  const { base } = await import('./cliente.ts');
+  base();
+
+  assertEquals(politicaRegisto().permitido, true);
+  await registarUtilizador({
+    email: 'primeira@palavraviva.pt',
+    nome: 'Primeira Professora',
+    password: 'SenhaForte123',
+    papel: 'professora'
+  });
+  assertEquals(politicaRegisto().permitido, false);
+  assertEquals(politicaRegisto('errada').permitido, false);
+
+  fecharBase();
+  Deno.env.delete('PALAVRA_VIVA_DB');
+  await Deno.remove(isolada);
 });

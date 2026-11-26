@@ -72,14 +72,34 @@ function paraEscrita(l: LinhaEscrita): RegistoEscrita {
 
 /** Repositório servidor, apoiado em SQLite. */
 export class RepositorioDb implements Repositorio {
-  async carregar(): Promise<EstadoDados> {
+  async carregar(professoraId?: string, criancaId?: string): Promise<EstadoDados> {
     const db = base();
+    const vazio = { versao: 1 as const, criancas: [], recursos: [], sessoes: [], escritas: [] };
+
+    // Sem uma conta autenticada identificada não devolvemos dados: uma falha
+    // aqui não pode resultar na lista completa de crianças de todas as turmas.
+    if (!professoraId && !criancaId) return vazio;
+
+    const criancas = professoraId
+      ? (db.prepare(`SELECT c.* FROM criancas c
+          JOIN turmas t ON t.id = c.turma_id
+          WHERE t.professora_id = ? ORDER BY c.nome`)
+          .all(professoraId) as LinhaCrianca[]).map(paraCrianca)
+      : (db.prepare('SELECT * FROM criancas WHERE id = ?')
+          .all(criancaId ?? '') as LinhaCrianca[]).map(paraCrianca);
+    if (criancas.length === 0) return vazio;
+    const ids = criancas.map((c) => c.id);
+    const marcadores = ids.map(() => '?').join(',');
+
     return {
       versao: 1,
-      criancas: (db.prepare('SELECT * FROM criancas ORDER BY nome').all() as LinhaCrianca[]).map(paraCrianca),
-      recursos: (db.prepare('SELECT * FROM recursos ORDER BY criado_em DESC').all() as LinhaRecurso[]).map(paraRecurso),
-      sessoes: (db.prepare('SELECT * FROM sessoes ORDER BY fim DESC').all() as LinhaSessao[]).map(paraSessao),
-      escritas: (db.prepare('SELECT * FROM escritas ORDER BY data DESC').all() as LinhaEscrita[]).map(paraEscrita)
+      criancas,
+      recursos: (db.prepare(`SELECT * FROM recursos WHERE crianca_id IN (${marcadores})
+        ORDER BY criado_em DESC`).all(...ids) as LinhaRecurso[]).map(paraRecurso),
+      sessoes: (db.prepare(`SELECT * FROM sessoes WHERE crianca_id IN (${marcadores})
+        ORDER BY fim DESC`).all(...ids) as LinhaSessao[]).map(paraSessao),
+      escritas: (db.prepare(`SELECT * FROM escritas WHERE crianca_id IN (${marcadores})
+        ORDER BY data DESC`).all(...ids) as LinhaEscrita[]).map(paraEscrita)
     };
   }
 

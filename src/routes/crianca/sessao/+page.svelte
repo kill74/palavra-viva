@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { goto } from '$app/navigation';
   import { resolve } from '$app/paths';
   import { onMount } from 'svelte';
   import { audioDaSilaba, fonteDaSilaba, obterPalavra } from '#lib/data/palavras';
@@ -11,6 +12,8 @@
     type TipoAtividade
   } from '#lib/data/tipos';
   import { dados } from '#lib/stores/dados.svelte';
+  import { sessao } from '#lib/stores/sessao.svelte';
+  import { MODO_SERVIDOR } from '#lib/ambiente';
   import { parametroUrl } from '#lib/utils/consulta';
   import { recursoEstatico } from '#lib/utils/caminho';
   import { idCurto } from '#lib/utils/formato';
@@ -40,7 +43,19 @@
   let recursoPedido = $state<string | null>(null);
 
   onMount(() => {
-    criancaId = parametroUrl('crianca') ?? '';
+    const pedido = parametroUrl('crianca');
+    if (MODO_SERVIDOR) {
+      // A identidade vem do cookie validado no servidor: uma query string
+      // nunca pode escolher os dados de outra criança (IDOR).
+      criancaId = sessao.criancaId ?? '';
+      if (pedido && pedido !== criancaId) {
+        const url = new URL(window.location.href);
+        url.searchParams.delete('crianca');
+        void goto(url.pathname + url.search, { replaceState: true });
+      }
+    } else {
+      criancaId = pedido ?? '';
+    }
     recursoPedido = parametroUrl('recurso');
   });
 
@@ -168,7 +183,10 @@
   });
 
   $effect(() => {
-    if (terminou && !guardada && crianca && respostas.length > 0) {
+    if (
+      terminou && !guardada && crianca && respostas.length > 0 &&
+      (!MODO_SERVIDOR || crianca.id === sessao.criancaId)
+    ) {
       dados.registarSessao({
         id: `ses-${idCurto()}`,
         criancaId: crianca.id,

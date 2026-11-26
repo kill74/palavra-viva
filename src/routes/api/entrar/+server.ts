@@ -1,6 +1,8 @@
 import { redirect } from '@sveltejs/kit';
-import { entrar, registarUtilizador, type Papel } from '../../../../db/autenticacao.ts';
+import { entrar, politicaRegisto, registarUtilizador } from '../../../../db/autenticacao.ts';
 import type { RequestHandler } from './$types';
+
+import { destinoSeguro } from '#lib/utils/destino';
 
 /** Endpoint de autenticação, usado apenas na build com servidor. */
 export const POST: RequestHandler = async ({ request, cookies, url }) => {
@@ -12,8 +14,18 @@ export const POST: RequestHandler = async ({ request, cookies, url }) => {
 
   if (tipo === 'registar') {
     const nome = String(dados.get('nome') ?? '');
-    const papel = String(dados.get('papel') ?? 'professora') as Papel;
-    const resultado = await registarUtilizador({ email, nome, password, papel });
+    const papel = String(dados.get('papel') ?? 'professora');
+    const codigo = String(dados.get('codigo') ?? '');
+
+    // Nunca permitir registo público de criança: essas contas são criadas pela professora.
+    if (papel !== 'professora') {
+      redirect(303, '/entrar/?erro=' + encodeURIComponent('Só a professora pode criar contas de criança.'));
+    }
+    const politica = politicaRegisto(codigo);
+    if (!politica.permitido) {
+      redirect(303, '/entrar/?erro=' + encodeURIComponent(politica.erro ?? 'Registo não permitido.'));
+    }
+    const resultado = await registarUtilizador({ email, nome, password, papel: 'professora' });
     if (!resultado.utilizador) {
       redirect(303, `/entrar/?erro=${encodeURIComponent(resultado.erros.join(' '))}`);
     }
@@ -33,11 +45,9 @@ export const POST: RequestHandler = async ({ request, cookies, url }) => {
     maxAge: 60 * 60 * 24 * 7
   });
 
-  const permitido = resultado.utilizador.papel === 'professora'
-    ? destino.startsWith('/professor')
-    : destino.startsWith('/crianca');
+  const seguro = destinoSeguro(destino, resultado.utilizador.papel);
   redirect(
     303,
-    permitido ? destino : resultado.utilizador.papel === 'professora' ? '/professor/' : '/crianca/'
+    seguro ?? (resultado.utilizador.papel === 'professora' ? '/professor/' : '/crianca/')
   );
 };

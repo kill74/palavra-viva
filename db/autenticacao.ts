@@ -48,6 +48,26 @@ export function validarRegisto(
   return erros;
 }
 
+/**
+ * O registo público só é permitido para professora, e apenas no setup inicial
+ * (quando ainda não há nenhuma) ou com um código de convite configurado no
+ * ambiente. Contas de criança são sempre criadas pela professora.
+ */
+export function politicaRegisto(codigo?: string): { permitido: boolean; erro?: string } {
+  const db = base();
+  const total = (db.prepare("SELECT COUNT(*) AS n FROM utilizadores WHERE papel = 'professora'")
+    .get() as { n: number }).n;
+  if (total === 0) return { permitido: true };
+
+  const convite = (globalThis as {
+    process?: { env?: Record<string, string | undefined> };
+    Deno?: { env?: { get(n: string): string | undefined } };
+  });
+  const esperado = convite.process?.env?.CODIGO_CONVITE ?? convite.Deno?.env?.get?.('CODIGO_CONVITE');
+  if (esperado && codigo && codigo === esperado) return { permitido: true };
+  return { permitido: false, erro: 'Registo encerrado. Pede um código de convite à professora.' };
+}
+
 /** Regista um utilizador. Só professores podem criar contas de criança. */
 export async function registarUtilizador(dados: {
   email: string;

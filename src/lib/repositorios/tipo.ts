@@ -16,7 +16,8 @@ export type EstadoDados = {
  * de saber qual está ativa.
  */
 export interface Repositorio {
-  carregar(): Promise<EstadoDados>;
+  /** No servidor, os ids limitam os dados à conta autenticada. */
+  carregar(professoraId?: string, criancaId?: string): Promise<EstadoDados>;
   guardar(estado: EstadoDados): Promise<void>;
   repor(estado: EstadoDados): Promise<void>;
 }

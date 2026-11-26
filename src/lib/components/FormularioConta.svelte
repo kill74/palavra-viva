@@ -76,6 +76,8 @@
         autocomplete="new-password"
       />
       <p class="dica">Pelo menos 10 caracteres, com maiúscula, minúscula e número.</p>
+      <label for="codigo-convite">Código de convite <span class="opcional">(se tiveres)</span></label>
+      <input id="codigo-convite" name="codigo" type="text" autocomplete="off" />
       <button type="submit" class="botao botao--primario botao--bloco">
         <Icone nome="check" tamanho={18} /> Criar conta
       </button>
@@ -138,6 +140,11 @@
     color: var(--tinta-ficha);
     font-family: var(--fonte-texto);
     font-size: var(--texto-m);
+  }
+
+  .opcional {
+    color: var(--tinta-fraca-ficha);
+    font-weight: 400;
   }
 
   .dica {

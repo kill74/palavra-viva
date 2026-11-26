@@ -15,7 +15,7 @@ function estadoInicial(): EstadoDados {
 }
 
 export class RepositorioLocal implements Repositorio {
-  async carregar(): Promise<EstadoDados> {
+  async carregar(_professoraId?: string, _criancaId?: string): Promise<EstadoDados> {
     if (typeof localStorage === 'undefined') return estadoInicial();
     try {
       const bruto = localStorage.getItem(CHAVE);
