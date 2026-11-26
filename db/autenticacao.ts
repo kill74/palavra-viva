@@ -236,6 +236,70 @@ export async function atualizarContaCrianca(dados: {
   return [];
 }
 
+const DURACAO_RECUPERACAO_MS = 30 * 60 * 1000; // 30 minutos
+
+export type PedidoRecuperacao = { token: string; email: string };
+
+/**
+ * Cria um token de recuperação. Não revela se o email existe: devolve sempre
+ * um objeto com token e email, mas quando não há conta o token é falso e
+ * não é gravado. Em desenvolvimento o token é mostrado no servidor.
+ */
+export async function pedirRecuperacao(email: string): Promise<PedidoRecuperacao> {
+  const token = idSeguro();
+  const limpo = email.trim().toLocaleLowerCase('pt-PT');
+  const db = base();
+  const linha = db.prepare('SELECT id, email FROM utilizadores WHERE email = ?')
+    .get(limpo) as { id: string; email: string } | undefined;
+
+  if (!linha) {
+    // Não gravamos nada: a resposta é idêntica à de uma conta existente.
+    return { token, email: limpo };
+  }
+
+  db.prepare('DELETE FROM tokens_recuperacao WHERE utilizador_id = ? AND usado_em IS NULL')
+    .run(linha.id);
+  const agora = Date.now();
+  db.prepare(`INSERT INTO tokens_recuperacao (id, utilizador_id, criado_em, expira_em)
+    VALUES (?, ?, ?, ?)`)
+    .run(token, linha.id, new Date(agora).toISOString(),
+      new Date(agora + DURACAO_RECUPERACAO_MS).toISOString());
+
+  console.log(`[palavra-viva] Recuperação para ${linha.email}: token ${token}`);
+  return { token, email: linha.email };
+}
+
+/** Verifica um token de recuperação. */
+export function verificarTokenRecuperacao(token: string): string | undefined {
+  const linha = base().prepare(`SELECT utilizador_id FROM tokens_recuperacao
+    WHERE id = ? AND usado_em IS NULL AND expira_em > ?`)
+    .get(token, new Date().toISOString()) as { utilizador_id: string } | undefined;
+  return linha?.utilizador_id;
+}
+
+/** Redefine a password e invalida o token e todas as sessões. */
+export async function redefinirPassword(
+  token: string,
+  password: string
+): Promise<string[]> {
+  if (password.length < 10 || !/[A-ZÀ-Ú]/.test(password) ||
+    !/[a-zà-ú]/.test(password) || !/\d/.test(password)) {
+    return ['A palavra-passe deve ter 10 caracteres, maiúscula, minúscula e número.'];
+  }
+  const utilizadorId = verificarTokenRecuperacao(token);
+  if (!utilizadorId) return ['O pedido expirou. Pede um novo.'];
+
+  const hash = await hashPassword(password);
+  transacao(() => {
+    const db = base();
+    db.prepare('UPDATE utilizadores SET password_hash = ? WHERE id = ?').run(hash, utilizadorId);
+    db.prepare('UPDATE tokens_recuperacao SET usado_em = ? WHERE id = ?')
+      .run(new Date().toISOString(), token);
+    db.prepare('DELETE FROM sessoes_login WHERE utilizador_id = ?').run(utilizadorId);
+  });
+  return [];
+}
+
 /** Devolve o id da criança associada a uma conta, se existir. */
 export function criancaDoUtilizador(utilizadorId: string): string | undefined {
   const linha = base().prepare('SELECT id FROM criancas WHERE utilizador_id = ? LIMIT 1')

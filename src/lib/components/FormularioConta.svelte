@@ -54,6 +54,7 @@
       <button type="submit" class="botao botao--primario botao--bloco">
         <Icone nome="seta" tamanho={18} /> Entrar
       </button>
+      <a class="esqueci" href="/esqueci-me/">Esqueci-me da palavra-passe</a>
     </form>
     <p class="dica">Conta de demonstração: <strong>professora@palavraviva.pt</strong> / <strong>professora2026!</strong>.</p>
   {:else}
@@ -158,5 +159,13 @@
 
   .botao {
     margin-top: 0.9rem;
+  }
+
+  .esqueci {
+    justify-self: center;
+    margin-top: 0.3rem;
+    color: var(--link-ficha);
+    font-size: var(--texto-mini);
+    text-underline-offset: 3px;
   }
 </style>
