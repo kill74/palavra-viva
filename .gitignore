@@ -3,6 +3,9 @@ node_modules/
 build/
 .svelte-kit/
 
+# Base de dados local (gerada por db/cliente.ts)
+db/dados/
+
 # Sistema e editores
 .DS_Store
 Thumbs.db
