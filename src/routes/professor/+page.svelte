@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { invalidateAll } from '$app/navigation';
   import { resolve } from '$app/paths';
   import { PALAVRAS_NUCLEARES } from '#lib/data/palavras';
   import { NOMES_FASE, NOMES_TIPO } from '#lib/data/tipos';
@@ -6,6 +7,7 @@
   import { sessao } from '#lib/stores/sessao.svelte';
   import { dataCurta, descarregar, hora, plural } from '#lib/utils/formato';
   import { criarCopia, validarCopia } from '#lib/utils/backup';
+  import { MODO_SERVIDOR } from '#lib/ambiente';
   import EditorCrianca from '#lib/components/EditorCrianca.svelte';
   import Icone from '#lib/components/Icone.svelte';
   import SeloEstado from '#lib/components/SeloEstado.svelte';
@@ -17,13 +19,15 @@
   let avisoCopia = $state('');
   let erroCopia = $state('');
 
-  function guardarCopia() {
-    const texto = criarCopia({
-      criancas: dados.criancas,
-      recursos: dados.recursos,
-      sessoes: dados.sessoes,
-      escritas: dados.escritas
-    });
+  async function guardarCopia() {
+    const texto = MODO_SERVIDOR
+      ? await (await fetch('/api/copia')).text()
+      : criarCopia({
+          criancas: dados.criancas,
+          recursos: dados.recursos,
+          sessoes: dados.sessoes,
+          escritas: dados.escritas
+        });
     const data = new Date().toISOString().slice(0, 10);
     descarregar(`palavra-viva-copia-${data}.json`, texto, 'application/json;charset=utf-8');
     avisoCopia = 'Cópia guardada no computador.';
@@ -37,15 +41,32 @@
     avisoCopia = '';
     erroCopia = '';
     try {
-      const resultado = validarCopia(await ficheiroEscolhido.text());
+      const texto = await ficheiroEscolhido.text();
+      const resultado = validarCopia(texto);
       if (!resultado.dados) {
         erroCopia = `Não foi possível carregar a cópia: ${resultado.erros.slice(0, 3).join(' ')}`;
         return;
       }
       const confirmar = window.confirm(
-        'Substituir todos os dados deste browser pela cópia escolhida? Os registos atuais serão perdidos.'
+        MODO_SERVIDOR
+          ? 'Substituir todos os dados da turma pela cópia escolhida? Os registos atuais serão perdidos.'
+          : 'Substituir todos os dados deste browser pela cópia escolhida? Os registos atuais serão perdidos.'
       );
       if (!confirmar) return;
+      if (MODO_SERVIDOR) {
+        const resposta = await fetch('/api/copia', {
+          method: 'POST',
+          body: texto
+        });
+        if (!resposta.ok) {
+          const detalhe = await resposta.json().catch(() => ({}));
+          erroCopia = detalhe.erro ?? 'Não foi possível carregar a cópia.';
+          return;
+        }
+        avisoCopia = 'Cópia carregada com sucesso.';
+        await invalidateAll();
+        return;
+      }
       dados.substituirTudo(resultado.dados);
       sessao.validarCrianca();
       avisoCopia = 'Cópia carregada com sucesso.';
