@@ -45,6 +45,15 @@
     }
     if (sessao.saindo) return;
 
+    if (rota.startsWith('/perfil')) {
+      if (sessao.perfil !== 'professor') {
+        void goto(`${resolve('/entrar')}?perfil=professor&destino=${encodeURIComponent(caminho)}`, {
+          replaceState: true
+        });
+      }
+      return;
+    }
+
     if (rota.startsWith('/professor')) {
       if (sessao.perfil !== 'professor') {
         void goto(`${resolve('/entrar')}?perfil=professor&destino=${encodeURIComponent(caminho)}`, {
