@@ -158,6 +158,10 @@ html[data-tema='escuro'] ::selection,
   box-sizing: border-box;
 }
 
+.conteudo-app {
+  display: contents;
+}
+
 * {
   margin: 0;
 }
@@ -165,6 +169,11 @@ html[data-tema='escuro'] ::selection,
 html {
   -webkit-text-size-adjust: 100%;
   scroll-behavior: smooth;
+  color-scheme: light;
+}
+
+html[data-tema='escuro'] {
+  color-scheme: dark;
 }
 
 body {
