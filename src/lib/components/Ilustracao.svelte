@@ -1,3 +1,4 @@
+<!-- Imagem de uma palavra do léxico, com alternativa textual para leitores de ecrã. -->
 <script lang="ts">
   import type { Palavra } from '#lib/data/palavras';
 

@@ -1,3 +1,8 @@
+/**
+ * Logout: apaga a sessão na base de dados e remove o cookie HttpOnly.
+ * Fazemos as duas coisas para que nem o servidor nem o browser guardem
+ * uma credencial já inválida.
+ */
 import { redirect } from '@sveltejs/kit';
 import { sair } from '../../../db/autenticacao.ts';
 import { terminarSessao } from '../../../db/cookies.ts';

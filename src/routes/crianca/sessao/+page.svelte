@@ -18,6 +18,7 @@
   import { recursoEstatico } from '#lib/utils/caminho';
   import { idCurto } from '#lib/utils/formato';
   import { tocarAudio } from '#lib/utils/audio';
+  import { mesmoTexto } from '#lib/utils/similaridade';
   import BotaoAudio from '#lib/components/BotaoAudio.svelte';
   import FichaPalavra from '#lib/components/FichaPalavra.svelte';
   import Icone from '#lib/components/Icone.svelte';
@@ -34,10 +35,6 @@
     ordem: 'silabas.mp3',
     frase: 'frase.mp3'
   };
-
-  function mesmoTexto(a: string, b: string): boolean {
-    return a.trim().toLocaleLowerCase('pt-PT') === b.trim().toLocaleLowerCase('pt-PT');
-  }
 
   let criancaId = $state('');
   let recursoPedido = $state<string | null>(null);

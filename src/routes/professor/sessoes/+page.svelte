@@ -5,7 +5,7 @@
   import { NOMES_FASE, NOMES_TIPO } from '#lib/data/tipos';
   import { dados } from '#lib/stores/dados.svelte';
   import { parametroUrl } from '#lib/utils/consulta';
-  import { csv, dataCurta, dataLonga, descarregar, duracao, hora, idCurto, plural } from '#lib/utils/formato';
+  import { csv, dataCurta, dataLonga, descarregar, duracao, hora, idCurto, percentagem, plural } from '#lib/utils/formato';
   import { recursoEstatico } from '#lib/utils/caminho';
   import BotaoAudio from '#lib/components/BotaoAudio.svelte';
   import EstadoVazio from '#lib/components/EstadoVazio.svelte';
@@ -36,9 +36,7 @@
   const autonomas = $derived(respostas.filter((r) => r.acertouPrimeira).length);
   const apoiadas = $derived(respostas.length - autonomas);
   const ajudas = $derived(respostas.reduce((soma, r) => soma + r.ajudas, 0));
-  const percentagem = $derived(
-    respostas.length ? Math.round((autonomas / respostas.length) * 100) : 0
-  );
+  const percentAutonoma = $derived(percentagem(autonomas, respostas.length));
 
   const porCrianca = $derived(
     dados.criancas.map((crianca) => {
@@ -49,7 +47,7 @@
         crianca,
         sessoes: lista.length,
         respostas: resp.length,
-        autonomia: resp.length ? Math.round((auto / resp.length) * 100) : 0,
+        autonomia: percentagem(auto, resp.length),
         ajudas: resp.reduce((soma, r) => soma + r.ajudas, 0),
         ultima: lista[0]
       };
@@ -168,7 +166,7 @@
       </div>
       <div class="resumo">
         <span class="resumo__rotulo">Autonomia</span>
-        <strong class="resumo__valor">{percentagem}%</strong>
+        <strong class="resumo__valor">{percentAutonoma}%</strong>
         <span class="resumo__nota">acertos à primeira tentativa, sem ajuda</span>
       </div>
       <div class="resumo">

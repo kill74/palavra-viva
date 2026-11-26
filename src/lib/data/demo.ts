@@ -1,3 +1,10 @@
+/**
+ * Turma e registos fictícios usados para arrancar a demonstração.
+ *
+ * Todos os nomes, sessões e propostas são inventados. Este ficheiro é a
+ * única fonte do estado inicial, tanto na build estática (localStorage) como
+ * no seed da base de dados (`db/seed.ts` espelha estes valores).
+ */
 import type {
   Apoios,
   Crianca,

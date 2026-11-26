@@ -1,3 +1,4 @@
+/** Configuração centralizada dos cookies de sessão e de mensagens "flash". Concentra as flags de segurança (HttpOnly, SameSite, Secure) num único sítio. */
 import type { Cookies } from '@sveltejs/kit';
 
 const CAMPO_SESSAO = 'pv_sessao';

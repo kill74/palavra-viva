@@ -1,3 +1,4 @@
+<!-- Redefinição com token de uso único e validade de 30 minutos. -->
 <script lang="ts">
   import { goto } from '$app/navigation';
   import { resolve } from '$app/paths';

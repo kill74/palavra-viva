@@ -1,3 +1,4 @@
+<!-- Pedido de recuperação de password: a resposta é a mesma quer a conta exista quer não. -->
 <script lang="ts">
   import { resolve } from '$app/paths';
   import Icone from '#lib/components/Icone.svelte';

@@ -1,3 +1,4 @@
+<!-- Botão de áudio reutilizável: mostra o estado "a tocar" e trata falhas de reprodução do browser. -->
 <script lang="ts">
   import { tocarAudio } from '#lib/utils/audio';
   import Icone from './Icone.svelte';

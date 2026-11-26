@@ -2,6 +2,7 @@ import { ESCRITAS_DEMO, RECURSOS_DEMO, SESSOES_DEMO, TURMA } from '#lib/data/dem
 import type { Crianca, Recurso, RegistoEscrita, Sessao } from '#lib/data/tipos';
 import { RepositorioLocal } from '#lib/repositorios/local';
 import type { EstadoDados, Repositorio } from '#lib/repositorios/tipo';
+import { percentagem } from '#lib/utils/formato';
 import { comValidacao, recursoValido } from '#lib/utils/validacao';
 
 class Dados {
@@ -201,7 +202,7 @@ class Dados {
       apoiadas,
       ajudas,
       audio,
-      percentagemAutonoma: total ? Math.round((autonomas / total) * 100) : 0
+      percentagemAutonoma: percentagem(autonomas, total)
     };
   }
 }

@@ -1,3 +1,4 @@
+<!-- Conjunto de ícones SVG locais, sem dependências externas em tempo de execução. -->
 <script lang="ts">
   type Nome =
     | 'livro'

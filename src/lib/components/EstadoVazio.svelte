@@ -1,3 +1,4 @@
+<!-- Bloco de estado vazio com ícone, título e ação opcional. -->
 <script lang="ts">
   import type { Snippet } from 'svelte';
   import Icone from './Icone.svelte';

@@ -1,3 +1,4 @@
+<!-- Mural com a sequência das 28 palavras nucleares e as já trabalhadas pela turma. -->
 <script lang="ts">
   import { PALAVRAS_NUCLEARES, type Palavra } from '#lib/data/palavras';
   import { dados } from '#lib/stores/dados.svelte';

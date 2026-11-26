@@ -1,3 +1,4 @@
+<!-- Oficina de sílabas: a criança arrasta ou toca nas sílabas para reconstruir a palavra. -->
 <script lang="ts">
   import { audioDaSilaba, fonteDaSilaba, obterPalavra } from '#lib/data/palavras';
   import { tocarAudio } from '#lib/utils/audio';

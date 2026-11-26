@@ -1,3 +1,4 @@
+<!-- Ficha de uma palavra com imagem, áudio e frase, usada em várias atividades. -->
 <script lang="ts">
   import type { Palavra } from '#lib/data/palavras';
   import BotaoAudio from './BotaoAudio.svelte';

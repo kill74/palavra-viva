@@ -1,3 +1,10 @@
+/**
+ * Textos do "prompt" apresentado no estúdio de criação.
+ *
+ * Não há chamada a um modelo externo: o que aqui chamamos de IA é uma
+ * composição determinística a partir do léxico validado. O prompt existe para
+ * tornar explícito o pedido pedagógico e para ficar registado em cada recurso.
+ */
 import type { Apoios, Crianca, Fase, TipoAtividade } from './tipos';
 import { NOMES_FASE, NOMES_TIPO } from './tipos';
 import { porId } from './palavras';

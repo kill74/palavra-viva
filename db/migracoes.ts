@@ -1,3 +1,4 @@
+/** Migrações versionadas da base de dados. Só aplica as ainda não registadas, em ordem, dentro de uma transação. */
 import type { DatabaseSync } from 'node:sqlite';
 import { ESQUEMA_INICIAL } from './schema.ts';
 import { MIGRACAO_2FA } from './schema2.ts';
