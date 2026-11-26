@@ -5,9 +5,14 @@ import { defineConfig } from 'vite';
 
 // GitHub Pages serve os project sites em /<repositório>/. O build de produção
 // define BASE_PATH; em desenvolvimento e no preview local fica vazio.
-const ambiente = (globalThis as { process?: { env?: Record<string, string | undefined> } }).process?.env;
-const base = (ambiente?.BASE_PATH ?? '') as '' | `/${string}`;
-const servidor = ambiente?.MODO_SERVIDOR === '1';
+const globais = globalThis as {
+  process?: { env?: Record<string, string | undefined> };
+  Deno?: { env?: { get(nome: string): string | undefined } };
+};
+const ambiente = globais.process?.env;
+const valor = (nome: string) => ambiente?.[nome] ?? globais.Deno?.env?.get?.(nome);
+const base = (valor('BASE_PATH') ?? '') as '' | `/${string}`;
+const servidor = valor('MODO_SERVIDOR') === '1';
 
 export default defineConfig({
   plugins: [
