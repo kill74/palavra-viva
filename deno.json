@@ -7,7 +7,7 @@
     "preview": "deno run -A npm:vite preview",
     "sync": "deno run -A npm:@sveltejs/kit@3.1.1 sync",
     "check": "deno run -A npm:svelte-check --tsconfig ./tsconfig.json",
-    "test": "deno test --allow-read src/lib/utils/recomendacao.test.ts src/lib/utils/backup.test.ts src/lib/utils/destino.test.ts && PALAVRA_VIVA_DB=:memory: deno test --allow-read --allow-write --allow-env db/db.test.ts db/autenticacao.test.ts",
+    "test": "deno test --allow-read src/lib/utils/recomendacao.test.ts src/lib/utils/backup.test.ts src/lib/utils/destino.test.ts && PALAVRA_VIVA_DB=:memory: deno test --allow-read --allow-write --allow-env db/db.test.ts db/autenticacao.test.ts db/rate-limit.test.ts",
     "db:seed": "deno run --allow-read --allow-write --allow-env db/seed.ts",
     "build:server": "MODO_SERVIDOR=1 deno run -A npm:vite build",
     "start": "ORIGIN=http://localhost:3000 PORT=3000 node servidor/index.js"

@@ -117,6 +117,11 @@ export class RepositorioDb implements Repositorio {
           .run(c.id, `util-${c.id}`, c.nome, c.idade, c.fase, c.cor, c.nota,
             JSON.stringify(c.palavrasTrabalhadas));
       }
+      // A store guarda o estado completo: todos os tipos têm de ser persistidos,
+      // não apenas as crianças.
+      for (const r of estado.recursos) this.inserirRecurso(r);
+      for (const s of estado.sessoes) this.inserirSessao(s);
+      for (const e of estado.escritas) this.inserirEscrita(e);
       db.exec('COMMIT');
     } catch (erro) {
       db.exec('ROLLBACK');
@@ -139,9 +144,6 @@ export class RepositorioDb implements Repositorio {
       throw erro;
     }
     await this.guardar(estado);
-    for (const r of estado.recursos) this.inserirRecurso(r);
-    for (const s of estado.sessoes) this.inserirSessao(s);
-    for (const e of estado.escritas) this.inserirEscrita(e);
   }
 
   private inserirRecurso(r: Recurso): void {
