@@ -1,8 +1,35 @@
 <script lang="ts">
   import Icone from './Icone.svelte';
 
+  import { goto } from '$app/navigation';
+
   let { destino = '' }: { destino?: string } = $props();
   let modo = $state<'entrar' | 'registar'>('entrar');
+  let erro = $state('');
+
+  async function submeter(evento: SubmitEvent) {
+    evento.preventDefault();
+    erro = '';
+    const form = evento.currentTarget as HTMLFormElement;
+    const dados = new FormData(form);
+    const tipo = modo === 'entrar' ? 'entrar' : 'registar';
+    const resposta = await fetch(`/api/entrar?tipo=${tipo}`, {
+      method: 'POST',
+      body: dados,
+      credentials: 'same-origin'
+    });
+    const conteudo = await resposta.json().catch(() => ({}));
+
+    if (conteudo.requer2fa) {
+      erro = 'Esta conta pede um código de verificação de 6 dígitos.';
+      return;
+    }
+    if (!resposta.ok || !resposta.redirected) {
+      erro = conteudo.erro ?? 'Não foi possível entrar.';
+      return;
+    }
+    await goto(new URL(resposta.url).pathname);
+  }
 </script>
 
 <div class="formulario">
@@ -27,11 +54,14 @@
     </button>
   </div>
 
+  {#if erro}
+    <p class="erro" role="alert" aria-live="assertive">
+      <Icone nome="alerta" tamanho={17} /> {erro}
+    </p>
+  {/if}
+
   {#if modo === 'entrar'}
-    <form
-      method="POST"
-      action="/api/entrar?tipo=entrar"
-    >
+    <form method="POST" action="/api/entrar?tipo=entrar" onsubmit={submeter}>
       <input type="hidden" name="destino" value={destino} />
       <label for="email-conta">Email</label>
       <input
@@ -51,6 +81,8 @@
         required
         minlength="10"
       />
+      <label for="codigo-2fa-login">Código de verificação <span class="opcional">(se tiver)</span></label>
+      <input id="codigo-2fa-login" name="codigo2fa" type="text" inputmode="numeric" maxlength="6" autocomplete="one-time-code" />
       <button type="submit" class="botao botao--primario botao--bloco">
         <Icone nome="seta" tamanho={18} /> Entrar
       </button>
@@ -58,10 +90,7 @@
     </form>
     <p class="dica">Conta de demonstração: <strong>professora@palavraviva.pt</strong> / <strong>professora2026!</strong>.</p>
   {:else}
-    <form
-      method="POST"
-      action="/api/entrar?tipo=registar"
-    >
+    <form method="POST" action="/api/entrar?tipo=registar" onsubmit={submeter}>
       <input type="hidden" name="papel" value="professora" />
       <label for="nome-conta">Nome</label>
       <input id="nome-conta" name="nome" type="text" required minlength="2" autocomplete="name" />
@@ -159,6 +188,16 @@
 
   .botao {
     margin-top: 0.9rem;
+  }
+
+  .erro {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin: 0;
+    color: var(--erro-ficha);
+    font-size: var(--texto-s);
+    font-weight: 700;
   }
 
   .esqueci {

@@ -17,6 +17,8 @@ type LinhaUtilizador = {
   papel: string;
   password_hash: string;
   criado_em: string;
+  totp_ativo?: number;
+  totp_secret?: string | null;
 };
 
 const DURACAO_SESSAO_MS = 1000 * 60 * 60 * 24 * 7; // 7 dias
@@ -102,10 +104,18 @@ export async function registarUtilizador(dados: {
 }
 
 /** Verifica credenciais e cria uma sessão opaca. Devolve o token. */
+export type ResultadoLogin = {
+  token?: string;
+  utilizador?: Utilizador;
+  erro?: string;
+  requer2fa?: boolean;
+};
+
 export async function entrar(
   email: string,
-  password: string
-): Promise<{ token?: string; utilizador?: Utilizador; erro?: string }> {
+  password: string,
+  codigo2fa?: string
+): Promise<ResultadoLogin> {
   const db = base();
   const linha = db.prepare('SELECT * FROM utilizadores WHERE email = ?')
     .get(email.trim().toLocaleLowerCase('pt-PT')) as LinhaUtilizador | undefined;
@@ -114,6 +124,16 @@ export async function entrar(
   const erroGenerico = 'Email ou palavra-passe incorretos.';
   if (!linha) return { erro: erroGenerico };
   if (!(await verificarPassword(password, linha.password_hash))) return { erro: erroGenerico };
+
+  // Segundo fator: só professores podem ativá-lo, e só quando configurado.
+  if (linha.papel === 'professora' && linha.totp_ativo === 1 && linha.totp_secret) {
+    if (!codigo2fa) return { requer2fa: true };
+    const { verificarTotp } = await import('./totp.ts');
+    const validoTotp = await verificarTotp(linha.totp_secret, codigo2fa);
+    if (!validoTotp && !(await verificarCodigoRecuperacao(linha.id, codigo2fa))) {
+      return { erro: 'Código de verificação inválido.' };
+    }
+  }
 
   const token = idSeguro();
   const agora = Date.now();
@@ -298,6 +318,81 @@ export async function redefinirPassword(
     db.prepare('DELETE FROM sessoes_login WHERE utilizador_id = ?').run(utilizadorId);
   });
   return [];
+}
+
+/** Estado do 2FA de um utilizador. */
+export function estado2fa(utilizadorId: string): {
+  ativo: boolean;
+  secret?: string;
+  recuperacoes: number;
+} {
+  const db = base();
+  const utilizador = db.prepare('SELECT totp_ativo, totp_secret FROM utilizadores WHERE id = ?')
+    .get(utilizadorId) as { totp_ativo: number; totp_secret: string | null } | undefined;
+  const restantes = (db.prepare(
+    'SELECT COUNT(*) AS n FROM codigos_recuperacao WHERE utilizador_id = ? AND usado_em IS NULL'
+  ).get(utilizadorId) as { n: number }).n;
+  return {
+    ativo: utilizador?.totp_ativo === 1,
+    secret: utilizador?.totp_secret ?? undefined,
+    recuperacoes: restantes
+  };
+}
+
+/** Ativa o 2FA depois de confirmar um código da app autenticadora. */
+export async function ativar2fa(
+  utilizadorId: string,
+  secret: string,
+  codigo: string
+): Promise<{ ok: boolean; erro?: string; recuperacoes?: string[] }> {
+  const { verificarTotp } = await import('./totp.ts');
+  if (!(await verificarTotp(secret, codigo))) {
+    return { ok: false, erro: 'Código incorreto.' };
+  }
+  const codigos = Array.from({ length: 8 }, () => idSeguro().slice(0, 8).toUpperCase());
+  transacao(() => {
+    const db = base();
+    db.prepare('UPDATE utilizadores SET totp_secret = ?, totp_ativo = 1 WHERE id = ?')
+      .run(secret, utilizadorId);
+    db.prepare('DELETE FROM codigos_recuperacao WHERE utilizador_id = ?').run(utilizadorId);
+    const stmt = db.prepare(
+      'INSERT INTO codigos_recuperacao (id, utilizador_id, codigo) VALUES (?, ?, ?)'
+    );
+    for (const c of codigos) stmt.run(idSeguro(), utilizadorId, c);
+  });
+  return { ok: true, recuperacoes: codigos };
+}
+
+/** Desativa o 2FA e apaga os códigos de recuperação. */
+export function desativar2fa(utilizadorId: string): void {
+  transacao(() => {
+    const db = base();
+    db.prepare('UPDATE utilizadores SET totp_ativo = 0, totp_secret = NULL WHERE id = ?')
+      .run(utilizadorId);
+    db.prepare('DELETE FROM codigos_recuperacao WHERE utilizador_id = ?').run(utilizadorId);
+  });
+}
+
+/** Verifica e consome um código de recuperação de emergência. */
+export async function verificarCodigoRecuperacao(
+  utilizadorId: string,
+  codigo: string
+): Promise<boolean> {
+  const db = base();
+  const linha = db.prepare(
+    'SELECT id, codigo FROM codigos_recuperacao WHERE utilizador_id = ? AND usado_em IS NULL'
+  ).all(utilizadorId) as Array<{ id: string; codigo: string }>;
+  const encontrado = linha.find((l) => {
+    // comparação em tempo constante, mesmo comprimento
+    if (l.codigo.length !== codigo.length) return false;
+    let d = 0;
+    for (let i = 0; i < codigo.length; i++) d |= l.codigo.charCodeAt(i) ^ codigo.charCodeAt(i);
+    return d === 0;
+  });
+  if (!encontrado) return false;
+  db.prepare('UPDATE codigos_recuperacao SET usado_em = ? WHERE id = ?')
+    .run(new Date().toISOString(), encontrado.id);
+  return true;
 }
 
 /** Devolve o id da criança associada a uma conta, se existir. */
