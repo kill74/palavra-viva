@@ -1,3 +1,4 @@
+/** Contrato da origem de dados. A implementação local usa localStorage; a de servidor usa SQLite. A store não precisa de saber qual está ativa. */
 import type { Crianca, Recurso, RegistoEscrita, Sessao } from '#lib/data/tipos';
 
 export type EstadoDados = {

@@ -1,3 +1,4 @@
+<!-- Rodapé com os percursos do site e nota de que os dados são fictícios. -->
 <script lang="ts">
   import { resolve } from '$app/paths';
   import Marca from './Marca.svelte';

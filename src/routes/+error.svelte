@@ -1,3 +1,4 @@
+<!-- Página de erro genérica, com mensagens diferentes para 404 e para falhas inesperadas. -->
 <script lang="ts">
   import { resolve } from '$app/paths';
   import { page } from '$app/state';

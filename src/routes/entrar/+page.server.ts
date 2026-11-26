@@ -1,3 +1,11 @@
+/**
+ * Carregamento da página de entrada na build com servidor.
+ *
+ * Lê e consome o aviso "flash" guardado num cookie HttpOnly, para que
+ * mensagens de erro não apareçam na URL. Se já houver sessão válida, envia a
+ * pessoa diretamente para a sua área — exceto com `?trocar=1`, usado para
+ * escolher outra identidade.
+ */
 import { building } from '$app/environment';
 import { redirect } from '@sveltejs/kit';
 import { lerAviso } from '../../../db/cookies.ts';

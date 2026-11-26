@@ -1,7 +1,17 @@
+/**
+ * As seis verificações automáticas aplicadas a cada recurso antes de a
+ * professora o aprovar. Não substituem a decisão humana: apenas assinalam
+ * incoerências entre palavra, sílabas, imagem, áudio, opções e frase.
+ *
+ * `validarRecurso` devolve sempre os seis itens, na mesma ordem, para que a
+ * interface possa mostrá-los de forma estável. `recursoValido` exige que
+ * todos estejam `ok`, e é usado como guarda final na store.
+ */
 import { LIGACOES, PALAVRAS, VOCABULARIO_EXTRA, porId, porTexto } from '#lib/data/palavras';
 import type { Recurso, ValidacaoItem } from '#lib/data/tipos';
 import { mesmoTexto, proximidade, rimam } from './similaridade';
 
+/** Confirma que não há opções vazias nem repetidas, ignorando maiúsculas. */
 function unicas(valores: string[]): boolean {
   const vistos = new Set<string>();
   for (const valor of valores) {
@@ -12,6 +22,12 @@ function unicas(valores: string[]): boolean {
   return true;
 }
 
+/**
+ * Valida as opções conforme o formato de atividade:
+ * - reconhecimento/ditado exigem a palavra escrita entre as opções;
+ * - rima exige uma resposta que rime, sem a palavra da pergunta;
+ * - associação/frase usam identificadores de imagem do léxico validado.
+ */
 function opcoesValidas(r: Recurso): { ok: boolean; detalhe: string } {
   if (r.tipo === 'cartao') {
     return { ok: true, detalhe: 'Este formato não usa opções.' };
@@ -91,6 +107,12 @@ function opcoesValidas(r: Recurso): { ok: boolean; detalhe: string } {
   return { ok: true, detalhe: `${total} imagens; a certa está incluída.` };
 }
 
+/**
+ * Para atividades de frase: a frase tem de conter a palavra trabalhada,
+ * terminar com pontuação, ter entre 3 e 10 palavras e usar apenas vocabulário
+ * já revisto. Quando existe áudio, a frase tem de ser a de referência, porque
+ * só essa gravação está disponível em `static/`.
+ */
 function fraseValida(r: Recurso): { ok: boolean; detalhe: string } {
   if (r.tipo !== 'frase') {
     return { ok: true, detalhe: 'Só se aplica a atividades de frase.' };

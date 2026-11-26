@@ -1,3 +1,11 @@
+/**
+ * Endpoints do segundo fator opcional da professora.
+ *
+ * GET devolve o estado (ativo e códigos de recuperação restantes).
+ * POST aceita três ações: `gerar` (cria um secret sem o ativar), `ativar`
+ * (confirma um código da app e entrega os códigos de recuperação) e
+ * `desativar`. Todas exigem uma sessão de professora.
+ */
 import { error } from '@sveltejs/kit';
 import { eModoServidor } from '#lib/ambiente-servidor';
 import {

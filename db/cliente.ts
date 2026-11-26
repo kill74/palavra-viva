@@ -1,3 +1,4 @@
+/** Ligação partilhada à base de dados SQLite. Aplica as migrações na primeira abertura e expõe transações com rollback. Funciona em Deno (seed/testes) e em Node (servidor gerado). */
 import { DatabaseSync } from 'node:sqlite';
 import { mkdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';

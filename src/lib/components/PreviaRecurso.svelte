@@ -1,3 +1,4 @@
+<!-- Pré-visualização exata de um recurso, para a professora ver o que a criança vai encontrar. -->
 <script lang="ts">
   import { obterPalavra } from '#lib/data/palavras';
   import type { Recurso } from '#lib/data/tipos';

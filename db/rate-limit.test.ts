@@ -1,3 +1,4 @@
+/** Testes do limitador: bloqueio após cinco falhas e expiração da janela. */
 import { assertEquals } from 'jsr:@std/assert';
 import { limparSucesso, registarFalha, verificador } from './rate-limit.ts';
 

@@ -1,3 +1,4 @@
+<!-- Etiqueta visual do estado de um recurso: rascunho ou aprovado. -->
 <script lang="ts">
   import type { EstadoRecurso } from '#lib/data/tipos';
   import Icone from './Icone.svelte';

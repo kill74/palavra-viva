@@ -1,3 +1,4 @@
+<!-- Lista das seis verificações automáticas de um recurso, com ícone de resultado. -->
 <script lang="ts">
   import type { ValidacaoId, ValidacaoItem } from '#lib/data/tipos';
   import Icone from './Icone.svelte';

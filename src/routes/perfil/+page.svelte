@@ -1,3 +1,8 @@
+<!--
+  Perfil da professora: dados da conta, resumo da turma, sessões ativas e
+  configuração opcional do segundo fator. Na build estática as secções de
+  servidor não aparecem, porque não existe conta nem base de dados.
+-->
 <script lang="ts">
   import { invalidateAll } from '$app/navigation';
   import { resolve } from '$app/paths';

@@ -1,3 +1,4 @@
+<!-- Logótipo "palavra viva" em SVG, com variante compacta para espaços pequenos. -->
 <script lang="ts">
   let { compacta = false }: { compacta?: boolean } = $props();
 </script>

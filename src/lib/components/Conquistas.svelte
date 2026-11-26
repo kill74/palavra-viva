@@ -1,3 +1,4 @@
+<!-- Medalhas da área da criança, derivadas das sessões reais — sem pontuações nem notas. -->
 <script lang="ts">
   import { conquistas } from '#lib/utils/recomendacao';
   import Icone from './Icone.svelte';

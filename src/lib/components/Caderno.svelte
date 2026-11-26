@@ -1,3 +1,4 @@
+<!-- Histórico pessoal da criança: palavras já lidas, botão para reler e linha do tempo das sessões. -->
 <script lang="ts">
   import type { Crianca, Sessao } from '#lib/data/tipos';
   import { obterPalavra } from '#lib/data/palavras';
