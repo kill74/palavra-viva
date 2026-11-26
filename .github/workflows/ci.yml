@@ -46,6 +46,9 @@ jobs:
       - name: Construir o servidor com base de dados
         run: deno task build:server
 
+      - name: Testes de segurança
+        run: node scripts/testes-seguranca.mjs
+
       - name: Guardar o build
         uses: actions/upload-artifact@v6
         with:
