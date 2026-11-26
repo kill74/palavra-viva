@@ -70,3 +70,26 @@ Deno.test('validarCopia: rejeita ids repetidos', () => {
   const resultado = validarCopia(JSON.stringify({ versao: 1, ...copia }));
   assertEquals(resultado.erros.some((e) => e.includes('repetido')), true);
 });
+
+Deno.test('validarCopia: rejeita apoios inválidos', () => {
+  const copia = JSON.parse(JSON.stringify(estado));
+  copia.recursos = [{
+    id: 'r1', criancaId: 'alice', palavraId: 'uva', palavra: 'uva',
+    silabas: [], frase: '', tipo: 'cartao', fase: 1, opcoes: [],
+    apoios: { imagem: 'sim', audio: true, silabas: false },
+    estado: 'aprovado', origem: 'manual', prompt: '', modelo: '',
+    criadoEm: '2026-01-01', feedbackCerto: '', feedbackErrado: '', validacao: []
+  }];
+  const resultado = validarCopia(JSON.stringify({ versao: 1, ...copia }));
+  assertEquals(resultado.erros.some((e) => e.includes('apoios inválidos')), true);
+});
+
+Deno.test('validarCopia: rejeita respostas malformadas', () => {
+  const copia = JSON.parse(JSON.stringify(estado));
+  copia.sessoes = [{
+    id: 's1', criancaId: 'alice', inicio: '2026-01-01', fim: '2026-01-01',
+    respostas: [{ recursoId: 'r1' }]
+  }];
+  const resultado = validarCopia(JSON.stringify({ versao: 1, ...copia }));
+  assertEquals(resultado.erros.some((e) => e.includes('respostas válidas')), true);
+});

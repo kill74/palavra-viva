@@ -107,7 +107,7 @@
     border: 0;
     border-radius: var(--raio-pill);
     background: transparent;
-    color: var(--tinta-ficha);
+    color: var(--tinta);
     font-family: var(--fonte-texto);
     font-size: var(--texto-mini);
     font-weight: 700;
@@ -143,7 +143,9 @@
   }
 
   .opcional {
-    color: var(--tinta-fraca-ficha);
+    /* O cartão é uma ficha clara nos dois temas, mas a etiqueta de tab pode
+       herdar o tema escuro: usamos cor adaptável para garantir contraste. */
+    color: var(--tinta-fraca);
     font-weight: 400;
   }
 
