@@ -37,8 +37,14 @@ jobs:
       - name: Verificar tipos e acessibilidade
         run: deno task check
 
+      - name: Testes unitários
+        run: deno task test
+
       - name: Construir o site estático
         run: deno task build
+
+      - name: Construir o servidor com base de dados
+        run: deno task build:server
 
       - name: Guardar o build
         uses: actions/upload-artifact@v6
