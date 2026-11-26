@@ -59,7 +59,11 @@ try {
   // 1. Cabeçalhos de segurança
   const resposta = await fetch(`${BASE}/entrar/`);
   const h = resposta.headers;
-  caso('CSP presente', Boolean(h.get('content-security-policy')));
+  const csp = h.get('content-security-policy') ?? '';
+  caso('CSP presente', Boolean(csp));
+  const scriptSrc = csp.split(';').find((d) => d.trim().startsWith('script-src')) ?? '';
+  caso('script-src sem unsafe-inline', !scriptSrc.includes('unsafe-inline'));
+  caso('CSP com nonce', csp.includes('nonce-'));
   caso('X-Frame-Options DENY', h.get('x-frame-options') === 'DENY');
   caso('X-Content-Type-Options nosniff', h.get('x-content-type-options') === 'nosniff');
   caso('Referrer-Policy', Boolean(h.get('referrer-policy')));

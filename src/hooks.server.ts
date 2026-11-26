@@ -27,22 +27,8 @@ export const handle: Handle = async ({ event, resolve }) => {
 
   const response = await resolve(event);
 
-  // Cabeçalhos de defesa em profundidade. O CSP permite apenas origens locais;
-  // 'unsafe-inline' é necessário para o script de tema em app.html e para os
-  // estilos gerados pelo Svelte. frame-ancestors impede clickjacking.
-  const csp = [
-    "default-src 'self'",
-    "script-src 'self' 'unsafe-inline'",
-    "style-src 'self' 'unsafe-inline'",
-    "img-src 'self' data:",
-    "media-src 'self'",
-    "font-src 'self'",
-    "connect-src 'self'",
-    "frame-ancestors 'none'",
-    "base-uri 'self'",
-    "form-action 'self'"
-  ].join('; ');
-  response.headers.set('Content-Security-Policy', csp);
+  // O CSP é gerado pelo SvelteKit a partir de `vite.config.ts`, com nonces
+  // por pedido (ou hashes no prerender). Aqui só acrescentamos o resto.
   response.headers.set('X-Frame-Options', 'DENY');
   response.headers.set('X-Content-Type-Options', 'nosniff');
   response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
