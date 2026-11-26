@@ -85,3 +85,13 @@ CREATE INDEX IF NOT EXISTS idx_recursos_estado ON recursos(estado);
 CREATE INDEX IF NOT EXISTS idx_sessoes_crianca ON sessoes(crianca_id);
 CREATE INDEX IF NOT EXISTS idx_escritas_crianca ON escritas(crianca_id);
 CREATE INDEX IF NOT EXISTS idx_sessoes_login_expira ON sessoes_login(expira_em);
+
+CREATE TABLE IF NOT EXISTS tokens_recuperacao (
+  id         TEXT PRIMARY KEY,
+  utilizador_id TEXT NOT NULL REFERENCES utilizadores(id) ON DELETE CASCADE,
+  criado_em  TEXT NOT NULL,
+  expira_em  TEXT NOT NULL,
+  usado_em   TEXT
+);
+
+CREATE INDEX IF NOT EXISTS idx_recuperacao_token ON tokens_recuperacao(id);

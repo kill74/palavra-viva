@@ -77,3 +77,15 @@ Deno.test('politicaRegisto: permite o primeiro registo e fecha os seguintes', as
   Deno.env.delete('PALAVRA_VIVA_DB');
   await Deno.remove(isolada);
 });
+
+Deno.test('recuperação: token inválido não redefine password', async () => {
+  const { redefinirPassword } = await import('./autenticacao.ts');
+  const erros = await redefinirPassword('token-inexistente', 'SenhaForte123');
+  assertEquals(erros.some((e) => e.includes('expirou')), true);
+});
+
+Deno.test('recuperação: password fraca é recusada', async () => {
+  const { redefinirPassword } = await import('./autenticacao.ts');
+  const erros = await redefinirPassword('token-inexistente', 'curta');
+  assertEquals(erros.length > 0, true);
+});
