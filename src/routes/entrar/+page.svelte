@@ -123,6 +123,9 @@
     </div>
 
     <div class="entrar__cartao">
+      {#if registado}
+        <p class="sucesso" role="status"><Icone nome="check-circulo" tamanho={17} /> Conta criada. Podes entrar agora.</p>
+      {/if}
       {#if etapa === 'escolha'}
         <div class="escolha">
           <h2>Escolhe o teu percurso</h2>
@@ -164,9 +167,6 @@
             <p class="erro" role="alert" aria-live="assertive">
               <Icone nome="alerta" tamanho={17} /> {erroUrl}
             </p>
-          {/if}
-          {#if registado}
-            <p class="dica" role="status">Conta criada. Podes entrar agora.</p>
           {/if}
 
           {#if MODO_SERVIDOR}
@@ -315,6 +315,16 @@
     background: var(--papel-ficha);
     color: var(--tinta-ficha);
     box-shadow: 7px 7px 0 var(--sombra-ficha);
+  }
+
+  .sucesso {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin: 0 0 1rem;
+    color: var(--sucesso-ficha);
+    font-size: var(--texto-s);
+    font-weight: 700;
   }
 
   .entrar__cartao h2 {
