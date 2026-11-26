@@ -11,11 +11,12 @@ export const load: LayoutServerLoad = async ({ locals }) => {
   const utilizador = locals.utilizador;
   // Na build com servidor os dados vêm da base de dados; na build estática
   // este ficheiro devolve apenas nulos e a store usa o localStorage.
+  const criancaId = utilizador ? criancaDoUtilizador(utilizador.id) ?? null : null;
   const repositorio = new RepositorioDb();
-  const estado = await repositorio.carregar();
-  return {
-    utilizador,
-    criancaId: utilizador ? criancaDoUtilizador(utilizador.id) ?? null : null,
-    estado
-  };
+  // Cada conta vê apenas os seus dados: professoras a turma, crianças só a sua.
+  const estado = await repositorio.carregar(
+    utilizador?.papel === 'professora' ? utilizador.id : undefined,
+    utilizador?.papel === 'crianca' ? criancaId ?? undefined : undefined
+  );
+  return { utilizador, criancaId, estado };
 };
