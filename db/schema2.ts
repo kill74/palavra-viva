@@ -1,0 +1,2 @@
+/** Migração 002 gerada a partir de db/migrations/002_2fa.sql. */
+export const MIGRACAO_2FA = "-- Segundo fator opcional para contas de professora.\nALTER TABLE utilizadores ADD COLUMN totp_secret TEXT;\nALTER TABLE utilizadores ADD COLUMN totp_ativo INTEGER NOT NULL DEFAULT 0;\nALTER TABLE utilizadores ADD COLUMN totp_recuperacao TEXT;\n\nCREATE TABLE IF NOT EXISTS codigos_recuperacao (\n  id       TEXT PRIMARY KEY,\n  utilizador_id TEXT NOT NULL REFERENCES utilizadores(id) ON DELETE CASCADE,\n  codigo   TEXT NOT NULL UNIQUE,\n  usado_em TEXT\n);\n";

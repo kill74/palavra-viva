@@ -1,7 +1,7 @@
 import { DatabaseSync } from 'node:sqlite';
 import { mkdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
-import { ESQUEMA_INICIAL } from './schema.ts';
+import { aplicarMigracoes } from './migracoes.ts';
 
 /** Caminho da base de dados local. Pode ser alterado por variável de ambiente. */
 export function caminhoBase(): string {
@@ -26,7 +26,7 @@ export function base(): DatabaseSync {
   const db = new DatabaseSync(caminho);
   db.exec('PRAGMA foreign_keys = ON');
   db.exec('PRAGMA journal_mode = WAL');
-  db.exec(ESQUEMA_INICIAL);
+  aplicarMigracoes(db);
   instancia = db;
   return db;
 }

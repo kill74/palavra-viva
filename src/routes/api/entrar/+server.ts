@@ -11,6 +11,7 @@ export const POST: RequestHandler = async ({ request, cookies, url, getClientAdd
   const dados = await request.formData();
   const email = String(dados.get('email') ?? '');
   const password = String(dados.get('password') ?? '');
+  const codigo2fa = String(dados.get('codigo2fa') ?? '').trim();
   const destino = String(dados.get('destino') ?? '');
 
   const chave = `${getClientAddress()}:${email.trim().toLocaleLowerCase('pt-PT')}`;
@@ -42,7 +43,10 @@ export const POST: RequestHandler = async ({ request, cookies, url, getClientAdd
     redirect(303, '/entrar/?registado=1');
   }
 
-  const resultado = await entrar(email, password);
+  const resultado = await entrar(email, password, codigo2fa || undefined);
+  if (resultado.requer2fa) {
+    return Response.json({ requer2fa: true }, { status: 200 });
+  }
   if (!resultado.token || !resultado.utilizador) {
     registarFalha(chave);
     definirAviso(cookies, resultado.erro ?? 'Não foi possível entrar.');
