@@ -10,7 +10,7 @@
     onfechar
   }: {
     crianca?: Crianca;
-    onguardar: (c: Crianca) => void;
+    onguardar: (c: Crianca, credenciais?: { email: string; password: string }) => void;
     onfechar: () => void;
   } = $props();
 
@@ -24,6 +24,8 @@
   let fase = $state<Fase>(dadosIniciais?.fase ?? 1);
   let cor = $state<Crianca['cor']>(dadosIniciais?.cor ?? 'coral');
   let nota = $state(dadosIniciais?.nota ?? '');
+  let email = $state('');
+  let password = $state('');
   let erro = $state('');
 
   const novo = $derived(!crianca);
@@ -82,6 +84,20 @@
       erro = 'A idade deve estar entre 3 e 12 anos.';
       return;
     }
+    const emailLimpo = email.trim();
+    if (Boolean(emailLimpo) !== Boolean(password)) {
+      erro = 'Preenche o email e a palavra-passe para criar o login da criança.';
+      return;
+    }
+    if (emailLimpo && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(emailLimpo)) {
+      erro = 'Escreve um email válido para a criança.';
+      return;
+    }
+    if (password && (password.length < 10 || !/[A-ZÀ-Ú]/.test(password) ||
+      !/[a-zà-ú]/.test(password) || !/\d/.test(password))) {
+      erro = 'A palavra-passe deve ter 10 caracteres, maiúscula, minúscula e número.';
+      return;
+    }
     erro = '';
     onguardar({
       id: crianca?.id ?? `crianca-${idCurto()}`,
@@ -91,7 +107,7 @@
       cor,
       nota: nota.trim(),
       palavrasTrabalhadas: crianca?.palavrasTrabalhadas ?? []
-    });
+    }, emailLimpo ? { email: emailLimpo, password } : undefined);
   }
 </script>
 
@@ -112,7 +128,7 @@
   <div class="campos">
     <label>
       <span>Nome</span>
-      <input bind:this={campoNome} bind:value={nome} maxlength="40" autocomplete="off" />
+      <input id="nome" bind:this={campoNome} bind:value={nome} maxlength="40" autocomplete="off" />
     </label>
     <label>
       <span>Idade</span>
@@ -142,6 +158,18 @@
       <span>Nota da professora</span>
       <textarea bind:value={nota} rows="3" maxlength="240" placeholder="O que observaste nas sessões?"></textarea>
     </label>
+    <fieldset class="login-campos">
+      <legend>Login da criança <span>(opcional)</span></legend>
+      <label>
+        <span>Email</span>
+        <input id="email-crianca" bind:value={email} type="email" autocomplete="off" placeholder="crianca@palavraviva.pt" />
+      </label>
+      <label>
+        <span>Palavra-passe</span>
+        <input id="password-crianca" bind:value={password} type="password" autocomplete="new-password" minlength="10" />
+      </label>
+      <p class="ajuda-login">Se preencheres ambos, a criança pode entrar com esta conta.</p>
+    </fieldset>
   </div>
 
   {#if erro}
@@ -313,6 +341,32 @@
     height: 0.9rem;
     border: 1px solid var(--linha-ficha);
     border-radius: var(--raio-circulo);
+  }
+
+  .login-campos {
+    display: grid;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0.8rem;
+    border: 1.5px dashed var(--linha-ficha);
+    border-radius: var(--raio-ficha);
+  }
+
+  .login-campos legend {
+    font-size: var(--texto-s);
+    font-weight: 700;
+  }
+
+  .login-campos legend span,
+  .ajuda-login {
+    color: var(--tinta-fraca-ficha);
+    font-size: var(--texto-mini);
+    font-weight: 400;
+  }
+
+  .ajuda-login {
+    margin: 0;
+    line-height: 1.4;
   }
 
   .erro {

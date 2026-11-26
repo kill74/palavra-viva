@@ -77,10 +77,29 @@
     }
   }
 
-  function guardarCrianca(crianca: Crianca) {
+  async function guardarCrianca(
+    crianca: Crianca,
+    credenciais?: { email: string; password: string }
+  ) {
     if (editando === undefined) dados.adicionarCrianca(crianca);
     else dados.atualizarCrianca(crianca);
     editando = null;
+
+    if (MODO_SERVIDOR && credenciais) {
+      // No servidor, o endpoint grava a criança e cria a conta de uma vez.
+      const resposta = await fetch('/api/criancas', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ crianca, ...credenciais })
+      });
+      if (!resposta.ok) {
+        const detalhe = await resposta.json().catch(() => ({}));
+        erroCopia = detalhe.erro ?? 'Não foi possível criar o login da criança.';
+      } else {
+        avisoCopia = 'Criança e login guardados.';
+        await invalidateAll();
+      }
+    }
   }
 
   const stats = $derived(dados.estatisticas());

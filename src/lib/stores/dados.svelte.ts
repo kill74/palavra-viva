@@ -53,9 +53,14 @@ class Dados {
   }
 
   guardar(): void {
-    void this.repositorio.guardar(this.estado()).then(
-      () => (this.persistencia = 'ok'),
-      () => (this.persistencia = 'indisponivel')
+    void this.guardarAwait();
+  }
+
+  /** Versão aguardável, para fluxos que dependem da persistência. */
+  guardarAwait(): Promise<void> {
+    return this.repositorio.guardar(this.estado()).then(
+      () => { this.persistencia = 'ok'; },
+      () => { this.persistencia = 'indisponivel'; }
     );
   }
 
