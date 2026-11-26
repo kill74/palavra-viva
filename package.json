@@ -9,6 +9,6 @@
   "dependencies": {
     "@noble/hashes": "1.8.0",
     "@sveltejs/adapter-node": "6.0.6",
-    "@types/node": "22.15.3"
+    "@types/node": "26.6.6"
   }
 }
