@@ -2,13 +2,14 @@
   import { afterNavigate } from '$app/navigation';
   import { resolve } from '$app/paths';
   import { onMount } from 'svelte';
-  import { PALAVRAS_NUCLEARES, obterPalavra } from '#lib/data/palavras';
+  import { obterPalavra } from '#lib/data/palavras';
   import { DESCRICAO_TIPO, NOMES_FASE, NOMES_TIPO } from '#lib/data/tipos';
   import { dados } from '#lib/stores/dados.svelte';
   import { sessao } from '#lib/stores/sessao.svelte';
   import { parametroUrl } from '#lib/utils/consulta';
   import { dataCurta, plural } from '#lib/utils/formato';
   import { proximoRecurso } from '#lib/utils/recomendacao';
+  import Caderno from '#lib/components/Caderno.svelte';
   import Conquistas from '#lib/components/Conquistas.svelte';
   import EstadoVazio from '#lib/components/EstadoVazio.svelte';
   import Icone from '#lib/components/Icone.svelte';
@@ -59,12 +60,6 @@
   const proximaAtividade = $derived(
     selecionada ? proximoRecurso(selecionada, dados.recursos, dados.sessoes) : undefined
   );
-  const palavrasConhecidas = $derived(
-    selecionada
-      ? selecionada.palavrasTrabalhadas.map((id) => obterPalavra(id)).filter((p) => p.nuclear)
-      : []
-  );
-
 </script>
 
 <svelte:head>
@@ -212,23 +207,8 @@
         </a>
       </div>
 
-      <div class="conhece">
-        <div class="conhece__cabeca">
-          <h3>Palavras que já conheces</h3>
-          <p>{palavrasConhecidas.length} de {PALAVRAS_NUCLEARES.length}</p>
-        </div>
-        {#if palavrasConhecidas.length === 0}
-          <p class="conhece__vazia">Ainda não há palavras registadas. A primeira vem já a seguir.</p>
-        {:else}
-          <ul class="conhece__lista">
-            {#each palavrasConhecidas as palavra (palavra.id)}
-              <li>
-                <span class="conhece__palavra">{palavra.palavra}</span>
-                <span class="conhece__silabas">{palavra.silabas.join(' · ')}</span>
-              </li>
-            {/each}
-          </ul>
-        {/if}
+      <div class="caderno">
+        <Caderno crianca={selecionada} {sessoes} />
       </div>
 
       {#if sessoes.length > 0}
@@ -618,67 +598,8 @@
     justify-self: start;
   }
 
-  .conhece {
+  .caderno {
     margin-top: 1.2rem;
-    padding: 1rem;
-    border: 1.5px solid var(--linha);
-    border-radius: var(--raio-ficha);
-    background: var(--papel-alto);
-  }
-
-  .conhece__cabeca {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 0.7rem;
-    margin-bottom: 0.5rem;
-  }
-
-  .conhece h3 {
-    margin: 0;
-    font-size: var(--texto-l);
-  }
-
-  :where(.conhece__cabeca) p {
-    margin: 0;
-    color: var(--tinta-fraca);
-    font-size: var(--texto-s);
-    font-variant-numeric: tabular-nums;
-  }
-
-  .conhece__lista {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem;
-    margin: 0;
-  }
-
-  .conhece__lista li {
-    display: flex;
-    flex-direction: column;
-    padding: 0.3rem 0.55rem;
-    border: 1.5px solid var(--linha);
-    border-radius: var(--raio-ficha);
-    background: var(--papel-ficha);
-  }
-
-  .conhece__palavra {
-    color: var(--tinta-ficha);
-    font-family: var(--fonte-titulo);
-    font-weight: 700;
-    letter-spacing: -0.03em;
-    line-height: 1.1;
-  }
-
-  .conhece__silabas {
-    color: var(--tinta-fraca);
-    font-size: var(--texto-mini);
-  }
-
-  .conhece__vazia {
-    margin: 0;
-    color: var(--tinta-fraca);
-    font-size: var(--texto-s);
   }
 
   .ultima {
