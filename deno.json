@@ -11,7 +11,8 @@
     "db:seed": "deno run --allow-read --allow-write --allow-env db/seed.ts",
     "build:server": "MODO_SERVIDOR=1 deno run -A npm:vite build",
     "start": "MODO_SERVIDOR=1 ORIGIN=http://localhost:3000 PORT=3000 node servidor/index.js",
-    "test:seguranca": "MODO_SERVIDOR=1 deno run -A npm:vite build && node scripts/testes-seguranca.mjs"
+    "test:seguranca": "MODO_SERVIDOR=1 deno run -A npm:vite build && node scripts/testes-seguranca.mjs",
+    "audit": "deno audit --ignore-registry-errors"
   },
   "imports": {
     "@sveltejs/adapter-static": "npm:@sveltejs/adapter-static@4.0.1",
