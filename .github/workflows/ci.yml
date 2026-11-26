@@ -37,6 +37,9 @@ jobs:
       - name: Verificar tipos e acessibilidade
         run: deno task check
 
+      - name: Auditoria de dependências
+        run: deno task audit
+
       - name: Testes unitários
         run: deno task test
 
