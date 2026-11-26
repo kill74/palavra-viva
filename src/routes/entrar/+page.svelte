@@ -10,19 +10,19 @@
   import { MODO_SERVIDOR } from '#lib/ambiente';
   import FormularioConta from '#lib/components/FormularioConta.svelte';
 
+  let { data } = $props();
 
   let etapa = $state<'escolha' | 'professor' | 'crianca'>('escolha');
   let codigo = $state('');
   let erro = $state('');
   let registado = $state(false);
-  let erroUrl = $state('');
+  const erroUrl = $derived(MODO_SERVIDOR ? (data?.aviso ?? '') : parametroUrl('erro') ?? '');
   let destino = $state('');
   let campoCodigo = $state<HTMLInputElement>();
 
   onMount(() => {
     destino = parametroUrl('destino') ?? '';
     registado = parametroUrl('registado') === '1';
-    erroUrl = parametroUrl('erro') ?? '';
     const perfil = parametroUrl('perfil');
     if (perfil === 'professor') {
       etapa = 'professor';
