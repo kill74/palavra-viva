@@ -1,16 +1,8 @@
 import { ESCRITAS_DEMO, RECURSOS_DEMO, SESSOES_DEMO, TURMA } from '#lib/data/demo';
 import type { Crianca, Recurso, RegistoEscrita, Sessao } from '#lib/data/tipos';
+import { RepositorioLocal } from '#lib/repositorios/local';
+import type { EstadoDados, Repositorio } from '#lib/repositorios/tipo';
 import { comValidacao, recursoValido } from '#lib/utils/validacao';
-
-const CHAVE = 'palavra-viva:dados:v1';
-
-type EstadoGuardado = {
-  versao: 1;
-  criancas: Crianca[];
-  recursos: Recurso[];
-  sessoes: Sessao[];
-  escritas?: RegistoEscrita[];
-};
 
 class Dados {
   criancas = $state<Crianca[]>(structuredClone(TURMA));
@@ -20,57 +12,57 @@ class Dados {
   pronto = $state(false);
   persistencia = $state<'ok' | 'indisponivel'>('ok');
 
-  carregar(): void {
-    if (typeof localStorage === 'undefined') return;
-    try {
-      const bruto = localStorage.getItem(CHAVE);
-      if (!bruto) {
-        this.pronto = true;
-        return;
-      }
-      const dados = JSON.parse(bruto) as Partial<EstadoGuardado>;
-      if (Array.isArray(dados.criancas) && dados.criancas.length > 0) {
-        this.criancas = dados.criancas;
-      }
-      if (Array.isArray(dados.recursos)) {
-        this.recursos = dados.recursos.map((r) => comValidacao(r));
-      }
-      if (Array.isArray(dados.sessoes)) {
-        this.sessoes = dados.sessoes;
-      }
-      if (Array.isArray(dados.escritas)) {
-        this.escritas = dados.escritas;
-      }
-      this.pronto = true;
-    } catch {
-      this.persistencia = 'indisponivel';
-      this.pronto = true;
-    }
+  private repositorio: Repositorio = new RepositorioLocal();
+
+  /** Permite ao servidor injetar o repositório de base de dados. */
+  usarRepositorio(repositorio: Repositorio): void {
+    this.repositorio = repositorio;
   }
 
-  guardar(): void {
-    if (typeof localStorage === 'undefined') return;
+  private estado(): EstadoDados {
+    return {
+      versao: 1,
+      criancas: $state.snapshot(this.criancas) as Crianca[],
+      recursos: $state.snapshot(this.recursos) as Recurso[],
+      sessoes: $state.snapshot(this.sessoes) as Sessao[],
+      escritas: $state.snapshot(this.escritas) as RegistoEscrita[]
+    };
+  }
+
+  async carregar(): Promise<void> {
     try {
-      const estado: EstadoGuardado = {
-        versao: 1,
-        criancas: this.criancas,
-        recursos: this.recursos,
-        sessoes: this.sessoes,
-        escritas: this.escritas
-      };
-      localStorage.setItem(CHAVE, JSON.stringify(estado));
+      const dados = await this.repositorio.carregar();
+      this.criancas = dados.criancas;
+      this.recursos = dados.recursos.map((r) => comValidacao(r));
+      this.sessoes = dados.sessoes;
+      this.escritas = dados.escritas;
       this.persistencia = 'ok';
     } catch {
       this.persistencia = 'indisponivel';
     }
+    this.pronto = true;
+  }
+
+  guardar(): void {
+    void this.repositorio.guardar(this.estado()).then(
+      () => (this.persistencia = 'ok'),
+      () => (this.persistencia = 'indisponivel')
+    );
   }
 
   repor(): void {
-    this.criancas = structuredClone(TURMA);
-    this.recursos = structuredClone(RECURSOS_DEMO);
-    this.sessoes = structuredClone(SESSOES_DEMO);
-    this.escritas = structuredClone(ESCRITAS_DEMO);
-    this.guardar();
+    const estado: EstadoDados = {
+      versao: 1,
+      criancas: structuredClone(TURMA),
+      recursos: structuredClone(RECURSOS_DEMO),
+      sessoes: structuredClone(SESSOES_DEMO),
+      escritas: structuredClone(ESCRITAS_DEMO)
+    };
+    this.criancas = estado.criancas;
+    this.recursos = estado.recursos;
+    this.sessoes = estado.sessoes;
+    this.escritas = estado.escritas;
+    void this.repositorio.repor(estado);
   }
 
   /** Aplica uma cópia já validada por `validarCopia`. */
