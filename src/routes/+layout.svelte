@@ -4,6 +4,7 @@
   import { navigating, page } from '$app/state';
   import Cabecalho from '#lib/components/Cabecalho.svelte';
   import Rodape from '#lib/components/Rodape.svelte';
+  import { RepositorioServidor } from '#lib/repositorios/servidor';
   import { dados } from '#lib/stores/dados.svelte';
   import { sessao } from '#lib/stores/sessao.svelte';
   import { onMount, untrack } from 'svelte';
@@ -32,8 +33,13 @@
   });
 
   onMount(() => {
-    // No servidor a sessão já foi aplicada pelo efeito acima, a partir de `locals`.
-    if (!MODO_SERVIDOR) void dados.carregar().then(() => sessao.carregar());
+    // No servidor a sessão e os dados já vêm de `locals`. A store passa a
+    // gravar através da API, e não no localStorage do browser.
+    if (MODO_SERVIDOR) {
+      dados.usarRepositorio(new RepositorioServidor());
+      return;
+    }
+    void dados.carregar().then(() => sessao.carregar());
   });
   let principal = $state<HTMLElement>();
 

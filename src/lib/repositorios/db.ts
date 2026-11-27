@@ -1,6 +1,8 @@
+import type { DatabaseSync } from 'node:sqlite';
 import type { Crianca, Recurso, RegistoEscrita, Sessao } from '#lib/data/tipos';
 import { base } from '../../../db/cliente.ts';
-import type { EstadoDados, Repositorio } from './tipo';
+import { exigirIds, idsPermitidos, type ContextoDados } from '../../../db/escopo.ts';
+import type { EstadoDados, Repositorio } from './tipo.ts';
 
 function json<T>(texto: string, fallback: T): T {
   try {
@@ -70,30 +72,27 @@ function paraEscrita(l: LinhaEscrita): RegistoEscrita {
   };
 }
 
-/** Repositório servidor, apoiado em SQLite. */
+/**
+ * Repositório servidor, apoiado em SQLite.
+ *
+ * Todas as operações são limitadas ao contexto da sessão. Escritas são
+ * diferenciais e transacionais: apenas as crianças, recursos, sessões e
+ * escritas do próprio utilizador podem ser alterados. Contas e turmas nunca
+ * são apagadas por uma importação.
+ */
 export class RepositorioDb implements Repositorio {
-  async carregar(professoraId?: string, criancaId?: string): Promise<EstadoDados> {
+  async carregar(contexto: ContextoDados = {}): Promise<EstadoDados> {
     const db = base();
     const vazio = { versao: 1 as const, criancas: [], recursos: [], sessoes: [], escritas: [] };
-
-    // Sem uma conta autenticada identificada não devolvemos dados: uma falha
-    // aqui não pode resultar na lista completa de crianças de todas as turmas.
-    if (!professoraId && !criancaId) return vazio;
-
-    const criancas = professoraId
-      ? (db.prepare(`SELECT c.* FROM criancas c
-          JOIN turmas t ON t.id = c.turma_id
-          WHERE t.professora_id = ? ORDER BY c.nome`)
-          .all(professoraId) as LinhaCrianca[]).map(paraCrianca)
-      : (db.prepare('SELECT * FROM criancas WHERE id = ?')
-          .all(criancaId ?? '') as LinhaCrianca[]).map(paraCrianca);
-    if (criancas.length === 0) return vazio;
-    const ids = criancas.map((c) => c.id);
+    const ids = idsPermitidos(contexto);
+    if (ids.length === 0) return vazio;
     const marcadores = ids.map(() => '?').join(',');
 
     return {
       versao: 1,
-      criancas,
+      criancas: (db.prepare(`SELECT c.* FROM criancas c
+        WHERE c.id IN (${marcadores}) ORDER BY c.nome`).all(...ids) as LinhaCrianca[])
+        .map(paraCrianca),
       recursos: (db.prepare(`SELECT * FROM recursos WHERE crianca_id IN (${marcadores})
         ORDER BY criado_em DESC`).all(...ids) as LinhaRecurso[]).map(paraRecurso),
       sessoes: (db.prepare(`SELECT * FROM sessoes WHERE crianca_id IN (${marcadores})
@@ -103,25 +102,15 @@ export class RepositorioDb implements Repositorio {
     };
   }
 
-  async guardar(estado: EstadoDados): Promise<void> {
+  async guardar(estado: EstadoDados, contexto: ContextoDados = {}): Promise<void> {
+    const permitidos = new Set(idsPermitidos(contexto));
+    if (permitidos.size === 0 && estado.criancas.length === 0) return;
+    this.exigirEstado(estado, permitidos);
+
     const db = base();
     db.exec('BEGIN');
     try {
-      for (const c of estado.criancas) {
-        db.prepare(`INSERT INTO criancas
-          (id, utilizador_id, nome, idade, fase, cor, nota, palavras_trabalhadas)
-          VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-          ON CONFLICT(id) DO UPDATE SET nome=excluded.nome, idade=excluded.idade,
-            fase=excluded.fase, cor=excluded.cor, nota=excluded.nota,
-            palavras_trabalhadas=excluded.palavras_trabalhadas`)
-          .run(c.id, `util-${c.id}`, c.nome, c.idade, c.fase, c.cor, c.nota,
-            JSON.stringify(c.palavrasTrabalhadas));
-      }
-      // A store guarda o estado completo: todos os tipos têm de ser persistidos,
-      // não apenas as crianças.
-      for (const r of estado.recursos) this.inserirRecurso(r);
-      for (const s of estado.sessoes) this.inserirSessao(s);
-      for (const e of estado.escritas) this.inserirEscrita(e);
+      this.sincronizar(estado, permitidos, db);
       db.exec('COMMIT');
     } catch (erro) {
       db.exec('ROLLBACK');
@@ -129,25 +118,85 @@ export class RepositorioDb implements Repositorio {
     }
   }
 
-  async repor(estado: EstadoDados): Promise<void> {
+  async repor(estado: EstadoDados, contexto: ContextoDados = {}): Promise<void> {
+    const permitidos = new Set(idsPermitidos(contexto));
+    if (permitidos.size === 0) throw new Error('Não há crianças autorizadas para repor.');
+    this.exigirEstado(estado, permitidos);
+
     const db = base();
     db.exec('BEGIN');
     try {
-      db.prepare('DELETE FROM sessoes_login').run();
-      db.prepare('DELETE FROM escritas').run();
-      db.prepare('DELETE FROM sessoes').run();
-      db.prepare('DELETE FROM recursos').run();
-      db.prepare('DELETE FROM criancas').run();
+      this.apagarRegistos(permitidos, db);
+      this.sincronizar(estado, permitidos, db);
       db.exec('COMMIT');
     } catch (erro) {
       db.exec('ROLLBACK');
       throw erro;
     }
-    await this.guardar(estado);
   }
 
-  private inserirRecurso(r: Recurso): void {
-    base().prepare(`INSERT OR REPLACE INTO recursos
+  /** A cópia tem de descrever exatamente as crianças da turma autorizada. */
+  private exigirEstado(estado: EstadoDados, permitidos: Set<string>): void {
+    if (estado.criancas.length !== permitidos.size) {
+      throw new Error('A cópia não inclui exatamente as crianças da turma autorizada.');
+    }
+    exigirIds(estado.criancas.map((c) => c.id), permitidos, 'Crianças');
+    exigirIds(estado.recursos.map((r) => r.criancaId), permitidos, 'Recursos');
+    exigirIds(estado.sessoes.map((s) => s.criancaId), permitidos, 'Sessões');
+    exigirIds(estado.escritas.map((e) => e.criancaId), permitidos, 'Escritas');
+  }
+
+  /** Apaga apenas registos pedagógicos; nunca utilizadores, turmas ou sessões de login. */
+  private apagarRegistos(permitidos: Set<string>, db: DatabaseSync): void {
+    const donos = [...permitidos];
+    const marcadores = donos.map(() => '?').join(',');
+    for (const tabela of ['sessoes', 'escritas', 'recursos']) {
+      db.prepare(`DELETE FROM ${tabela} WHERE crianca_id IN (${marcadores})`).run(...donos);
+    }
+  }
+
+  /** Aplica o estado recebido e remove o que deixou de existir, dentro do escopo. */
+  private sincronizar(
+    estado: EstadoDados,
+    permitidos: Set<string>,
+    db: DatabaseSync
+  ): void {
+    for (const c of estado.criancas) {
+      // `utilizador_id` e `turma_id` pertencem à conta e não são enviados pelo
+      // browser: atualizamos só os campos pedagógicos.
+      db.prepare(`UPDATE criancas SET nome=?, idade=?, fase=?, cor=?, nota=?,
+        palavras_trabalhadas=? WHERE id=?`)
+        .run(c.nome, c.idade, c.fase, c.cor, c.nota,
+          JSON.stringify(c.palavrasTrabalhadas), c.id);
+    }
+
+    this.apagarForaDoEstado('recursos', estado.recursos.map((r) => r.id), permitidos, db);
+    this.apagarForaDoEstado('sessoes', estado.sessoes.map((s) => s.id), permitidos, db);
+    this.apagarForaDoEstado('escritas', estado.escritas.map((e) => e.id), permitidos, db);
+
+    for (const r of estado.recursos) this.inserirRecurso(r, db);
+    for (const s of estado.sessoes) this.inserirSessao(s, db);
+    for (const e of estado.escritas) this.inserirEscrita(e, db);
+  }
+
+  private apagarForaDoEstado(
+    tabela: string,
+    ids: string[],
+    permitidos: Set<string>,
+    db: DatabaseSync
+  ): void {
+    const donos = [...permitidos];
+    if (donos.length === 0) return;
+    const donosSql = donos.map(() => '?').join(',');
+    const manterSql = ids.length > 0
+      ? ` AND id NOT IN (${ids.map(() => '?').join(',')})`
+      : '';
+    db.prepare(`DELETE FROM ${tabela} WHERE crianca_id IN (${donosSql})${manterSql}`)
+      .run(...donos, ...ids);
+  }
+
+  private inserirRecurso(r: Recurso, db: DatabaseSync = base()): void {
+    db.prepare(`INSERT OR REPLACE INTO recursos
       (id, crianca_id, palavra_id, palavra, silabas, frase, tipo, fase, opcoes,
        resposta_correta, apoios, estado, origem, prompt, modelo, criado_em,
        aprovado_em, feedback_certo, feedback_errado, validacao)
@@ -158,13 +207,13 @@ export class RepositorioDb implements Repositorio {
         r.aprovadoEm ?? null, r.feedbackCerto, r.feedbackErrado, JSON.stringify(r.validacao));
   }
 
-  private inserirSessao(s: Sessao): void {
-    base().prepare(`INSERT OR REPLACE INTO sessoes (id, crianca_id, inicio, fim, respostas)
+  private inserirSessao(s: Sessao, db: DatabaseSync = base()): void {
+    db.prepare(`INSERT OR REPLACE INTO sessoes (id, crianca_id, inicio, fim, respostas)
       VALUES (?,?,?,?,?)`).run(s.id, s.criancaId, s.inicio, s.fim, JSON.stringify(s.respostas));
   }
 
-  private inserirEscrita(e: RegistoEscrita): void {
-    base().prepare(`INSERT OR REPLACE INTO escritas (id, crianca_id, palavra_id, data, nota)
+  private inserirEscrita(e: RegistoEscrita, db: DatabaseSync = base()): void {
+    db.prepare(`INSERT OR REPLACE INTO escritas (id, crianca_id, palavra_id, data, nota)
       VALUES (?,?,?,?,?)`).run(e.id, e.criancaId, e.palavraId, e.data, e.nota);
   }
 }

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { MODO_SERVIDOR } from '#lib/ambiente';
   import type { Crianca, Fase } from '#lib/data/tipos';
   import { FASES, NOMES_COR } from '#lib/data/tipos';
   import { idCurto } from '#lib/utils/formato';
@@ -89,6 +90,10 @@
       erro = 'Preenche o email e a palavra-passe para criar o login da criança.';
       return;
     }
+    if (MODO_SERVIDOR && !emailLimpo) {
+      erro = 'No servidor, cada criança precisa de email e palavra-passe para entrar.';
+      return;
+    }
     if (emailLimpo && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(emailLimpo)) {
       erro = 'Escreve um email válido para a criança.';
       return;
@@ -159,7 +164,7 @@
       <textarea bind:value={nota} rows="3" maxlength="240" placeholder="O que observaste nas sessões?"></textarea>
     </label>
     <fieldset class="login-campos">
-      <legend>Login da criança <span>(opcional)</span></legend>
+      <legend>Login da criança <span>({MODO_SERVIDOR ? 'obrigatório' : 'opcional'})</span></legend>
       <label>
         <span>Email</span>
         <input id="email-crianca" bind:value={email} type="email" autocomplete="off" placeholder="crianca@palavraviva.pt" />

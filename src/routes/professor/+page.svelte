@@ -81,12 +81,16 @@
     crianca: Crianca,
     credenciais?: { email: string; password: string }
   ) {
-    if (editando === undefined) dados.adicionarCrianca(crianca);
-    else dados.atualizarCrianca(crianca);
-    editando = null;
+    erroCopia = '';
+    avisoCopia = '';
 
-    if (MODO_SERVIDOR && credenciais) {
-      // No servidor, o endpoint grava a criança e cria a conta de uma vez.
+    if (MODO_SERVIDOR) {
+      // No servidor o endpoint é a única autoridade: grava a criança e cria
+      // a conta na mesma transação. A store é atualizada pelo invalidateAll.
+      if (!credenciais) {
+        erroCopia = 'No servidor, cada criança precisa de email e palavra-passe.';
+        return;
+      }
       const resposta = await fetch('/api/criancas', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -94,12 +98,18 @@
       });
       if (!resposta.ok) {
         const detalhe = await resposta.json().catch(() => ({}));
-        erroCopia = detalhe.erro ?? 'Não foi possível criar o login da criança.';
-      } else {
-        avisoCopia = 'Criança e login guardados.';
-        await invalidateAll();
+        erroCopia = detalhe.erro ?? 'Não foi possível guardar a criança.';
+        return;
       }
+      editando = null;
+      avisoCopia = 'Criança e login guardados.';
+      await invalidateAll();
+      return;
     }
+
+    if (editando === undefined) dados.adicionarCrianca(crianca);
+    else dados.atualizarCrianca(crianca);
+    editando = null;
   }
 
   const stats = $derived(dados.estatisticas());
@@ -168,17 +178,19 @@
           >
             <Icone nome="mais" tamanho={16} /> Registar criança
           </button>
-          <button
-            type="button"
-            class="botao botao--fantasma botao--pequeno"
-            onclick={() => {
-              if (window.confirm('Repor a demonstração? Os registos locais serão substituídos pelos dados iniciais.')) {
-                dados.repor();
-              }
-            }}
-          >
-            <Icone nome="refresh" tamanho={16} /> Repor demonstração
-          </button>
+          {#if !MODO_SERVIDOR}
+            <button
+              type="button"
+              class="botao botao--fantasma botao--pequeno"
+              onclick={() => {
+                if (window.confirm('Repor a demonstração? Os registos locais serão substituídos pelos dados iniciais.')) {
+                  dados.repor();
+                }
+              }}
+            >
+              <Icone nome="refresh" tamanho={16} /> Repor demonstração
+            </button>
+          {/if}
           <button type="button" class="botao botao--fantasma botao--pequeno" onclick={guardarCopia}>
             <Icone nome="descarregar" tamanho={16} /> Guardar cópia
           </button>

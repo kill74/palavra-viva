@@ -1,22 +1,19 @@
 import { error } from '@sveltejs/kit';
 import type { Crianca } from '#lib/data/tipos';
-import { eModoServidor } from '#lib/ambiente-servidor';
 import {
   atualizarContaCrianca,
   criarContaCrianca
 } from '../../../../db/autenticacao.ts';
 import { RepositorioDb } from '#lib/repositorios/db';
+import { contextoDaProfessora } from '#lib/autorizacao/contexto';
 import { base } from '../../../../db/cliente.ts';
 import type { RequestHandler } from './$types';
 
 /** Só professoras, e apenas crianças da sua própria turma. */
 async function autorizar(locals: App.Locals, criancaId?: string): Promise<string> {
-  if (!eModoServidor()) error(404, 'Não encontrado');
-  if (!locals.utilizador || locals.utilizador.papel !== 'professora') {
-    error(403, 'Acesso reservado à professora.');
-  }
+  const contexto = contextoDaProfessora(locals);
   const repositorio = new RepositorioDb();
-  const estado = await repositorio.carregar(locals.utilizador.id);
+  const estado = await repositorio.carregar(contexto);
   const daMinhaTurma = estado.criancas.some((c) => c.id === criancaId);
   if (criancaId && !daMinhaTurma) {
     // O id pode pertencer a outra turma: não podemos permitir que esta
@@ -24,7 +21,7 @@ async function autorizar(locals: App.Locals, criancaId?: string): Promise<string
     const existente = base().prepare('SELECT id FROM criancas WHERE id = ?').get(criancaId);
     if (existente) error(403, 'Esta criança pertence a outra turma.');
   }
-  return locals.utilizador.id;
+  return contexto.professoraId;
 }
 
 /** Grava a criança na BD da professora (sem depender da store do browser). */
