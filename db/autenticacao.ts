@@ -23,6 +23,18 @@ type LinhaUtilizador = {
 
 const DURACAO_SESSAO_MS = 1000 * 60 * 60 * 24 * 7; // 7 dias
 
+/** Regra única de palavra-passe, partilhada por registo, edição e recuperação. */
+export function validarPassword(password: string): string[] {
+  const erros: string[] = [];
+  if (password.length < 10) {
+    erros.push('A palavra-passe deve ter pelo menos 10 caracteres.');
+  }
+  if (!/[A-ZÀ-Ú]/.test(password) || !/[a-zà-ú]/.test(password) || !/\d/.test(password)) {
+    erros.push('A palavra-passe deve incluir uma maiúscula, uma minúscula e um número.');
+  }
+  return erros;
+}
+
 /** Valida os dados de registo. Devolve uma lista de erros em PT-PT. */
 export function validarRegisto(
   email: string,
@@ -38,12 +50,7 @@ export function validarRegisto(
   if (nome.trim().length < 2 || nome.trim().length > 80) {
     erros.push('O nome deve ter entre 2 e 80 caracteres.');
   }
-  if (password.length < 10) {
-    erros.push('A palavra-passe deve ter pelo menos 10 caracteres.');
-  }
-  if (!/[A-ZÀ-Ú]/.test(password) || !/[a-zà-ú]/.test(password) || !/\d/.test(password)) {
-    erros.push('A palavra-passe deve incluir uma maiúscula, uma minúscula e um número.');
-  }
+  erros.push(...validarPassword(password));
   if (papel !== 'professora' && papel !== 'crianca') {
     erros.push('Escolhe um perfil válido.');
   }
@@ -87,9 +94,18 @@ export async function registarUtilizador(dados: {
 
   const id = idSeguro();
   const hash = await hashPassword(dados.password);
-  db.prepare(`INSERT INTO utilizadores
-    (id, email, nome, papel, password_hash, criado_em) VALUES (?, ?, ?, ?, ?, ?)`)
-    .run(id, email, dados.nome.trim(), dados.papel, hash, new Date().toISOString());
+  const agora = new Date().toISOString();
+  // Toda a professora começa com uma turma: sem ela as crianças ficariam
+  // órfãs e o carregamento (que faz JOIN com turmas) não devolveria nada.
+  transacao(() => {
+    db.prepare(`INSERT INTO utilizadores
+      (id, email, nome, papel, password_hash, criado_em) VALUES (?, ?, ?, ?, ?, ?)`)
+      .run(id, email, dados.nome.trim(), dados.papel, hash, agora);
+    if (dados.papel === 'professora') {
+      db.prepare(`INSERT INTO turmas (id, nome, professora_id, criado_em)
+        VALUES (?, ?, ?, ?)`).run(idSeguro(), '1.º A', id, agora);
+    }
+  });
 
   return {
     utilizador: {
@@ -97,7 +113,7 @@ export async function registarUtilizador(dados: {
       email,
       nome: dados.nome.trim(),
       papel: dados.papel,
-      criadoEm: new Date().toISOString()
+      criadoEm: agora
     },
     erros: []
   };
@@ -242,10 +258,8 @@ export async function atualizarContaCrianca(dados: {
 }): Promise<string[]> {
   const email = dados.email.trim().toLocaleLowerCase('pt-PT');
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return ['Escreve um email válido.'];
-  if (dados.password.length < 10 || !/[A-ZÀ-Ú]/.test(dados.password) ||
-    !/[a-zà-ú]/.test(dados.password) || !/\d/.test(dados.password)) {
-    return ['A palavra-passe deve ter 10 caracteres, maiúscula, minúscula e número.'];
-  }
+  const errosSenha = validarPassword(dados.password);
+  if (errosSenha.length > 0) return errosSenha;
   const db = base();
   const duplicado = db.prepare('SELECT id FROM utilizadores WHERE email = ? AND id <> ?')
     .get(email, dados.utilizadorId);
@@ -258,12 +272,22 @@ export async function atualizarContaCrianca(dados: {
 
 const DURACAO_RECUPERACAO_MS = 30 * 60 * 1000; // 30 minutos
 
+/** Tokens de recuperação só são mostrados no console com `PALAVRA_VIVA_DEV=1`. */
+function modoDesenvolvimento(): boolean {
+  const ambiente = globalThis as {
+    process?: { env?: Record<string, string | undefined> };
+    Deno?: { env?: { get(nome: string): string | undefined } };
+  };
+  return (ambiente.process?.env?.PALAVRA_VIVA_DEV ??
+    ambiente.Deno?.env?.get?.('PALAVRA_VIVA_DEV')) === '1';
+}
+
 export type PedidoRecuperacao = { token: string; email: string };
 
 /**
  * Cria um token de recuperação. Não revela se o email existe: devolve sempre
  * um objeto com token e email, mas quando não há conta o token é falso e
- * não é gravado. Em desenvolvimento o token é mostrado no servidor.
+ * não é gravado. O token só é mostrado no servidor com `PALAVRA_VIVA_DEV=1`.
  */
 export async function pedirRecuperacao(email: string): Promise<PedidoRecuperacao> {
   const token = idSeguro();
@@ -285,7 +309,11 @@ export async function pedirRecuperacao(email: string): Promise<PedidoRecuperacao
     .run(token, linha.id, new Date(agora).toISOString(),
       new Date(agora + DURACAO_RECUPERACAO_MS).toISOString());
 
-  console.log(`[palavra-viva] Recuperação para ${linha.email}: token ${token}`);
+  // Em produção um token de recuperação nunca deve ir para os logs.
+  // A configuração de email fica a cargo do servidor da escola.
+  if (modoDesenvolvimento()) {
+    console.log(`[palavra-viva] Recuperação para ${linha.email}: token ${token}`);
+  }
   return { token, email: linha.email };
 }
 
@@ -302,10 +330,8 @@ export async function redefinirPassword(
   token: string,
   password: string
 ): Promise<string[]> {
-  if (password.length < 10 || !/[A-ZÀ-Ú]/.test(password) ||
-    !/[a-zà-ú]/.test(password) || !/\d/.test(password)) {
-    return ['A palavra-passe deve ter 10 caracteres, maiúscula, minúscula e número.'];
-  }
+  const errosSenha = validarPassword(password);
+  if (errosSenha.length > 0) return errosSenha;
   const utilizadorId = verificarTokenRecuperacao(token);
   if (!utilizadorId) return ['O pedido expirou. Pede um novo.'];
 

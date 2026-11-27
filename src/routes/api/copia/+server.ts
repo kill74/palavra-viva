@@ -1,28 +1,21 @@
 import { error } from '@sveltejs/kit';
-import { eModoServidor } from '#lib/ambiente-servidor';
 import { RepositorioDb } from '#lib/repositorios/db';
+import { contextoDaProfessora } from '#lib/autorizacao/contexto';
 import { validarCopia } from '#lib/utils/backup';
 import type { RequestHandler } from './$types';
 
 /** Só professoras podem exportar/importar, e apenas a sua própria turma. */
-function professoraId(locals: App.Locals): string {
-  if (!eModoServidor()) error(404, 'Não encontrado');
-  if (!locals.utilizador || locals.utilizador.papel !== 'professora') {
-    error(403, 'Acesso reservado à professora.');
-  }
-  return locals.utilizador.id;
-}
 
 export const GET: RequestHandler = async ({ locals }) => {
-  const repositorio = new RepositorioDb();
-  const estado = await repositorio.carregar(professoraId(locals));
+  const contexto = contextoDaProfessora(locals);
+  const estado = await new RepositorioDb().carregar(contexto);
   return Response.json(estado, {
     headers: { 'Cache-Control': 'no-store' }
   });
 };
 
 export const POST: RequestHandler = async ({ request, locals }) => {
-  const id = professoraId(locals);
+  const contexto = contextoDaProfessora(locals);
   let texto: string;
   try {
     texto = await request.text();
@@ -36,18 +29,24 @@ export const POST: RequestHandler = async ({ request, locals }) => {
   }
 
   const repositorio = new RepositorioDb();
-  // A cópia não pode introduzir crianças de outra turma: comparamos com o
-  // estado atual da professora autenticada antes de substituir qualquer coisa.
-  const atual = await repositorio.carregar(id);
+  // A cópia não pode introduzir crianças de outra turma nem omitir crianças
+  // desta: comparamos com o estado atual antes de substituir qualquer coisa.
+  const atual = await repositorio.carregar(contexto);
   const permitidos = new Set(atual.criancas.map((c) => c.id));
-  const extranhos = resultado.dados.criancas.filter((c) => !permitidos.has(c.id));
-  if (extranhos.length > 0 || resultado.dados.criancas.length === 0) {
+  const copia = resultado.dados;
+  const divergentes = copia.criancas.filter((c) => !permitidos.has(c.id));
+  const omissas = atual.criancas.filter((c) => !copia.criancas.some((d) => d.id === c.id));
+  if (divergentes.length > 0 || omissas.length > 0 || copia.criancas.length === 0) {
     return Response.json(
-      { erro: 'A cópia contém crianças que não pertencem a esta turma.' },
+      { erro: 'A cópia tem de incluir exatamente as crianças desta turma.' },
       { status: 400 }
     );
   }
 
-  await repositorio.repor(resultado.dados);
+  try {
+    await repositorio.repor(copia, contexto);
+  } catch (erro) {
+    error(400, erro instanceof Error ? erro.message : 'Não foi possível importar a cópia.');
+  }
   return Response.json({ ok: true });
 };

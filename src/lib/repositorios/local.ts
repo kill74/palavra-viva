@@ -1,6 +1,6 @@
 import { ESCRITAS_DEMO, RECURSOS_DEMO, SESSOES_DEMO, TURMA } from '#lib/data/demo';
 import { comValidacao } from '#lib/utils/validacao';
-import type { EstadoDados, Repositorio } from './tipo';
+import type { ContextoDados, EstadoDados, Repositorio } from './tipo.ts';
 
 const CHAVE = 'palavra-viva:dados:v1';
 
@@ -15,7 +15,7 @@ function estadoInicial(): EstadoDados {
 }
 
 export class RepositorioLocal implements Repositorio {
-  async carregar(_professoraId?: string, _criancaId?: string): Promise<EstadoDados> {
+  async carregar(_contexto?: ContextoDados): Promise<EstadoDados> {
     if (typeof localStorage === 'undefined') return estadoInicial();
     try {
       const bruto = localStorage.getItem(CHAVE);

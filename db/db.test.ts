@@ -37,8 +37,8 @@ Deno.test('hashPassword: produz hash Argon2id com parâmetros OWASP', async () =
   const partes = hash.split('$');
   assertEquals(partes[0], 'argon2id');
   assertEquals(Number(partes[1]), 3);
-  assertEquals(Number(partes[2]), 65536);
-  assertEquals(Number(partes[3]), 4);
+  assertEquals(Number(partes[2]), 19 * 1024);
+  assertEquals(Number(partes[3]), 1);
   assertEquals(await verificarPassword('SenhaForte123', hash), true);
   assertEquals(await verificarPassword('Errada12345', hash), false);
 });

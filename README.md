@@ -94,25 +94,41 @@ O site é totalmente pré-renderizado com `@sveltejs/adapter-static`. O resultad
 pode ser servido por qualquer alojamento estático. O fallback `404.html` garante a página de
 erro em servidores estáticos.
 
-### Versão com base de dados e login real
+### Versão com servidor, SQLite e contas reais
 
-Além da demonstração estática, o projeto tem uma build com servidor, SQLite e contas reais:
+Além da demonstração estática, o projeto tem uma build com servidor (adapter-node):
 
 ```bash
-deno task db:seed          # cria db/dados/palavra-viva.sqlite com a turma demo
+deno task db:seed          # cria a BD de demonstração (apenas na primeira vez)
 deno task build:server     # gera o servidor em servidor/
 deno task start            # arranca em http://localhost:3000
 ```
 
 Contas de demonstração: `professora@palavraviva.pt` / `professora2026!` e
 `alice@palavraviva.pt` / `alice2026!` (as restantes seguem o mesmo padrão).
+**Não deixes estas contas num servidor acessível à escola.**
 
-Variáveis de ambiente: `ORIGIN` (origem de confiança para os formulários, obrigatória
-em form actions), `PORT` e `PALAVRA_VIVA_DB` (caminho do ficheiro SQLite). As passwords
-são guardadas com PBKDF2 e as sessões em cookies `HttpOnly` com expiração de 7 dias.
+Variáveis de ambiente:
+
+| Variável | Para que serve |
+| :--- | :--- |
+| `MODO_SERVIDOR=1` | ativa as rotas com base de dados (tem de estar no build **e** no arranque) |
+| `ORIGIN` | origem pública de confiança; `https://...` ativa cookie `Secure` e HSTS |
+| `PORT` | porta do servidor Node (padrão `3000`) |
+| `PALAVRA_VIVA_DB` | caminho **absoluto** do ficheiro SQLite (usado pelo seed e pelo servidor) |
+| `CODIGO_CONVITE` | código para registar novas professoras após a primeira |
+| `PALAVRA_VIVA_HASH_MAX` | máximo de hashes Argon2id em paralelo (padrão `4`) |
+| `PALAVRA_VIVA_DEV=1` | mostra tokens de recuperação no console — **não usar em produção** |
+
+As passwords são guardadas com Argon2id (19 MiB, 3 passagens — mínimo OWASP com uma
+passagem extra), as sessões são opacas em
+SQLite e o cookie é `HttpOnly` com expiração de 7 dias. A leitura e a escrita de dados
+são limitadas à turma da professora autenticada (ou à própria criança): um ID na URL
+nunca escolhe os dados de outrem.
 
 O GitHub Pages continua a publicar a build estática (`deno task build`); a build com
-servidor é independente e destina-se ao trabalho com autenticação e base de dados.
+servidor é independente. O guia completo para o servidor da escola está em
+[Instalar no servidor da escola](#instalar-no-servidor-da-escola-guia-para-professores).
 
 ### Publicação
 
@@ -121,6 +137,146 @@ publica-o no GitHub Pages em cada push para `main`. A demonstração fica em
 **https://kill74.github.io/palavra-viva/**. Todas as rotas são geradas como pastas com
 `index.html`, para funcionarem sem extensão no alojamento estático.
 
+---
+
+## Instalar no servidor da escola (guia para professores)
+
+Esta secção é para quem vai **usar** a aplicação com turmas reais. Se queres apenas ver
+a demonstração, usa o GitHub Pages — não precisas de servidor.
+
+### O que precisas
+
+- Uma máquina Linux com **Deno ≥ 2.9**, **Node ≥ 22.5** (para `node:sqlite`), `git` e
+  `sqlite3`.
+- Um nome de domínio ou subdomínio da escola, com **HTTPS** (Caddy, Nginx + Let's
+  Encrypt, ou equivalent).
+- Permissão de escrita numa pasta fora do código, por exemplo
+  `/var/lib/palavra-viva/`, para o ficheiro SQLite e os backups.
+
+### 1. Preparar a base de dados e as variáveis
+
+Usa sempre um caminho **absoluto** e o mesmo valor no seed e no servidor. O código usa
+`import.meta.dirname` para o caminho por omissão, que é diferente no seed e no bundle —
+definir `PALAVRA_VIVA_DB` evita essa divergência.
+
+```bash
+export APP_DIR=/srv/palavra-viva
+export PALAVRA_VIVA_DB=/var/lib/palavra-viva/palavra-viva.sqlite
+export ORIGIN=https://palavra-viva.escola.pt
+export PORT=3000
+export MODO_SERVIDOR=1
+export CODIGO_CONVITE='<codigo-para-outras-professoras>'
+
+sudo mkdir -p "$(dirname "$PALAVRA_VIVA_DB")" "$APP_DIR"
+sudo chown -R www-data:www-data "$(dirname "$PALAVRA_VIVA_DB")"
+cd "$APP_DIR" && git clone <url-do-repositorio> . && deno install --frozen
+```
+
+### 2. Criar a primeira conta de professora
+
+Não é preciso seed para começar: a primeira professora regista-se em `/entrar/`. O
+registo público só permite o perfil «professora»; quando já existe uma conta, passa a
+ser obrigatório o `CODIGO_CONVITE`. Cada professora recebe uma turma `1.º A` criada
+automaticamente, e cria as contas das crianças no painel (email + palavra-passe são
+obrigatórios no modo servidor).
+
+O comando `deno task db:seed` é **opcional** e destina-se a testar com a turma
+fictícia. Se o usares num servidor acessível, remove depois as contas demo
+(`professora@palavraviva.pt`, `alice@palavraviva.pt`, …) e troca as passwords com
+`deno task conta:senha <email> '<palavra-passe-forte>'`.
+
+### 3. Construir e arrancar
+
+```bash
+cd "$APP_DIR"
+deno task sync && deno task check && deno task test   # verificação opcional
+MODO_SERVIDOR=1 deno task build:server
+MODO_SERVIDOR=1 ORIGIN="$ORIGIN" PORT="$PORT" \
+  PALAVRA_VIVA_DB="$PALAVRA_VIVA_DB" CODIGO_CONVITE="$CODIGO_CONVITE" \
+  node servidor/index.js
+curl -I "http://127.0.0.1:$PORT/entrar/"               # tem de responder
+```
+
+Para deixar o serviço sempre ligado, cria uma unidade systemd com
+`WorkingDirectory=$APP_DIR`, `ExecStart=/usr/bin/node servidor/index.js` e as mesmas
+variáveis de ambiente, depois `sudo systemctl enable --now palavra-viva`.
+
+### 4. Colocar atrás de HTTPS
+
+Exemplo com Caddy (ele trata do certificado):
+
+```text
+palavra-viva.escola.pt {
+    reverse_proxy 127.0.0.1:3000
+    encode gzip
+}
+```
+
+Com Nginx, acrescenta `proxy_set_header Host $host;` e
+`proxy_set_header X-Forwarded-Proto $scheme;`. O `ORIGIN` tem de ser o URL público
+`https://...`: é ele que ativa o cookie `Secure`, o HSTS e a verificação de origem dos
+formulários.
+
+### 5. Backup e restauro
+
+```bash
+# backup diário (cron das 03:00, por exemplo)
+sqlite3 "$PALAVRA_VIVA_DB" ".backup '/var/lib/palavra-viva/backups/$(date +%F).sqlite'"
+
+# restaurar: parar o serviço, copiar o ficheiro, reiniciar
+sudo systemctl stop palavra-viva
+cp /var/lib/palavra-viva/backups/2026-11-27.sqlite "$PALAVRA_VIVA_DB"
+sudo systemctl start palavra-viva
+```
+
+A aplicação também permite exportar/importar uma cópia JSON por turma em
+`/professor/`. A importação substitui apenas os recursos, sessões e escritas **da
+turma da professora autenticada**; nunca apaga contas, turmas de colegas nem sessões
+de login.
+
+### 6. Atualizar o código
+
+```bash
+cd "$APP_DIR" && git pull && deno install --frozen
+MODO_SERVIDOR=1 deno task build:server
+sudo systemctl restart palavra-viva
+```
+
+**Não apagues o ficheiro SQLite ao atualizar.** As migrações são aplicadas
+automaticamente na primeira abertura.
+
+### Capacidade para 30 utilizadores em simultâneo
+
+A build com servidor foi desenhada para uma única instância com 30 utilizadores:
+
+- Os assets (incluindo os áudios) somam ~1,5 MB e são servidos com cache pelo proxy.
+- Cada pedido autenticado faz uma consulta pequena à SQLite (WAL ativo). 1–2 vCPU e
+  2 GB de RAM são suficientes para 30 utilizadores.
+- Argon2id reserva ~19 MB por hash e é limitado pela CPU: cada hash demora cerca de
+  1 s nesta máquina. 30 logins **exatamente ao mesmo segundo** podem por isso
+  demorar ~30 s para o último (os alunos chegam normalmente ao longo de minutos).
+  `PALAVRA_VIVA_HASH_MAX` (padrão `4`) limita o pico de memória a ~80 MB; num único
+  processo não aumenta a taxa de hashing. Para paralelismo real seriam precisos
+  vários processos ou um KDF nativo. Contas antigas (64 MB) continuam a verificar.
+- O limitador de tentativas de login está em memória: protege uma instância, mas
+  reinicia com o processo. Para várias réplicas seria preciso movê-lo para a BD ou
+  Redis — nesse caso, aumenta também `PALAVRA_VIVA_HASH_MAX` por réplica.
+
+### Limitações operacionais a conhecer
+
+- A recuperação de palavra-passe por email ainda não está ligada a um provedor SMTP.
+  Em produção usa `deno task conta:senha` para redefinir contas;
+  `PALAVRA_VIVA_DEV=1` só deve ser usado num ambiente fechado.
+- Alterações feitas em **duas abas da mesma conta** podem sobrescrever-se entre si
+  (última gravação ganha). Usa uma aba por conta para evitar.
+- O seed e os testes de segurança usam contas fictícias; não são adequados para um
+  servidor público.
+- Antes de usar com dados de menores, a escola precisa de definir consentimento,
+  retenção e responsável pelo tratamento dos dados.
+
+Existe um modelo comentado com todos estes passos em
+`scripts/deploy-servidor.sh`: copia-o, preenche os valores e descomenta o que precisas.
+
 ### Stack
 
 - **Deno 2.9** como runtime e gestor de tarefas (`deno task`).
@@ -128,7 +284,8 @@ publica-o no GitHub Pages em cada push para `main`. A demonstração fica em
 - **SvelteKit 3** com `adapter-static` e pré-renderização de todas as rotas.
 - **TypeScript 6** em modo `strict`, verificado por `svelte-check`.
 - **Vite 8** para desenvolvimento e build.
-- Sem backend e sem API em tempo de execução. O estado persistente vive em `localStorage`.
+- Na build estática não há backend: o estado vive em `localStorage`. Na build com
+  servidor, `adapter-node` + SQLite guardam os dados por conta (`src/lib/repositorios/`).
 - Imports internos com subpath imports (`#lib/...`), configurados em `package.json` e
   `tsconfig.json`, sem aliases deprecados do SvelteKit.
 
@@ -442,8 +599,19 @@ o projeto.
 
 ```text
 .github/
-  workflows/ci.yml           verificação e build em GitHub Actions
+  workflows/ci.yml           verificação, builds e testes de segurança
   workflows/pages.yml        publicação no GitHub Pages
+db/
+  cliente.ts                 ligação SQLite partilhada, WAL e migrações
+  escopo.ts                  permissões por turma / criança
+  autenticacao.ts            contas, sessões, 2FA e recuperação
+  seguranca.ts               Argon2id com fila de hashes
+  seed.ts                    turma fictícia (opcional)
+  redefinir-password.ts      redefinição de conta pela linha de comandos
+  migrations/                esquema versionado
+scripts/
+  deploy-servidor.sh         modelo de deploy comentado
+  testes-seguranca.mjs       testes contra a build com servidor
 src/
   app.css                    tokens, tipografia, componentes globais, temas
   app.html                   head base, tema sem flash, fontes, metadados
@@ -456,8 +624,16 @@ src/
       prompts.ts             prompts, modelo declarado e exemplos de revisão
       tipos.ts               tipos e nomes de fases/tipos
       metodo.ts              texto metodológico, limites, decisões e referências
+    repositorios/
+      local.ts               localStorage (demonstração estática)
+      db.ts                  SQLite com escopo por conta
+      servidor.ts            sincronização pela API no modo servidor
+      tipo.ts                contrato comum de persistência
+    autorizacao/
+      contexto.ts            transforma a sessão no escopo de dados
     stores/
-      dados.svelte.ts        estado + localStorage (recursos, sessões, escritas)
+      dados.svelte.ts        estado da turma (local ou servidor)
+      sessao.svelte.ts       perfil (simulado ou cookie)
       tema.svelte.ts         tema claro/escuro persistente
     utils/
       gerador.ts             composição determinística de propostas
@@ -470,19 +646,18 @@ src/
       recomendacao.test.ts   testes unitários da recomendação
       backup.ts              cópia completa em JSON e validação de esquema
       backup.test.ts         testes unitários da cópia
-  stores/
-    dados.svelte.ts          turma, recursos e sessões (localStorage)
-    sessao.svelte.ts         perfil simulado e chave de demonstração
-  components/
-    EditorCrianca.svelte     registo e edição de crianças
-    LinhaFases.svelte        percurso visual pelas seis fases
-    Conquistas.svelte        medalhas da área da criança
   routes/
     +page.svelte             visão geral e oficina de sílabas
     entrar/                  escolha de perfil e código de demonstração
     metodo/                  método, sequência, IA, testes e referências
     professor/               painel, criar, biblioteca, sessões, biblioteca individual
     crianca/                 escolha, cantinho e sessão de atividades
+    api/estado/              leitura e escrita do estado no modo servidor
+    api/copia/               exportação e importação por turma
+    api/criancas/            registo de criança com conta
+    api/entrar/, sair/       autenticação, registo e logout
+    api/recuperar/, 2fa/     recuperação e segundo fator
+    perfil/, esqueci-me/, redefinir/
 static/
   audio/                     160 MP3 pt-PT pré-gerados
   palavras/                  34 ilustrações SVG originais
@@ -493,23 +668,30 @@ static/
 
 ## Limitações e melhorias possíveis
 
-- **Sem API em tempo de execução.** A geração é prévia e o catálogo é finito. Uma versão
-  com API exigiria validação humana, limites de custo, moderação e registo de proveniência.
+- **Geração prévia.** Não há chamadas a APIs de IA em tempo de execução e o catálogo é
+  finito. Uma versão com API exigiria validação humana, limites de custo, moderação e
+  registo de proveniência.
 - **Sem reconhecimento de leitura oral.** A correção é por regras em respostas fechadas.
   A oralidade continua a ser observada pela professora.
-- **Entrada simulada.** O código `1234` não protege nada: serve apenas para separar os dois
-  percursos na demonstração. Um produto real exigiria contas, palavras-passe com hash,
-  sessões no servidor e autorização por perfil.
-- **Dados locais.** Não há contas, sincronização nem backend; limpar o `localStorage`
-  repõe a demonstração. Para uso real seria necessário consentimento, retenção e proteção
-  de dados de menores.
+- **A demonstração estática não protege nada.** O código `1234` e o `localStorage` servem
+  apenas para separar os dois percursos. Para contas reais usa a build com servidor
+  (Argon2id, sessões em SQLite, cookies `HttpOnly` e autorização por perfil).
+- **Recuperação de palavra-passe por email por ligar.** No servidor, redefine contas com
+  `deno task conta:senha`; `PALAVRA_VIVA_DEV=1` mostra tokens no console e não deve ser
+  usado em produção.
+- **Concorrência entre abas da mesma conta.** A sincronização usa o estado completo da
+  aba; duas abas a editar a mesma turma podem provar a última gravação. Para várias
+  réplicas do servidor, o rate limit em memória e a fila de hashes têm de passar para
+  um serviço partilhado.
+- **Dados de menores.** A escola tem de definir consentimento, prazos de retenção e
+  responsável pelo tratamento antes de usar com turmas reais.
 - **Voz sintetizada.** Consistente em pt-PT, mas não substitui entoação, afeto e correção
   humana.
 - **LCP mobile simulado.** A pontuação de desempenho cumpre ≥95; o LCP mobile do Lighthouse
   é influenciado pela simulação Slow 4G. Em desktop é 0,5 s.
-- **Melhorias prioritárias:** testes automatizados em CI, métricas de campo, expansão do
-  léxico com novas ilustrações e áudios validados, modo offline/PWA, importação/exportação
-  de dados da turma e um fluxo de revisão com histórico de versões.
+- **Melhorias prioritárias:** email de recuperação, concorrência otimista entre abas,
+  métricas de campo, expansão do léxico com novas ilustrações e áudios validados, modo
+  offline/PWA e histórico de versões dos recursos.
 
 ---
 
