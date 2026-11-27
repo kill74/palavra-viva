@@ -32,18 +32,24 @@ A aplicação separa dois percursos que se encontram numa revisão obrigatória:
 2. **A criança aprende.** Só vê recursos aprovados. Ouve, lê, escolhe, constrói sílabas e
    resolve frases curtas, com feedback imediato e nova tentativa.
 
-> Todos os nomes, registos e sessões são fictícios. Os dados ficam apenas no browser.
+> **Duas formas de executar:** a demonstração pública, pré-renderizada, com nomes e
+> sessões fictícios guardados no browser; e uma build com servidor, SQLite e contas
+> reais, destinada a uso escolar. Guia:
+> [Instalar no servidor da escola](#instalar-no-servidor-da-escola-guia-para-professores).
 
 **Demonstração pública:** https://kill74.github.io/palavra-viva/
 
 ### Entrar e biblioteca individual
 
-As áreas da professora e da criança são agora precedidas de uma página de entrada em
-`/entrar`. A professora usa o código de demonstração **1234**; a criança escolhe o nome na
-grelha da turma. A sessão fica guardada em `localStorage` na chave
-`palavra-viva:sessao:v1`. **Não é autenticação real**: o código está visível na própria
-página e não há dados pessoais nem servidor. O objetivo é separar os dois percursos e dar
-contexto ao cabeçalho. As páginas `/` e `/metodo` continuam públicas.
+As áreas da professora e da criança são precedidas de uma página de entrada em `/entrar`.
+
+- Na **demonstração estática**, a professora usa o código **1234** e a criança escolhe o
+  nome na grelha da turma. A sessão fica em `localStorage` (`palavra-viva:sessao:v1`):
+  **não é autenticação real**, serve apenas para separar os dois percursos.
+- Na **build com servidor**, o `/entrar` usa contas reais (email, Argon2id, sessão em
+  SQLite e cookie `HttpOnly`); as contas das crianças são criadas pela professora.
+
+As páginas `/` e `/metodo` continuam públicas nos dois modos.
 
 A biblioteca de cada criança está em `/professor/crianca?crianca=alice`: mostra as seis
 fases do percurso, o que a criança já fez, o que tem aprovado para a próxima sessão e o que
@@ -52,9 +58,11 @@ tem «Ver como a criança vê» com a pré-visualização exata. Na área da cri
 «O meu cantinho» reúne conquistas derivadas das sessões reais e um atalho «Continuar a ler»
 para a atividade recomendada; o cabeçalho permite «Mudar» de criança sem sair da sessão.
 
-No painel da professora é possível registar e editar crianças, repor a demonstração e
-guardar/carregar uma cópia completa dos dados em JSON. A cópia é validada antes de substituir
-os registos (versão, referências e identificadores), recusando ficheiros inconsistentes.
+No painel da professora é possível registar e editar crianças e guardar/carregar uma cópia
+completa dos dados em JSON, validada antes de substituir os registos (versão, referências e
+identificadores). Na demonstração estática existe ainda o botão «Repor demonstração»; no
+servidor esse botão não aparece e a importação substitui apenas os dados da turma
+autenticada, preservando contas e sessões de login.
 
 <p align="center">
   <img src="docs/screenshots/home-escuro.webp" alt="Página inicial do Palavra Viva no tema escuro: «Ler começa numa palavra que a criança já conhece.»" width="100%">
@@ -64,8 +72,10 @@ os registos (versão, referências e identificadores), recusando ficheiros incon
 
 ## Executar
 
-Pré-requisitos: **Deno 2.9+** e um browser atual. Não é necessário instalar Node, npm, yarn
-ou pnpm. As dependências npm são resolvidas pelo Deno através de `npm:` em `deno.json`.
+Pré-requisitos para desenvolvimento e build estático: **Deno 2.9+** e um browser atual.
+Não é necessário instalar Node, npm, yarn ou pnpm — as dependências npm são resolvidas
+pelo Deno através de `npm:` em `deno.json`. Para a build com servidor é também necessário
+**Node ≥ 22.5** (usa `node:sqlite`).
 
 ```bash
 # desenvolvimento com HMR
@@ -102,6 +112,9 @@ Além da demonstração estática, o projeto tem uma build com servidor (adapter
 deno task db:seed          # cria a BD de demonstração (apenas na primeira vez)
 deno task build:server     # gera o servidor em servidor/
 deno task start            # arranca em http://localhost:3000
+
+# redefinir a password de uma conta sem depender de token por email
+deno task conta:senha professora@escola.pt '<palavra-passe-forte>'
 ```
 
 Contas de demonstração: `professora@palavraviva.pt` / `professora2026!` e
